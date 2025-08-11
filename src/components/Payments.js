@@ -1,0 +1,399 @@
+import React, { useState } from 'react';
+
+function PaymentForm({ payment, onSave, onCancel, tenants, properties }) {
+  const [formData, setFormData] = useState({
+    tenantId: payment?.tenantId || '',
+    amount: payment?.amount || '',
+    date: payment?.date || new Date().toISOString().split('T')[0],
+    method: payment?.method || 'cash',
+    status: payment?.status || 'completed',
+    notes: payment?.notes || ''
+  });
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (!formData.tenantId || !formData.amount || !formData.date) {
+      alert('Please fill in all required fields');
+      return;
+    }
+
+    const paymentData = {
+      ...formData,
+      id: payment?.id || Date.now().toString(),
+      amount: parseFloat(formData.amount) || 0
+    };
+
+    onSave(paymentData);
+  };
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({ ...prev, [name]: value }));
+  };
+
+  const getTenantName = (tenantId) => {
+    const tenant = tenants.find(t => t.id === tenantId);
+    return tenant ? tenant.name : '';
+  };
+
+  const getPropertyName = (tenantId) => {
+    const tenant = tenants.find(t => t.id === tenantId);
+    if (!tenant) return '';
+    const property = properties.find(p => p.id === tenant.propertyId);
+    return property ? property.name : '';
+  };
+
+  return (
+    <div className="modal">
+      <div className="modal-content">
+        <div className="modal-header">
+          <h2>{payment ? 'Edit Payment' : 'Record New Payment'}</h2>
+          <button className="close-btn" onClick={onCancel}>&times;</button>
+        </div>
+        <form onSubmit={handleSubmit}>
+          <div className="form-group">
+            <label>Tenant *</label>
+            <select
+              name="tenantId"
+              value={formData.tenantId}
+              onChange={handleChange}
+              className="form-control"
+              required
+            >
+              <option value="">Select a tenant</option>
+              {tenants.filter(t => t.status === 'active').map(tenant => {
+                const property = properties.find(p => p.id === tenant.propertyId);
+                return (
+                  <option key={tenant.id} value={tenant.id}>
+                    {tenant.name} - {property?.name || 'Unknown Property'}
+                  </option>
+                );
+              })}
+            </select>
+          </div>
+          <div className="form-row">
+            <div className="form-group">
+              <label>Amount *</label>
+              <input
+                type="number"
+                name="amount"
+                value={formData.amount}
+                onChange={handleChange}
+                className="form-control"
+                step="0.01"
+                min="0"
+                required
+              />
+            </div>
+            <div className="form-group">
+              <label>Date *</label>
+              <input
+                type="date"
+                name="date"
+                value={formData.date}
+                onChange={handleChange}
+                className="form-control"
+                required
+              />
+            </div>
+          </div>
+          <div className="form-row">
+            <div className="form-group">
+              <label>Payment Method</label>
+              <select
+                name="method"
+                value={formData.method}
+                onChange={handleChange}
+                className="form-control"
+              >
+                <option value="cash">Cash</option>
+                <option value="check">Check</option>
+                <option value="bank_transfer">Bank Transfer</option>
+                <option value="credit_card">Credit Card</option>
+                <option value="online">Online Payment</option>
+              </select>
+            </div>
+            <div className="form-group">
+              <label>Status</label>
+              <select
+                name="status"
+                value={formData.status}
+                onChange={handleChange}
+                className="form-control"
+              >
+                <option value="completed">Completed</option>
+                <option value="pending">Pending</option>
+                <option value="failed">Failed</option>
+              </select>
+            </div>
+          </div>
+          <div className="form-group">
+            <label>Notes</label>
+            <textarea
+              name="notes"
+              value={formData.notes}
+              onChange={handleChange}
+              className="form-control"
+              rows="3"
+              placeholder="Additional notes about this payment..."
+            />
+          </div>
+          <div style={{ display: 'flex', gap: '10px', justifyContent: 'flex-end', marginTop: '20px' }}>
+            <button type="button" className="btn" onClick={onCancel}>Cancel</button>
+            <button type="submit" className="btn btn-primary">Save Payment</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+}
+
+function Payments({ payments, setPayments, tenants, properties }) {
+  const [showForm, setShowForm] = useState(false);
+  const [editingPayment, setEditingPayment] = useState(null);
+  const [filter, setFilter] = useState('all');
+
+  const handleAddPayment = () => {
+    const activeTenantsExist = tenants.some(t => t.status === 'active');
+    if (!activeTenantsExist) {
+      alert('Please add at least one active tenant before recording payments');
+      return;
+    }
+    setEditingPayment(null);
+    setShowForm(true);
+  };
+
+  const handleEditPayment = (payment) => {
+    setEditingPayment(payment);
+    setShowForm(true);
+  };
+
+  const handleSavePayment = (paymentData) => {
+    if (editingPayment) {
+      setPayments(prev => prev.map(p => p.id === editingPayment.id ? paymentData : p));
+    } else {
+      setPayments(prev => [...prev, paymentData]);
+    }
+    setShowForm(false);
+    setEditingPayment(null);
+  };
+
+  const handleDeletePayment = (id) => {
+    if (window.confirm('Are you sure you want to delete this payment record?')) {
+      setPayments(prev => prev.filter(p => p.id !== id));
+    }
+  };
+
+  const handleCancel = () => {
+    setShowForm(false);
+    setEditingPayment(null);
+  };
+
+  const getTenantName = (tenantId) => {
+    const tenant = tenants.find(t => t.id === tenantId);
+    return tenant ? tenant.name : 'Unknown Tenant';
+  };
+
+  const getPropertyName = (tenantId) => {
+    const tenant = tenants.find(t => t.id === tenantId);
+    if (!tenant) return 'Unknown Property';
+    const property = properties.find(p => p.id === tenant.propertyId);
+    return property ? property.name : 'Unknown Property';
+  };
+
+  const getStatusBadge = (status) => {
+    const colors = {
+      completed: '#28a745',
+      pending: '#ffc107',
+      failed: '#dc3545'
+    };
+    return (
+      <span
+        style={{
+          backgroundColor: colors[status] || colors.pending,
+          color: 'white',
+          padding: '4px 8px',
+          borderRadius: '4px',
+          fontSize: '12px',
+          textTransform: 'capitalize'
+        }}
+      >
+        {status}
+      </span>
+    );
+  };
+
+  const filteredPayments = payments.filter(payment => {
+    if (filter === 'all') return true;
+    return payment.status === filter;
+  }).sort((a, b) => new Date(b.date) - new Date(a.date));
+
+  const totalPayments = payments
+    .filter(p => p.status === 'completed')
+    .reduce((sum, payment) => sum + payment.amount, 0);
+
+  return (
+    <div>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+        <h1>Rent Payments</h1>
+        <button className="btn btn-primary" onClick={handleAddPayment}>
+          Record Payment
+        </button>
+      </div>
+
+      <div className="dashboard-grid" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))' }}>
+        <div className="stat-card">
+          <div className="stat-number">${totalPayments.toLocaleString()}</div>
+          <div className="stat-label">Total Collected</div>
+        </div>
+        <div className="stat-card">
+          <div className="stat-number">{payments.filter(p => p.status === 'completed').length}</div>
+          <div className="stat-label">Completed Payments</div>
+        </div>
+        <div className="stat-card">
+          <div className="stat-number">{payments.filter(p => p.status === 'pending').length}</div>
+          <div className="stat-label">Pending Payments</div>
+        </div>
+      </div>
+
+      <div className="card">
+        <div style={{ marginBottom: '20px' }}>
+          <label style={{ marginRight: '10px' }}>Filter by status:</label>
+          <select
+            value={filter}
+            onChange={(e) => setFilter(e.target.value)}
+            className="form-control"
+            style={{ width: 'auto', display: 'inline-block' }}
+          >
+            <option value="all">All Payments</option>
+            <option value="completed">Completed</option>
+            <option value="pending">Pending</option>
+            <option value="failed">Failed</option>
+          </select>
+        </div>
+
+        {filteredPayments.length === 0 ? (
+          <div style={{ textAlign: 'center', padding: '40px', color: '#666' }}>
+            <h3>No payments found</h3>
+            <p>
+              {filter === 'all' 
+                ? 'Record your first payment to start tracking rent collection'
+                : `No ${filter} payments found`
+              }
+            </p>
+            {tenants.filter(t => t.status === 'active').length === 0 && (
+              <p style={{ color: '#dc3545', marginTop: '10px' }}>
+                Note: You need to have active tenants before recording payments
+              </p>
+            )}
+          </div>
+        ) : (
+          <>
+            {/* Desktop Table View */}
+            <div className="table-responsive">
+              <table className="table">
+                <thead>
+                  <tr>
+                    <th>Date</th>
+                    <th>Tenant</th>
+                    <th>Property</th>
+                    <th>Amount</th>
+                    <th>Method</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {filteredPayments.map(payment => (
+                    <tr key={payment.id}>
+                      <td>{new Date(payment.date).toLocaleDateString()}</td>
+                      <td>{getTenantName(payment.tenantId)}</td>
+                      <td>{getPropertyName(payment.tenantId)}</td>
+                      <td>${payment.amount.toLocaleString()}</td>
+                      <td style={{ textTransform: 'capitalize' }}>
+                        {payment.method.replace('_', ' ')}
+                      </td>
+                      <td>{getStatusBadge(payment.status)}</td>
+                      <td>
+                        <button
+                          className="btn btn-primary"
+                          onClick={() => handleEditPayment(payment)}
+                          style={{ marginRight: '10px' }}
+                        >
+                          Edit
+                        </button>
+                        <button
+                          className="btn btn-danger"
+                          onClick={() => handleDeletePayment(payment.id)}
+                        >
+                          Delete
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+            
+            {/* Mobile Card View */}
+            <div className="card-list">
+              {filteredPayments.map(payment => (
+                <div key={payment.id} className="card-item">
+                  <div className="card-item-header">
+                    ${payment.amount.toLocaleString()} - {new Date(payment.date).toLocaleDateString()}
+                  </div>
+                  <div className="card-item-details">
+                    <div className="card-item-detail">
+                      <span className="card-item-label">Tenant:</span>
+                      <span className="card-item-value">{getTenantName(payment.tenantId)}</span>
+                    </div>
+                    <div className="card-item-detail">
+                      <span className="card-item-label">Property:</span>
+                      <span className="card-item-value">{getPropertyName(payment.tenantId)}</span>
+                    </div>
+                    <div className="card-item-detail">
+                      <span className="card-item-label">Method:</span>
+                      <span className="card-item-value" style={{ textTransform: 'capitalize' }}>
+                        {payment.method.replace('_', ' ')}
+                      </span>
+                    </div>
+                    <div className="card-item-detail">
+                      <span className="card-item-label">Status:</span>
+                      <span className="card-item-value">{getStatusBadge(payment.status)}</span>
+                    </div>
+                  </div>
+                  <div className="card-item-actions">
+                    <button
+                      className="btn btn-primary"
+                      onClick={() => handleEditPayment(payment)}
+                    >
+                      Edit
+                    </button>
+                    <button
+                      className="btn btn-danger"
+                      onClick={() => handleDeletePayment(payment.id)}
+                    >
+                      Delete
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </>
+        )}
+      </div>
+
+      {showForm && (
+        <PaymentForm
+          payment={editingPayment}
+          onSave={handleSavePayment}
+          onCancel={handleCancel}
+          tenants={tenants}
+          properties={properties}
+        />
+      )}
+    </div>
+  );
+}
+
+export default Payments;
