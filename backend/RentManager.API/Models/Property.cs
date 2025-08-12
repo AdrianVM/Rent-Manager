@@ -1,0 +1,36 @@
+namespace RentManager.API.Models
+{
+    public class Property
+    {
+        public string Id { get; set; } = string.Empty;
+        public string Name { get; set; } = string.Empty;
+        public string Address { get; set; } = string.Empty;
+        public PropertyType Type { get; set; }
+        public int? Bedrooms { get; set; }
+        public decimal? Bathrooms { get; set; }
+        public decimal RentAmount { get; set; }
+        public string? Description { get; set; }
+        public ParkingType? ParkingType { get; set; }
+        public string? SpaceNumber { get; set; }
+        public int? SquareFootage { get; set; }
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+        public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
+    }
+
+    public enum PropertyType
+    {
+        Apartment,
+        House,
+        Condo,
+        Commercial,
+        ParkingSpace
+    }
+
+    public enum ParkingType
+    {
+        Outdoor,
+        Covered,
+        Garage,
+        Underground
+    }
+}
