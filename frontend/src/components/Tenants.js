@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import apiService from '../services/api';
 
 function TenantForm({ tenant, onSave, onCancel, properties }) {
   const [formData, setFormData] = useState({
@@ -35,10 +36,6 @@ function TenantForm({ tenant, onSave, onCancel, properties }) {
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
-  const getPropertyName = (propertyId) => {
-    const property = properties.find(p => p.id === propertyId);
-    return property ? property.name : '';
-  };
 
   return (
     <div className="modal">
@@ -169,9 +166,35 @@ function TenantForm({ tenant, onSave, onCancel, properties }) {
   );
 }
 
-function Tenants({ tenants, setTenants, properties }) {
+function Tenants() {
+  const [tenants, setTenants] = useState([]);
+  const [properties, setProperties] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [showForm, setShowForm] = useState(false);
   const [editingTenant, setEditingTenant] = useState(null);
+
+  useEffect(() => {
+    loadData();
+  }, []);
+
+  const loadData = async () => {
+    try {
+      setLoading(true);
+      const [tenantsData, propertiesData] = await Promise.all([
+        apiService.getTenants(),
+        apiService.getProperties()
+      ]);
+      setTenants(tenantsData || []);
+      setProperties(propertiesData || []);
+      setError(null);
+    } catch (err) {
+      setError('Failed to load data. Please try again.');
+      console.error('Error loading data:', err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleAddTenant = () => {
     if (properties.length === 0) {
@@ -187,19 +210,31 @@ function Tenants({ tenants, setTenants, properties }) {
     setShowForm(true);
   };
 
-  const handleSaveTenant = (tenantData) => {
-    if (editingTenant) {
-      setTenants(prev => prev.map(t => t.id === editingTenant.id ? tenantData : t));
-    } else {
-      setTenants(prev => [...prev, tenantData]);
+  const handleSaveTenant = async (tenantData) => {
+    try {
+      if (editingTenant) {
+        await apiService.updateTenant(editingTenant.id, tenantData);
+      } else {
+        await apiService.createTenant(tenantData);
+      }
+      await loadData(); // Reload data from server
+      setShowForm(false);
+      setEditingTenant(null);
+    } catch (err) {
+      alert('Failed to save tenant. Please try again.');
+      console.error('Error saving tenant:', err);
     }
-    setShowForm(false);
-    setEditingTenant(null);
   };
 
-  const handleDeleteTenant = (id) => {
+  const handleDeleteTenant = async (id) => {
     if (window.confirm('Are you sure you want to delete this tenant?')) {
-      setTenants(prev => prev.filter(t => t.id !== id));
+      try {
+        await apiService.deleteTenant(id);
+        await loadData(); // Reload data from server
+      } catch (err) {
+        alert('Failed to delete tenant. Please try again.');
+        console.error('Error deleting tenant:', err);
+      }
     }
   };
 
@@ -245,7 +280,18 @@ function Tenants({ tenants, setTenants, properties }) {
       </div>
 
       <div className="card">
-        {tenants.length === 0 ? (
+        {loading ? (
+          <div style={{ textAlign: 'center', padding: '40px', color: '#666' }}>
+            <p>Loading tenants...</p>
+          </div>
+        ) : error ? (
+          <div style={{ textAlign: 'center', padding: '40px', color: '#dc3545' }}>
+            <p>{error}</p>
+            <button className="btn btn-primary" onClick={loadData}>
+              Try Again
+            </button>
+          </div>
+        ) : tenants.length === 0 ? (
           <div style={{ textAlign: 'center', padding: '40px', color: '#666' }}>
             <h3>No tenants yet</h3>
             <p>Add your first tenant to start tracking rent payments</p>

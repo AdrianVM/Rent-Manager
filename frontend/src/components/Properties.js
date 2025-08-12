@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import apiService from '../services/api';
 
 function PropertyForm({ property, onSave, onCancel }) {
   const [formData, setFormData] = useState({
@@ -79,7 +80,7 @@ function PropertyForm({ property, onSave, onCancel }) {
               <option value="house">House</option>
               <option value="condo">Condo</option>
               <option value="commercial">Commercial</option>
-              <option value="parking_space">Parking Space</option>
+              <option value="parkingSpace">Parking Space</option>
             </select>
           </div>
           {/* Only show bedrooms/bathrooms for residential properties */}
@@ -112,7 +113,7 @@ function PropertyForm({ property, onSave, onCancel }) {
           )}
           
           {/* Show parking-specific fields for parking spaces */}
-          {formData.type === 'parking_space' && (
+          {formData.type === 'parkingSpace' && (
             <div className="form-row">
               <div className="form-group">
                 <label>Parking Type</label>
@@ -190,9 +191,30 @@ function PropertyForm({ property, onSave, onCancel }) {
   );
 }
 
-function Properties({ properties, setProperties }) {
+function Properties() {
+  const [properties, setProperties] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [showForm, setShowForm] = useState(false);
   const [editingProperty, setEditingProperty] = useState(null);
+
+  useEffect(() => {
+    loadProperties();
+  }, []);
+
+  const loadProperties = async () => {
+    try {
+      setLoading(true);
+      const data = await apiService.getProperties();
+      setProperties(data || []);
+      setError(null);
+    } catch (err) {
+      setError('Failed to load properties. Please try again.');
+      console.error('Error loading properties:', err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleAddProperty = () => {
     setEditingProperty(null);
@@ -204,19 +226,31 @@ function Properties({ properties, setProperties }) {
     setShowForm(true);
   };
 
-  const handleSaveProperty = (propertyData) => {
-    if (editingProperty) {
-      setProperties(prev => prev.map(p => p.id === editingProperty.id ? propertyData : p));
-    } else {
-      setProperties(prev => [...prev, propertyData]);
+  const handleSaveProperty = async (propertyData) => {
+    try {
+      if (editingProperty) {
+        await apiService.updateProperty(editingProperty.id, propertyData);
+      } else {
+        await apiService.createProperty(propertyData);
+      }
+      await loadProperties(); // Reload data from server
+      setShowForm(false);
+      setEditingProperty(null);
+    } catch (err) {
+      alert('Failed to save property. Please try again.');
+      console.error('Error saving property:', err);
     }
-    setShowForm(false);
-    setEditingProperty(null);
   };
 
-  const handleDeleteProperty = (id) => {
+  const handleDeleteProperty = async (id) => {
     if (window.confirm('Are you sure you want to delete this property?')) {
-      setProperties(prev => prev.filter(p => p.id !== id));
+      try {
+        await apiService.deleteProperty(id);
+        await loadProperties(); // Reload data from server
+      } catch (err) {
+        alert('Failed to delete property. Please try again.');
+        console.error('Error deleting property:', err);
+      }
     }
   };
 
@@ -235,7 +269,18 @@ function Properties({ properties, setProperties }) {
       </div>
 
       <div className="card">
-        {properties.length === 0 ? (
+        {loading ? (
+          <div style={{ textAlign: 'center', padding: '40px', color: '#666' }}>
+            <p>Loading properties...</p>
+          </div>
+        ) : error ? (
+          <div style={{ textAlign: 'center', padding: '40px', color: '#dc3545' }}>
+            <p>{error}</p>
+            <button className="btn btn-primary" onClick={loadProperties}>
+              Try Again
+            </button>
+          </div>
+        ) : properties.length === 0 ? (
           <div style={{ textAlign: 'center', padding: '40px', color: '#666' }}>
             <h3>No properties yet</h3>
             <p>Add your first property to get started managing rentals</p>
@@ -263,7 +308,7 @@ function Properties({ properties, setProperties }) {
                         case 'house':
                         case 'condo':
                           return `${prop.bedrooms || 0}/${prop.bathrooms || 0} bed/bath`;
-                        case 'parking_space':
+                        case 'parkingSpace':
                           const details = [];
                           if (prop.parkingType) details.push(prop.parkingType.replace('_', ' '));
                           if (prop.spaceNumber) details.push(`#${prop.spaceNumber}`);
@@ -315,7 +360,7 @@ function Properties({ properties, setProperties }) {
                     case 'house':
                     case 'condo':
                       return `${prop.bedrooms || 0}/${prop.bathrooms || 0} bed/bath`;
-                    case 'parking_space':
+                    case 'parkingSpace':
                       const details = [];
                       if (prop.parkingType) details.push(prop.parkingType.replace('_', ' '));
                       if (prop.spaceNumber) details.push(`#${prop.spaceNumber}`);

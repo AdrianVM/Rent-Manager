@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import apiService from '../services/api';
 
 function PaymentForm({ payment, onSave, onCancel, tenants, properties }) {
   const [formData, setFormData] = useState({
@@ -31,17 +32,6 @@ function PaymentForm({ payment, onSave, onCancel, tenants, properties }) {
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
-  const getTenantName = (tenantId) => {
-    const tenant = tenants.find(t => t.id === tenantId);
-    return tenant ? tenant.name : '';
-  };
-
-  const getPropertyName = (tenantId) => {
-    const tenant = tenants.find(t => t.id === tenantId);
-    if (!tenant) return '';
-    const property = properties.find(p => p.id === tenant.propertyId);
-    return property ? property.name : '';
-  };
 
   return (
     <div className="modal">
@@ -108,8 +98,8 @@ function PaymentForm({ payment, onSave, onCancel, tenants, properties }) {
               >
                 <option value="cash">Cash</option>
                 <option value="check">Check</option>
-                <option value="bank_transfer">Bank Transfer</option>
-                <option value="credit_card">Credit Card</option>
+                <option value="bankTransfer">Bank Transfer</option>
+                <option value="creditCard">Credit Card</option>
                 <option value="online">Online Payment</option>
               </select>
             </div>
@@ -148,13 +138,42 @@ function PaymentForm({ payment, onSave, onCancel, tenants, properties }) {
   );
 }
 
-function Payments({ payments, setPayments, tenants, properties }) {
+function Payments() {
+  const [payments, setPayments] = useState([]);
+  const [tenants, setTenants] = useState([]);
+  const [properties, setProperties] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [showForm, setShowForm] = useState(false);
   const [editingPayment, setEditingPayment] = useState(null);
   const [filter, setFilter] = useState('all');
 
+  useEffect(() => {
+    loadData();
+  }, []);
+
+  const loadData = async () => {
+    try {
+      setLoading(true);
+      const [paymentsData, tenantsData, propertiesData] = await Promise.all([
+        apiService.getPayments(),
+        apiService.getTenants(),
+        apiService.getProperties()
+      ]);
+      setPayments(paymentsData || []);
+      setTenants(tenantsData || []);
+      setProperties(propertiesData || []);
+      setError(null);
+    } catch (err) {
+      setError('Failed to load data. Please try again.');
+      console.error('Error loading data:', err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const handleAddPayment = () => {
-    const activeTenantsExist = tenants.some(t => t.status === 'active');
+    const activeTenantsExist = tenants.some(t => t.status === 'Active');
     if (!activeTenantsExist) {
       alert('Please add at least one active tenant before recording payments');
       return;
@@ -168,19 +187,31 @@ function Payments({ payments, setPayments, tenants, properties }) {
     setShowForm(true);
   };
 
-  const handleSavePayment = (paymentData) => {
-    if (editingPayment) {
-      setPayments(prev => prev.map(p => p.id === editingPayment.id ? paymentData : p));
-    } else {
-      setPayments(prev => [...prev, paymentData]);
+  const handleSavePayment = async (paymentData) => {
+    try {
+      if (editingPayment) {
+        await apiService.updatePayment(editingPayment.id, paymentData);
+      } else {
+        await apiService.createPayment(paymentData);
+      }
+      await loadData(); // Reload data from server
+      setShowForm(false);
+      setEditingPayment(null);
+    } catch (err) {
+      alert('Failed to save payment. Please try again.');
+      console.error('Error saving payment:', err);
     }
-    setShowForm(false);
-    setEditingPayment(null);
   };
 
-  const handleDeletePayment = (id) => {
+  const handleDeletePayment = async (id) => {
     if (window.confirm('Are you sure you want to delete this payment record?')) {
-      setPayments(prev => prev.filter(p => p.id !== id));
+      try {
+        await apiService.deletePayment(id);
+        await loadData(); // Reload data from server
+      } catch (err) {
+        alert('Failed to delete payment. Please try again.');
+        console.error('Error deleting payment:', err);
+      }
     }
   };
 
@@ -225,11 +256,11 @@ function Payments({ payments, setPayments, tenants, properties }) {
 
   const filteredPayments = payments.filter(payment => {
     if (filter === 'all') return true;
-    return payment.status === filter;
+    return payment.status.toLowerCase() === filter;
   }).sort((a, b) => new Date(b.date) - new Date(a.date));
 
   const totalPayments = payments
-    .filter(p => p.status === 'completed')
+    .filter(p => p.status.toLowerCase() === 'completed')
     .reduce((sum, payment) => sum + payment.amount, 0);
 
   return (
@@ -247,11 +278,11 @@ function Payments({ payments, setPayments, tenants, properties }) {
           <div className="stat-label">Total Collected</div>
         </div>
         <div className="stat-card">
-          <div className="stat-number">{payments.filter(p => p.status === 'completed').length}</div>
+          <div className="stat-number">{payments.filter(p => p.status.toLowerCase() === 'completed').length}</div>
           <div className="stat-label">Completed Payments</div>
         </div>
         <div className="stat-card">
-          <div className="stat-number">{payments.filter(p => p.status === 'pending').length}</div>
+          <div className="stat-number">{payments.filter(p => p.status.toLowerCase() === 'pending').length}</div>
           <div className="stat-label">Pending Payments</div>
         </div>
       </div>
@@ -272,7 +303,18 @@ function Payments({ payments, setPayments, tenants, properties }) {
           </select>
         </div>
 
-        {filteredPayments.length === 0 ? (
+        {loading ? (
+          <div style={{ textAlign: 'center', padding: '40px', color: '#666' }}>
+            <p>Loading payments...</p>
+          </div>
+        ) : error ? (
+          <div style={{ textAlign: 'center', padding: '40px', color: '#dc3545' }}>
+            <p>{error}</p>
+            <button className="btn btn-primary" onClick={loadData}>
+              Try Again
+            </button>
+          </div>
+        ) : filteredPayments.length === 0 ? (
           <div style={{ textAlign: 'center', padding: '40px', color: '#666' }}>
             <h3>No payments found</h3>
             <p>
@@ -281,7 +323,7 @@ function Payments({ payments, setPayments, tenants, properties }) {
                 : `No ${filter} payments found`
               }
             </p>
-            {tenants.filter(t => t.status === 'active').length === 0 && (
+            {tenants.filter(t => t.status.toLowerCase() === 'active').length === 0 && (
               <p style={{ color: '#dc3545', marginTop: '10px' }}>
                 Note: You need to have active tenants before recording payments
               </p>
@@ -311,7 +353,7 @@ function Payments({ payments, setPayments, tenants, properties }) {
                       <td>{getPropertyName(payment.tenantId)}</td>
                       <td>${payment.amount.toLocaleString()}</td>
                       <td style={{ textTransform: 'capitalize' }}>
-                        {payment.method.replace('_', ' ')}
+                        {payment.method.replace(/([A-Z])/g, ' $1').replace('_', ' ').replace(/^\w/, c => c.toUpperCase())}
                       </td>
                       <td>{getStatusBadge(payment.status)}</td>
                       <td>
@@ -354,7 +396,7 @@ function Payments({ payments, setPayments, tenants, properties }) {
                     <div className="card-item-detail">
                       <span className="card-item-label">Method:</span>
                       <span className="card-item-value" style={{ textTransform: 'capitalize' }}>
-                        {payment.method.replace('_', ' ')}
+                        {payment.method.replace(/([A-Z])/g, ' $1').replace('_', ' ').replace(/^\w/, c => c.toUpperCase())}
                       </span>
                     </div>
                     <div className="card-item-detail">

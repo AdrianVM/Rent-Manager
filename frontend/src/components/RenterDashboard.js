@@ -1,4 +1,5 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
+import apiService from '../services/api';
 
 function RentPaymentHistory({ payments, currentTenant }) {
   const tenantPayments = payments
@@ -55,7 +56,7 @@ function RentPaymentHistory({ payments, currentTenant }) {
                   ${payment.amount.toLocaleString()}
                 </div>
                 <div style={{ fontSize: '14px', color: 'var(--text-secondary)' }}>
-                  {new Date(payment.date).toLocaleDateString()} • {payment.method.replace('_', ' ')}
+                  {new Date(payment.date).toLocaleDateString()} • {payment.method.replace(/([A-Z])/g, ' $1').replace('_', ' ').replace(/^\w/, c => c.toUpperCase())}
                 </div>
               </div>
               <div style={{ textAlign: 'right' }}>
@@ -89,7 +90,7 @@ function PropertyInfo({ property }) {
       case 'house':
       case 'condo':
         return `${prop.bedrooms || 0} bed, ${prop.bathrooms || 0} bath`;
-      case 'parking_space':
+      case 'parkingSpace':
         const details = [];
         if (prop.parkingType) details.push(prop.parkingType.replace('_', ' '));
         if (prop.spaceNumber) details.push(`Space #${prop.spaceNumber}`);
@@ -543,126 +544,87 @@ function ContactInfo() {
   );
 }
 
-function RenterDashboard({ tenants, payments, properties }) {
-  // For demo purposes, we'll simulate the current renter with mock data
-  const [currentRenterId] = useState('demo-renter');
-  
-  const currentTenant = useMemo(() => {
-    // Use existing tenant if available, otherwise create mock data
-    const existingTenant = tenants.find(t => t.status === 'active');
-    
-    if (existingTenant) {
-      return existingTenant;
+function RenterDashboard() {
+  const [tenants, setTenants] = useState([]);
+  const [payments, setPayments] = useState([]);
+  const [properties, setProperties] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    loadData();
+  }, []);
+
+  const loadData = async () => {
+    try {
+      setLoading(true);
+      const [tenantsData, paymentsData, propertiesData] = await Promise.all([
+        apiService.getTenants(),
+        apiService.getPayments(),
+        apiService.getProperties()
+      ]);
+      setTenants(tenantsData || []);
+      setPayments(paymentsData || []);
+      setProperties(propertiesData || []);
+      setError(null);
+    } catch (err) {
+      setError('Failed to load data. Please try again.');
+      console.error('Error loading data:', err);
+    } finally {
+      setLoading(false);
     }
-    
-    // Mock tenant data for demonstration
-    return {
-      id: 'mock-tenant-1',
-      name: 'John Smith',
-      email: 'john.smith@email.com',
-      phone: '+1 (555) 123-4567',
-      propertyId: 'mock-property-1',
-      leaseStart: '2023-06-01',
-      leaseEnd: '2024-05-31',
-      rentAmount: 2500,
-      deposit: 2500,
-      status: 'active'
-    };
+  };
+
+  const currentTenant = useMemo(() => {
+    // Use the first active tenant found
+    return tenants.find(t => t.status.toLowerCase() === 'active') || null;
   }, [tenants]);
 
   const currentProperty = useMemo(() => {
     if (!currentTenant) return null;
-    
-    // Use existing property if available, otherwise create mock data
-    const existingProperty = properties.find(p => p.id === currentTenant.propertyId);
-    
-    if (existingProperty) {
-      return existingProperty;
-    }
-    
-    // Mock property data for demonstration
-    return {
-      id: 'mock-property-1',
-      name: 'Sunset Apartments - Unit 4B',
-      address: '123 Sunset Boulevard, Los Angeles, CA 90210',
-      type: 'apartment',
-      bedrooms: 2,
-      bathrooms: 2,
-      rentAmount: 2500,
-      description: 'Modern 2-bedroom apartment with city views, updated kitchen, and in-unit laundry.'
-    };
+    return properties.find(p => p.id === currentTenant.propertyId) || null;
   }, [currentTenant, properties]);
-
-  // Create mock payments if no real payments exist for the tenant
-  const mockPayments = useMemo(() => {
-    const existingPayments = payments.filter(p => p.tenantId === currentTenant?.id);
-    
-    if (existingPayments.length > 0) {
-      return payments;
-    }
-    
-    // Generate mock payment history
-    const mockPaymentHistory = [
-      {
-        id: 'mock-payment-1',
-        tenantId: currentTenant?.id || 'mock-tenant-1',
-        amount: 2500,
-        date: '2024-01-01',
-        method: 'bank_transfer',
-        status: 'completed',
-        notes: 'January rent payment'
-      },
-      {
-        id: 'mock-payment-2',
-        tenantId: currentTenant?.id || 'mock-tenant-1',
-        amount: 2500,
-        date: '2023-12-01',
-        method: 'check',
-        status: 'completed',
-        notes: 'December rent payment'
-      },
-      {
-        id: 'mock-payment-3',
-        tenantId: currentTenant?.id || 'mock-tenant-1',
-        amount: 2500,
-        date: '2023-11-01',
-        method: 'online',
-        status: 'completed',
-        notes: 'November rent payment'
-      },
-      {
-        id: 'mock-payment-4',
-        tenantId: currentTenant?.id || 'mock-tenant-1',
-        amount: 1250,
-        date: '2024-02-01',
-        method: 'bank_transfer',
-        status: 'completed',
-        notes: 'Partial February payment'
-      },
-      {
-        id: 'mock-payment-5',
-        tenantId: currentTenant?.id || 'mock-tenant-1',
-        amount: 2500,
-        date: '2023-10-01',
-        method: 'credit_card',
-        status: 'completed',
-        notes: 'October rent payment'
-      }
-    ];
-    
-    return [...payments, ...mockPaymentHistory];
-  }, [payments, currentTenant]);
 
   const rentStats = useMemo(() => {
     if (!currentTenant) return { totalPaid: 0, paymentsCount: 0, avgPayment: 0 };
     
-    const tenantPayments = mockPayments.filter(p => p.tenantId === currentTenant.id && p.status === 'completed');
+    const tenantPayments = payments.filter(p => p.tenantId === currentTenant.id && p.status.toLowerCase() === 'completed');
     const totalPaid = tenantPayments.reduce((sum, p) => sum + p.amount, 0);
     const paymentsCount = tenantPayments.length;
     const avgPayment = paymentsCount > 0 ? totalPaid / paymentsCount : 0;
     
     return { totalPaid, paymentsCount, avgPayment };
-  }, [currentTenant, mockPayments]);
+  }, [currentTenant, payments]);
+
+  if (loading) {
+    return (
+      <div style={{ textAlign: 'center', padding: '40px', color: '#666' }}>
+        <h1>Renter Dashboard</h1>
+        <p>Loading your rental information...</p>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div style={{ textAlign: 'center', padding: '40px', color: '#dc3545' }}>
+        <h1>Renter Dashboard</h1>
+        <p>{error}</p>
+        <button className="btn btn-primary" onClick={loadData}>
+          Try Again
+        </button>
+      </div>
+    );
+  }
+
+  if (!currentTenant) {
+    return (
+      <div style={{ textAlign: 'center', padding: '40px', color: '#666' }}>
+        <h1>Renter Dashboard</h1>
+        <p>No active tenant data found. Please contact your property manager.</p>
+      </div>
+    );
+  }
 
   return (
     <div>
@@ -670,7 +632,7 @@ function RenterDashboard({ tenants, payments, properties }) {
         <div>
           <h1>Renter Dashboard</h1>
           <p style={{ color: 'var(--text-secondary)', margin: '5px 0 0 0', fontSize: '1.1rem' }}>
-            Welcome back, {currentTenant?.name || 'Tenant'}
+            Welcome back, {currentTenant.name}
           </p>
         </div>
       </div>
@@ -709,7 +671,7 @@ function RenterDashboard({ tenants, payments, properties }) {
           </div>
 
           {/* Payment Due Section */}
-          <NextPaymentDue currentTenant={currentTenant} payments={mockPayments} />
+          <NextPaymentDue currentTenant={currentTenant} payments={payments} />
 
           {/* Main Content Grid */}
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))', gap: '20px' }}>
@@ -719,7 +681,7 @@ function RenterDashboard({ tenants, payments, properties }) {
               <ContactInfo />
             </div>
             <div>
-              <RentPaymentHistory payments={mockPayments} currentTenant={currentTenant} />
+              <RentPaymentHistory payments={payments} currentTenant={currentTenant} />
               <MaintenanceRequests />
             </div>
           </div>

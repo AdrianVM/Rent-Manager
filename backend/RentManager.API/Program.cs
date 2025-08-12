@@ -3,13 +3,18 @@ using RentManager.API.Services;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-builder.Services.AddControllers();
+builder.Services.AddControllers()
+    .AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.Converters.Add(new System.Text.Json.Serialization.JsonStringEnumConverter(System.Text.Json.JsonNamingPolicy.CamelCase));
+    });
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddHealthChecks();
 
 // Register data service
 builder.Services.AddSingleton<IDataService, InMemoryDataService>();
+builder.Services.AddScoped<SeedDataService>();
 
 // Add CORS for frontend
 builder.Services.AddCors(options =>
