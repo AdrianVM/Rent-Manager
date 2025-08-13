@@ -191,15 +191,312 @@ function PropertyForm({ property, onSave, onCancel }) {
   );
 }
 
+function ContractUpload({ property, tenants, onClose, onUpload }) {
+  const [file, setFile] = useState(null);
+  const [tenantId, setTenantId] = useState('');
+  const [status, setStatus] = useState('draft');
+  const [notes, setNotes] = useState('');
+  const [uploading, setUploading] = useState(false);
+
+  const propertyTenants = tenants.filter(t => t.propertyId === property.id);
+
+  const handleFileChange = (e) => {
+    const selectedFile = e.target.files[0];
+    if (selectedFile) {
+      if (selectedFile.size > 10 * 1024 * 1024) {
+        alert('File size must be less than 10MB');
+        return;
+      }
+      setFile(selectedFile);
+    }
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (!file || !tenantId) {
+      alert('Please select a file and tenant');
+      return;
+    }
+
+    setUploading(true);
+    try {
+      const reader = new FileReader();
+      reader.onload = async () => {
+        const base64 = reader.result.split(',')[1];
+        const contractData = {
+          propertyId: property.id,
+          tenantId,
+          fileName: file.name,
+          fileContentBase64: base64,
+          mimeType: file.type,
+          fileSizeBytes: file.size,
+          status,
+          notes
+        };
+
+        await apiService.uploadContract(contractData);
+        onUpload();
+        onClose();
+      };
+      reader.readAsDataURL(file);
+    } catch (err) {
+      alert('Failed to upload contract. Please try again.');
+      console.error('Error uploading contract:', err);
+    } finally {
+      setUploading(false);
+    }
+  };
+
+  return (
+    <div className="modal">
+      <div className="modal-content">
+        <div className="modal-header">
+          <h2>Upload Contract for {property.name}</h2>
+          <button className="close-btn" onClick={onClose}>&times;</button>
+        </div>
+        <form onSubmit={handleSubmit}>
+          <div className="form-group">
+            <label>Contract File *</label>
+            <input
+              type="file"
+              accept=".pdf,.doc,.docx"
+              onChange={handleFileChange}
+              className="form-control"
+              required
+            />
+            <small style={{ color: 'var(--text-secondary)' }}>
+              Supported formats: PDF, DOC, DOCX (Max 10MB)
+            </small>
+          </div>
+          <div className="form-group">
+            <label>Tenant *</label>
+            <select
+              value={tenantId}
+              onChange={(e) => setTenantId(e.target.value)}
+              className="form-control"
+              required
+            >
+              <option value="">Select a tenant</option>
+              {propertyTenants.map(tenant => (
+                <option key={tenant.id} value={tenant.id}>
+                  {tenant.name}
+                </option>
+              ))}
+            </select>
+          </div>
+          <div className="form-group">
+            <label>Status</label>
+            <select
+              value={status}
+              onChange={(e) => setStatus(e.target.value)}
+              className="form-control"
+            >
+              <option value="draft">Draft</option>
+              <option value="pending">Pending</option>
+              <option value="signed">Signed</option>
+            </select>
+          </div>
+          <div className="form-group">
+            <label>Notes</label>
+            <textarea
+              value={notes}
+              onChange={(e) => setNotes(e.target.value)}
+              className="form-control"
+              rows="3"
+              placeholder="Optional notes about the contract"
+            />
+          </div>
+          <div style={{ display: 'flex', gap: '10px', justifyContent: 'flex-end', marginTop: '20px' }}>
+            <button type="button" className="btn" onClick={onClose}>Cancel</button>
+            <button type="submit" className="btn btn-primary" disabled={uploading}>
+              {uploading ? 'Uploading...' : 'Upload Contract'}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+}
+
+function ContractsView({ property, onClose, onUpdate }) {
+  const [contracts, setContracts] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [tenants, setTenants] = useState([]);
+
+  useEffect(() => {
+    loadContracts();
+    loadTenants();
+  }, [property.id]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const loadContracts = async () => {
+    try {
+      setLoading(true);
+      const data = await apiService.getContractsByProperty(property.id);
+      setContracts(data || []);
+    } catch (err) {
+      console.error('Error loading contracts:', err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const loadTenants = async () => {
+    try {
+      const data = await apiService.getTenants();
+      setTenants(data || []);
+    } catch (err) {
+      console.error('Error loading tenants:', err);
+    }
+  };
+
+  const getTenantName = (tenantId) => {
+    const tenant = tenants.find(t => t.id === tenantId);
+    return tenant ? tenant.name : 'Unknown Tenant';
+  };
+
+  const getStatusBadge = (status) => {
+    const colors = {
+      draft: '#6c757d',
+      pending: '#ffc107',
+      signed: '#28a745',
+      terminated: '#dc3545'
+    };
+    return (
+      <span
+        style={{
+          backgroundColor: colors[status] || colors.draft,
+          color: 'white',
+          padding: '4px 8px',
+          borderRadius: '4px',
+          fontSize: '12px',
+          textTransform: 'capitalize'
+        }}
+      >
+        {status}
+      </span>
+    );
+  };
+
+  const handleDownload = async (contract) => {
+    try {
+      const response = await apiService.downloadContract(contract.id);
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = contract.fileName;
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(a);
+    } catch (err) {
+      alert('Failed to download contract');
+      console.error('Error downloading contract:', err);
+    }
+  };
+
+  const handleDelete = async (contractId) => {
+    if (window.confirm('Are you sure you want to delete this contract?')) {
+      try {
+        await apiService.deleteContract(contractId);
+        loadContracts();
+      } catch (err) {
+        alert('Failed to delete contract');
+        console.error('Error deleting contract:', err);
+      }
+    }
+  };
+
+  return (
+    <div className="modal">
+      <div className="modal-content" style={{ maxWidth: '800px' }}>
+        <div className="modal-header">
+          <h2>Contracts for {property.name}</h2>
+          <button className="close-btn" onClick={onClose}>&times;</button>
+        </div>
+        <div style={{ padding: '20px' }}>
+          {loading ? (
+            <div style={{ textAlign: 'center', padding: '40px' }}>
+              Loading contracts...
+            </div>
+          ) : contracts.length === 0 ? (
+            <div style={{ textAlign: 'center', padding: '40px', color: 'var(--text-secondary)' }}>
+              <p>No contracts uploaded for this property</p>
+            </div>
+          ) : (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+              {contracts.map(contract => (
+                <div
+                  key={contract.id}
+                  style={{
+                    border: '1px solid var(--border-color)',
+                    borderRadius: '8px',
+                    padding: '16px',
+                    backgroundColor: 'var(--bg-tertiary)'
+                  }}
+                >
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '8px' }}>
+                    <div>
+                      <h4 style={{ margin: '0 0 4px 0', color: 'var(--text-primary)' }}>
+                        {contract.fileName}
+                      </h4>
+                      <div style={{ fontSize: '14px', color: 'var(--text-secondary)' }}>
+                        Tenant: {getTenantName(contract.tenantId)}
+                      </div>
+                    </div>
+                    {getStatusBadge(contract.status)}
+                  </div>
+                  {contract.notes && (
+                    <div style={{ fontSize: '14px', color: 'var(--text-secondary)', marginBottom: '8px' }}>
+                      Notes: {contract.notes}
+                    </div>
+                  )}
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '12px', color: 'var(--text-secondary)' }}>
+                    <span>
+                      Uploaded: {new Date(contract.uploadedAt).toLocaleDateString()}
+                      {contract.signedAt && ` • Signed: ${new Date(contract.signedAt).toLocaleDateString()}`}
+                    </span>
+                    <div style={{ display: 'flex', gap: '8px' }}>
+                      <button
+                        className="btn btn-primary"
+                        style={{ padding: '4px 8px', fontSize: '12px' }}
+                        onClick={() => handleDownload(contract)}
+                      >
+                        Download
+                      </button>
+                      <button
+                        className="btn btn-danger"
+                        style={{ padding: '4px 8px', fontSize: '12px' }}
+                        onClick={() => handleDelete(contract.id)}
+                      >
+                        Delete
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function Properties() {
   const [properties, setProperties] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [showForm, setShowForm] = useState(false);
   const [editingProperty, setEditingProperty] = useState(null);
+  const [showContractUpload, setShowContractUpload] = useState(false);
+  const [showContractsView, setShowContractsView] = useState(false);
+  const [selectedProperty, setSelectedProperty] = useState(null);
+  const [tenants, setTenants] = useState([]);
 
   useEffect(() => {
     loadProperties();
+    loadTenants();
   }, []);
 
   const loadProperties = async () => {
@@ -213,6 +510,15 @@ function Properties() {
       console.error('Error loading properties:', err);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const loadTenants = async () => {
+    try {
+      const data = await apiService.getTenants();
+      setTenants(data || []);
+    } catch (err) {
+      console.error('Error loading tenants:', err);
     }
   };
 
@@ -257,6 +563,26 @@ function Properties() {
   const handleCancel = () => {
     setShowForm(false);
     setEditingProperty(null);
+  };
+
+  const handleUploadContract = (property) => {
+    setSelectedProperty(property);
+    setShowContractUpload(true);
+  };
+
+  const handleViewContracts = (property) => {
+    setSelectedProperty(property);
+    setShowContractsView(true);
+  };
+
+  const handleContractUploadComplete = () => {
+    setShowContractUpload(false);
+    setSelectedProperty(null);
+  };
+
+  const handleContractsViewClose = () => {
+    setShowContractsView(false);
+    setSelectedProperty(null);
   };
 
   return (
@@ -333,9 +659,23 @@ function Properties() {
                           <button
                             className="btn btn-primary"
                             onClick={() => handleEditProperty(property)}
-                            style={{ marginRight: '10px' }}
+                            style={{ marginRight: '8px' }}
                           >
                             Edit
+                          </button>
+                          <button
+                            className="btn btn-accent"
+                            onClick={() => handleUploadContract(property)}
+                            style={{ marginRight: '8px' }}
+                          >
+                            Upload Contract
+                          </button>
+                          <button
+                            className="btn"
+                            onClick={() => handleViewContracts(property)}
+                            style={{ marginRight: '8px' }}
+                          >
+                            View Contracts
                           </button>
                           <button
                             className="btn btn-danger"
@@ -403,6 +743,18 @@ function Properties() {
                         Edit
                       </button>
                       <button
+                        className="btn btn-accent"
+                        onClick={() => handleUploadContract(property)}
+                      >
+                        Upload Contract
+                      </button>
+                      <button
+                        className="btn"
+                        onClick={() => handleViewContracts(property)}
+                      >
+                        View Contracts
+                      </button>
+                      <button
                         className="btn btn-danger"
                         onClick={() => handleDeleteProperty(property.id)}
                       >
@@ -422,6 +774,23 @@ function Properties() {
           property={editingProperty}
           onSave={handleSaveProperty}
           onCancel={handleCancel}
+        />
+      )}
+
+      {showContractUpload && selectedProperty && (
+        <ContractUpload
+          property={selectedProperty}
+          tenants={tenants}
+          onClose={handleContractUploadComplete}
+          onUpload={handleContractUploadComplete}
+        />
+      )}
+
+      {showContractsView && selectedProperty && (
+        <ContractsView
+          property={selectedProperty}
+          onClose={handleContractsViewClose}
+          onUpdate={handleContractsViewClose}
         />
       )}
     </div>

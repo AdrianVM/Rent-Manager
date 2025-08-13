@@ -127,6 +127,147 @@ function PropertyInfo({ property }) {
   );
 }
 
+function ContractsSection({ currentTenant }) {
+  const [contracts, setContracts] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if (currentTenant?.id) {
+      loadContracts();
+    }
+  }, [currentTenant?.id]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const loadContracts = async () => {
+    try {
+      setLoading(true);
+      const data = await apiService.getContractsByTenant(currentTenant.id);
+      setContracts(data || []);
+    } catch (err) {
+      console.error('Error loading contracts:', err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const getStatusBadge = (status) => {
+    const colors = {
+      draft: '#6c757d',
+      pending: '#ffc107',
+      signed: '#28a745',
+      terminated: '#dc3545'
+    };
+    return (
+      <span
+        style={{
+          backgroundColor: colors[status] || colors.draft,
+          color: 'white',
+          padding: '4px 8px',
+          borderRadius: '4px',
+          fontSize: '12px',
+          textTransform: 'capitalize'
+        }}
+      >
+        {status}
+      </span>
+    );
+  };
+
+  const handleDownload = async (contract) => {
+    try {
+      const response = await apiService.downloadContract(contract.id);
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = contract.fileName;
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(a);
+    } catch (err) {
+      alert('Failed to download contract');
+      console.error('Error downloading contract:', err);
+    }
+  };
+
+  if (!currentTenant) {
+    return (
+      <div className="card">
+        <h3 style={{ marginBottom: '20px', color: 'var(--primary-color)' }}>
+          My Contracts
+        </h3>
+        <p style={{ color: 'var(--text-secondary)', textAlign: 'center', padding: '20px' }}>
+          Tenant information not available
+        </p>
+      </div>
+    );
+  }
+
+  return (
+    <div className="card">
+      <h3 style={{ marginBottom: '20px', color: 'var(--primary-color)' }}>
+        My Contracts
+      </h3>
+      {loading ? (
+        <div style={{ textAlign: 'center', padding: '20px', color: 'var(--text-secondary)' }}>
+          Loading contracts...
+        </div>
+      ) : contracts.length === 0 ? (
+        <div style={{ textAlign: 'center', padding: '20px', color: 'var(--text-secondary)' }}>
+          <div style={{ fontSize: '2rem', marginBottom: '10px' }}>📄</div>
+          <p>No contracts available</p>
+          <p style={{ fontSize: '0.9rem' }}>Contact your property manager if you need access to your lease documents</p>
+        </div>
+      ) : (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+          {contracts.map(contract => (
+            <div
+              key={contract.id}
+              style={{
+                border: '1px solid var(--border-color)',
+                borderRadius: '8px',
+                padding: '16px',
+                backgroundColor: 'var(--bg-tertiary)'
+              }}
+            >
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '8px' }}>
+                <div>
+                  <h4 style={{ margin: '0 0 4px 0', color: 'var(--text-primary)' }}>
+                    {contract.fileName}
+                  </h4>
+                  <div style={{ fontSize: '14px', color: 'var(--text-secondary)' }}>
+                    Uploaded: {new Date(contract.uploadedAt).toLocaleDateString()}
+                  </div>
+                </div>
+                {getStatusBadge(contract.status)}
+              </div>
+              {contract.notes && (
+                <div style={{ fontSize: '14px', color: 'var(--text-secondary)', marginBottom: '8px' }}>
+                  Notes: {contract.notes}
+                </div>
+              )}
+              {contract.signedAt && (
+                <div style={{ fontSize: '12px', color: 'var(--text-secondary)', marginBottom: '8px' }}>
+                  Signed: {new Date(contract.signedAt).toLocaleDateString()}
+                </div>
+              )}
+              <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+                <button
+                  className="btn btn-primary"
+                  style={{ padding: '6px 12px', fontSize: '14px' }}
+                  onClick={() => handleDownload(contract)}
+                >
+                  Download Contract
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
 function LeaseInfo({ currentTenant }) {
   if (!currentTenant) {
     return (
@@ -678,6 +819,7 @@ function RenterDashboard() {
             <div>
               <PropertyInfo property={currentProperty} />
               <LeaseInfo currentTenant={currentTenant} />
+              <ContractsSection currentTenant={currentTenant} />
               <ContactInfo />
             </div>
             <div>

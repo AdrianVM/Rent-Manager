@@ -121,6 +121,52 @@ class ApiService {
     });
   }
 
+  // Contracts API
+  async getContracts() {
+    return this.request('/contracts');
+  }
+
+  async getContract(id) {
+    return this.request(`/contracts/${id}`);
+  }
+
+  async getContractsByProperty(propertyId) {
+    return this.request(`/contracts/property/${propertyId}`);
+  }
+
+  async getContractsByTenant(tenantId) {
+    return this.request(`/contracts/tenant/${tenantId}`);
+  }
+
+  async uploadContract(contractData) {
+    return this.request('/contracts', {
+      method: 'POST',
+      body: contractData,
+    });
+  }
+
+  async updateContract(id, contractData) {
+    return this.request(`/contracts/${id}`, {
+      method: 'PUT',
+      body: contractData,
+    });
+  }
+
+  async deleteContract(id) {
+    return this.request(`/contracts/${id}`, {
+      method: 'DELETE',
+    });
+  }
+
+  async downloadContract(id) {
+    const url = `${API_BASE_URL}/contracts/${id}/download`;
+    const response = await fetch(url);
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    return response;
+  }
+
   // Dashboard API
   async getDashboardStats() {
     return this.request('/dashboard/stats');
