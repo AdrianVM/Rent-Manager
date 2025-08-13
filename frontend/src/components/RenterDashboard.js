@@ -127,7 +127,78 @@ function PropertyInfo({ property }) {
   );
 }
 
-function ContractsSection({ currentTenant }) {
+function ContractViewer({ contract, onClose }) {
+  const [loading, setLoading] = useState(true);
+  const [contractData, setContractData] = useState(null);
+
+  useEffect(() => {
+    loadContractData();
+  }, [contract.id]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const loadContractData = async () => {
+    try {
+      setLoading(true);
+      const data = await apiService.getContract(contract.id);
+      setContractData(data);
+    } catch (err) {
+      console.error('Error loading contract data:', err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const renderContract = () => {
+    if (!contractData || !contractData.fileContentBase64) {
+      return <div>No contract content available</div>;
+    }
+
+    const mimeType = contractData.mimeType || '';
+    
+    if (mimeType.includes('pdf')) {
+      const blob = new Blob([Uint8Array.from(atob(contractData.fileContentBase64), c => c.charCodeAt(0))], { type: 'application/pdf' });
+      const url = URL.createObjectURL(blob);
+      
+      return (
+        <iframe
+          src={url}
+          style={{ width: '100%', height: '600px', border: 'none' }}
+          title="Contract Viewer"
+        />
+      );
+    } else {
+      return (
+        <div style={{ textAlign: 'center', padding: '40px' }}>
+          <div style={{ fontSize: '2rem', marginBottom: '20px' }}>📄</div>
+          <p>This file format cannot be previewed in the browser.</p>
+          <p>File type: {mimeType}</p>
+          <p>Please download the file to view its contents.</p>
+        </div>
+      );
+    }
+  };
+
+  return (
+    <div className="modal">
+      <div className="modal-content" style={{ maxWidth: '900px', height: '80vh' }}>
+        <div className="modal-header">
+          <h2>View Contract: {contract.fileName}</h2>
+          <button className="close-btn" onClick={onClose}>&times;</button>
+        </div>
+        <div style={{ padding: '20px', height: 'calc(100% - 60px)', overflow: 'auto' }}>
+          {loading ? (
+            <div style={{ textAlign: 'center', padding: '40px' }}>
+              Loading contract...
+            </div>
+          ) : (
+            renderContract()
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function ContractsSection({ currentTenant, onViewContract }) {
   const [contracts, setContracts] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -251,7 +322,14 @@ function ContractsSection({ currentTenant }) {
                   Signed: {new Date(contract.signedAt).toLocaleDateString()}
                 </div>
               )}
-              <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+              <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '8px' }}>
+                <button
+                  className="btn btn-accent"
+                  style={{ padding: '6px 12px', fontSize: '14px' }}
+                  onClick={() => onViewContract(contract)}
+                >
+                  View Contract
+                </button>
                 <button
                   className="btn btn-primary"
                   style={{ padding: '6px 12px', fontSize: '14px' }}
@@ -691,6 +769,7 @@ function RenterDashboard() {
   const [properties, setProperties] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [viewingContract, setViewingContract] = useState(null);
 
   useEffect(() => {
     loadData();
@@ -819,7 +898,10 @@ function RenterDashboard() {
             <div>
               <PropertyInfo property={currentProperty} />
               <LeaseInfo currentTenant={currentTenant} />
-              <ContractsSection currentTenant={currentTenant} />
+              <ContractsSection 
+                currentTenant={currentTenant} 
+                onViewContract={setViewingContract}
+              />
               <ContactInfo />
             </div>
             <div>
@@ -831,6 +913,13 @@ function RenterDashboard() {
           {/* Full Width Notices */}
           <ImportantNotices />
         </>
+      )}
+
+      {viewingContract && (
+        <ContractViewer
+          contract={viewingContract}
+          onClose={() => setViewingContract(null)}
+        />
       )}
     </div>
   );
