@@ -7,6 +7,7 @@ namespace RentManager.API.Services
         private readonly List<Property> _properties = new();
         private readonly List<Tenant> _tenants = new();
         private readonly List<Payment> _payments = new();
+        private readonly List<Contract> _contracts = new();
 
         // Properties
         public Task<List<Property>> GetPropertiesAsync()
@@ -150,6 +151,61 @@ namespace RentManager.API.Services
             if (payment == null) return Task.FromResult(false);
 
             _payments.Remove(payment);
+            return Task.FromResult(true);
+        }
+
+        // Contracts
+        public Task<List<Contract>> GetContractsAsync()
+        {
+            return Task.FromResult(_contracts.OrderByDescending(c => c.UploadedAt).ToList());
+        }
+
+        public Task<Contract?> GetContractAsync(string id)
+        {
+            var contract = _contracts.FirstOrDefault(c => c.Id == id);
+            return Task.FromResult(contract);
+        }
+
+        public Task<List<Contract>> GetContractsByPropertyIdAsync(string propertyId)
+        {
+            var contracts = _contracts.Where(c => c.PropertyId == propertyId).OrderByDescending(c => c.UploadedAt).ToList();
+            return Task.FromResult(contracts);
+        }
+
+        public Task<List<Contract>> GetContractsByTenantIdAsync(string tenantId)
+        {
+            var contracts = _contracts.Where(c => c.TenantId == tenantId).OrderByDescending(c => c.UploadedAt).ToList();
+            return Task.FromResult(contracts);
+        }
+
+        public Task<Contract> CreateContractAsync(Contract contract)
+        {
+            contract.Id = Guid.NewGuid().ToString();
+            contract.UploadedAt = DateTime.UtcNow;
+            _contracts.Add(contract);
+            return Task.FromResult(contract);
+        }
+
+        public Task<Contract?> UpdateContractAsync(string id, Contract contract)
+        {
+            var existingContract = _contracts.FirstOrDefault(c => c.Id == id);
+            if (existingContract == null) return Task.FromResult<Contract?>(null);
+
+            existingContract.PropertyId = contract.PropertyId;
+            existingContract.TenantId = contract.TenantId;
+            existingContract.Status = contract.Status;
+            existingContract.SignedAt = contract.SignedAt;
+            existingContract.Notes = contract.Notes;
+
+            return Task.FromResult<Contract?>(existingContract);
+        }
+
+        public Task<bool> DeleteContractAsync(string id)
+        {
+            var contract = _contracts.FirstOrDefault(c => c.Id == id);
+            if (contract == null) return Task.FromResult(false);
+
+            _contracts.Remove(contract);
             return Task.FromResult(true);
         }
 

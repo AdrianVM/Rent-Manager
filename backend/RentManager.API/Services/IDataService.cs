@@ -25,6 +25,15 @@ namespace RentManager.API.Services
         Task<Payment?> UpdatePaymentAsync(string id, Payment payment);
         Task<bool> DeletePaymentAsync(string id);
 
+        // Contracts
+        Task<List<Contract>> GetContractsAsync();
+        Task<Contract?> GetContractAsync(string id);
+        Task<List<Contract>> GetContractsByPropertyIdAsync(string propertyId);
+        Task<List<Contract>> GetContractsByTenantIdAsync(string tenantId);
+        Task<Contract> CreateContractAsync(Contract contract);
+        Task<Contract?> UpdateContractAsync(string id, Contract contract);
+        Task<bool> DeleteContractAsync(string id);
+
         // Dashboard
         Task<DashboardStats> GetDashboardStatsAsync();
     }
