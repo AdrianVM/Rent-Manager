@@ -40,6 +40,9 @@ app.UseHttpsRedirection();
 
 app.UseCors("AllowFrontend");
 
+// Redirect root to Swagger UI
+app.MapGet("/", () => Results.Redirect("/swagger")).ExcludeFromDescription();
+
 app.MapControllers();
 app.MapHealthChecks("/health");
 
