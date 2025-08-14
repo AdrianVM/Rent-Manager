@@ -2,7 +2,9 @@
   "name": "rent-manager-monorepo",
   "version": "1.0.0",
   "private": true,
-  "workspaces": ["frontend"],
+  "workspaces": [
+    "frontend"
+  ],
   "scripts": {
     "dev": "npm run dev:frontend",
     "dev:frontend": "npm run start --workspace=frontend",
