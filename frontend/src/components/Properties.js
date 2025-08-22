@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import apiService from '../services/api';
+import { renderAsync } from 'docx-preview';
 
 function PropertyForm({ property, onSave, onCancel }) {
   const [formData, setFormData] = useState({
@@ -321,10 +322,18 @@ function ContractUpload({ property, tenants, onClose, onUpload }) {
 function ContractViewer({ contract, onClose }) {
   const [loading, setLoading] = useState(true);
   const [contractData, setContractData] = useState(null);
+  const [renderingDocx, setRenderingDocx] = useState(false);
+  const docxContainerRef = useRef(null);
 
   useEffect(() => {
     loadContractData();
   }, [contract.id]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  useEffect(() => {
+    if (contractData && docxContainerRef.current) {
+      renderDocxIfNeeded();
+    }
+  }, [contractData]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const loadContractData = async () => {
     try {
@@ -335,6 +344,53 @@ function ContractViewer({ contract, onClose }) {
       console.error('Error loading contract data:', err);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const renderDocxIfNeeded = async () => {
+    if (!contractData || !contractData.fileContentBase64 || !docxContainerRef.current) {
+      return;
+    }
+
+    const mimeType = contractData.mimeType || '';
+    
+    if (mimeType.includes('wordprocessingml') || mimeType.includes('msword') || contractData.fileName.toLowerCase().endsWith('.docx') || contractData.fileName.toLowerCase().endsWith('.doc')) {
+      setRenderingDocx(true);
+      try {
+        const arrayBuffer = Uint8Array.from(atob(contractData.fileContentBase64), c => c.charCodeAt(0)).buffer;
+        
+        await renderAsync(arrayBuffer, docxContainerRef.current, null, {
+          className: 'docx-viewer',
+          inWrapper: false,
+          ignoreWidth: false,
+          ignoreHeight: false,
+          ignoreFonts: false,
+          breakPages: true,
+          ignoreLastRenderedPageBreak: true,
+          experimental: false,
+          trimXmlDeclaration: true,
+          useBase64URL: false,
+          useMathMLPolyfill: false,
+          renderChanges: false,
+          renderComments: false,
+          renderFootnotes: true,
+          renderHeaders: true,
+          renderFooters: true
+        });
+      } catch (error) {
+        console.error('Error rendering DOCX:', error);
+        if (docxContainerRef.current) {
+          docxContainerRef.current.innerHTML = `
+            <div style="text-align: center; padding: 40px;">
+              <div style="font-size: 2rem; margin-bottom: 20px;">⚠️</div>
+              <p>Error loading Word document</p>
+              <p>Please download the file to view its contents.</p>
+            </div>
+          `;
+        }
+      } finally {
+        setRenderingDocx(false);
+      }
     }
   };
 
@@ -355,6 +411,34 @@ function ContractViewer({ contract, onClose }) {
           style={{ width: '100%', height: '600px', border: 'none' }}
           title="Contract Viewer"
         />
+      );
+    } else if (mimeType.includes('wordprocessingml') || mimeType.includes('msword') || contractData.fileName.toLowerCase().endsWith('.docx') || contractData.fileName.toLowerCase().endsWith('.doc')) {
+      // Handle Word documents
+      return (
+        <div style={{ position: 'relative', width: '100%', height: '600px' }}>
+          {renderingDocx && (
+            <div style={{ 
+              position: 'absolute', 
+              top: '50%', 
+              left: '50%', 
+              transform: 'translate(-50%, -50%)', 
+              zIndex: 10 
+            }}>
+              Rendering Word document...
+            </div>
+          )}
+          <div 
+            ref={docxContainerRef}
+            style={{ 
+              width: '100%', 
+              height: '100%', 
+              overflow: 'auto',
+              border: '1px solid #ddd',
+              padding: '20px',
+              backgroundColor: 'white'
+            }}
+          />
+        </div>
       );
     } else {
       return (

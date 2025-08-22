@@ -1103,3 +1103,60 @@ textarea.form-control {
     flex: 1;
   }
 }
+
+/* ===== DOCX VIEWER STYLES ===== */
+.docx-viewer {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  line-height: 1.6;
+  color: var(--text-primary);
+  background: white;
+}
+
+.docx-viewer p {
+  margin-bottom: 12px;
+}
+
+.docx-viewer h1, .docx-viewer h2, .docx-viewer h3, .docx-viewer h4, .docx-viewer h5, .docx-viewer h6 {
+  margin-top: 20px;
+  margin-bottom: 10px;
+  color: var(--text-primary);
+  font-weight: 600;
+}
+
+.docx-viewer table {
+  border-collapse: collapse;
+  width: 100%;
+  margin: 16px 0;
+}
+
+.docx-viewer td, .docx-viewer th {
+  border: 1px solid var(--border-color);
+  padding: 8px 12px;
+  text-align: left;
+}
+
+.docx-viewer th {
+  background-color: var(--bg-secondary);
+  font-weight: 600;
+}
+
+.docx-viewer ul, .docx-viewer ol {
+  margin: 12px 0;
+  padding-left: 20px;
+}
+
+.docx-viewer li {
+  margin-bottom: 4px;
+}
+
+.docx-viewer strong, .docx-viewer b {
+  font-weight: 600;
+}
+
+.docx-viewer em, .docx-viewer i {
+  font-style: italic;
+}
+
+.docx-viewer u {
+  text-decoration: underline;
+}
