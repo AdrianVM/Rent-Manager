@@ -357,19 +357,24 @@ function Payments() {
                       </td>
                       <td>{getStatusBadge(payment.status)}</td>
                       <td>
-                        <button
-                          className="btn btn-primary"
-                          onClick={() => handleEditPayment(payment)}
-                          style={{ marginRight: '10px' }}
-                        >
-                          Edit
-                        </button>
-                        <button
-                          className="btn btn-danger"
-                          onClick={() => handleDeletePayment(payment.id)}
-                        >
-                          Delete
-                        </button>
+                        <div style={{ display: 'flex', gap: '6px', alignItems: 'center' }}>
+                          <button
+                            className="btn btn-primary"
+                            onClick={() => handleEditPayment(payment)}
+                            title="Edit Payment"
+                            style={{ padding: '6px 10px', minWidth: '36px' }}
+                          >
+                            ✏️
+                          </button>
+                          <button
+                            className="btn btn-danger"
+                            onClick={() => handleDeletePayment(payment.id)}
+                            title="Delete Payment"
+                            style={{ padding: '6px 10px', minWidth: '36px' }}
+                          >
+                            🗑️
+                          </button>
+                        </div>
                       </td>
                     </tr>
                   ))}
@@ -404,18 +409,22 @@ function Payments() {
                       <span className="card-item-value">{getStatusBadge(payment.status)}</span>
                     </div>
                   </div>
-                  <div className="card-item-actions">
+                  <div className="card-item-actions" style={{ gap: '8px' }}>
                     <button
                       className="btn btn-primary"
                       onClick={() => handleEditPayment(payment)}
+                      title="Edit Payment"
+                      style={{ flex: '1', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
                     >
-                      Edit
+                      ✏️
                     </button>
                     <button
                       className="btn btn-danger"
                       onClick={() => handleDeletePayment(payment.id)}
+                      title="Delete Payment"
+                      style={{ flex: '1', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
                     >
-                      Delete
+                      🗑️
                     </button>
                   </div>
                 </div>

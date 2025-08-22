@@ -612,27 +612,30 @@ function ContractsView({ property, onClose, onUpdate }) {
                       Uploaded: {new Date(contract.uploadedAt).toLocaleDateString()}
                       {contract.signedAt && ` • Signed: ${new Date(contract.signedAt).toLocaleDateString()}`}
                     </span>
-                    <div style={{ display: 'flex', gap: '8px' }}>
+                    <div style={{ display: 'flex', gap: '6px', alignItems: 'center' }}>
                       <button
                         className="btn btn-accent"
-                        style={{ padding: '4px 8px', fontSize: '12px' }}
+                        style={{ padding: '6px 8px', fontSize: '14px', minWidth: '32px' }}
                         onClick={() => setViewingContract(contract)}
+                        title="View Contract"
                       >
-                        View
+                        👁️
                       </button>
                       <button
                         className="btn btn-primary"
-                        style={{ padding: '4px 8px', fontSize: '12px' }}
+                        style={{ padding: '6px 8px', fontSize: '14px', minWidth: '32px' }}
                         onClick={() => handleDownload(contract)}
+                        title="Download Contract"
                       >
-                        Download
+                        ⬇️
                       </button>
                       <button
                         className="btn btn-danger"
-                        style={{ padding: '4px 8px', fontSize: '12px' }}
+                        style={{ padding: '6px 8px', fontSize: '14px', minWidth: '32px' }}
                         onClick={() => handleDelete(contract.id)}
+                        title="Delete Contract"
                       >
-                        Delete
+                        🗑️
                       </button>
                     </div>
                   </div>
@@ -826,33 +829,40 @@ function Properties() {
                         <td>{getPropertyDetails(property)}</td>
                         <td>${property.rentAmount.toLocaleString()}</td>
                         <td>
-                          <button
-                            className="btn btn-primary"
-                            onClick={() => handleEditProperty(property)}
-                            style={{ marginRight: '8px' }}
-                          >
-                            Edit
-                          </button>
-                          <button
-                            className="btn btn-accent"
-                            onClick={() => handleUploadContract(property)}
-                            style={{ marginRight: '8px' }}
-                          >
-                            Upload Contract
-                          </button>
-                          <button
-                            className="btn"
-                            onClick={() => handleViewContracts(property)}
-                            style={{ marginRight: '8px' }}
-                          >
-                            View Contracts
-                          </button>
-                          <button
-                            className="btn btn-danger"
-                            onClick={() => handleDeleteProperty(property.id)}
-                          >
-                            Delete
-                          </button>
+                          <div style={{ display: 'flex', gap: '6px', alignItems: 'center' }}>
+                            <button
+                              className="btn btn-primary"
+                              onClick={() => handleEditProperty(property)}
+                              title="Edit Property"
+                              style={{ padding: '6px 10px', minWidth: '36px' }}
+                            >
+                              ✏️
+                            </button>
+                            <button
+                              className="btn btn-accent"
+                              onClick={() => handleUploadContract(property)}
+                              title="Upload Contract"
+                              style={{ padding: '6px 10px', minWidth: '36px' }}
+                            >
+                              📤
+                            </button>
+                            <button
+                              className="btn"
+                              onClick={() => handleViewContracts(property)}
+                              title="View Contracts"
+                              style={{ padding: '6px 10px', minWidth: '36px' }}
+                            >
+                              👁️
+                            </button>
+                            <button
+                              className="btn btn-danger"
+                              onClick={() => handleDeleteProperty(property.id)}
+                              title="Delete Property"
+                              style={{ padding: '6px 10px', minWidth: '36px' }}
+                            >
+                              🗑️
+                            </button>
+                          </div>
                         </td>
                       </tr>
                     );
@@ -905,30 +915,38 @@ function Properties() {
                         <span className="card-item-value">${property.rentAmount.toLocaleString()}</span>
                       </div>
                     </div>
-                    <div className="card-item-actions">
+                    <div className="card-item-actions" style={{ gap: '8px' }}>
                       <button
                         className="btn btn-primary"
                         onClick={() => handleEditProperty(property)}
+                        title="Edit Property"
+                        style={{ flex: '1', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
                       >
-                        Edit
+                        ✏️
                       </button>
                       <button
                         className="btn btn-accent"
                         onClick={() => handleUploadContract(property)}
+                        title="Upload Contract"
+                        style={{ flex: '1', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
                       >
-                        Upload Contract
+                        📤
                       </button>
                       <button
                         className="btn"
                         onClick={() => handleViewContracts(property)}
+                        title="View Contracts"
+                        style={{ flex: '1', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
                       >
-                        View Contracts
+                        👁️
                       </button>
                       <button
                         className="btn btn-danger"
                         onClick={() => handleDeleteProperty(property.id)}
+                        title="Delete Property"
+                        style={{ flex: '1', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
                       >
-                        Delete
+                        🗑️
                       </button>
                     </div>
                   </div>

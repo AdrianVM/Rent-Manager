@@ -322,20 +322,22 @@ function ContractsSection({ currentTenant, onViewContract }) {
                   Signed: {new Date(contract.signedAt).toLocaleDateString()}
                 </div>
               )}
-              <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '8px' }}>
+              <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '6px' }}>
                 <button
                   className="btn btn-accent"
-                  style={{ padding: '6px 12px', fontSize: '14px' }}
+                  style={{ padding: '6px 10px', fontSize: '16px', minWidth: '36px' }}
                   onClick={() => onViewContract(contract)}
+                  title="View Contract"
                 >
-                  View Contract
+                  👁️
                 </button>
                 <button
                   className="btn btn-primary"
-                  style={{ padding: '6px 12px', fontSize: '14px' }}
+                  style={{ padding: '6px 10px', fontSize: '16px', minWidth: '36px' }}
                   onClick={() => handleDownload(contract)}
+                  title="Download Contract"
                 >
-                  Download Contract
+                  ⬇️
                 </button>
               </div>
             </div>

@@ -27,19 +27,24 @@ function ResponsiveTable({ data, columns, onEdit, onDelete }) {
                   </td>
                 ))}
                 <td>
-                  <button
-                    className="btn btn-primary"
-                    onClick={() => onEdit(item)}
-                    style={{ marginRight: '10px' }}
-                  >
-                    Edit
-                  </button>
-                  <button
-                    className="btn btn-danger"
-                    onClick={() => onDelete(item.id)}
-                  >
-                    Delete
-                  </button>
+                  <div style={{ display: 'flex', gap: '6px', alignItems: 'center' }}>
+                    <button
+                      className="btn btn-primary"
+                      onClick={() => onEdit(item)}
+                      title="Edit"
+                      style={{ padding: '6px 10px', minWidth: '36px' }}
+                    >
+                      ✏️
+                    </button>
+                    <button
+                      className="btn btn-danger"
+                      onClick={() => onDelete(item.id)}
+                      title="Delete"
+                      style={{ padding: '6px 10px', minWidth: '36px' }}
+                    >
+                      🗑️
+                    </button>
+                  </div>
                 </td>
               </tr>
             ))}
@@ -64,18 +69,22 @@ function ResponsiveTable({ data, columns, onEdit, onDelete }) {
                 </div>
               ))}
             </div>
-            <div className="card-item-actions">
+            <div className="card-item-actions" style={{ gap: '8px' }}>
               <button
                 className="btn btn-primary"
                 onClick={() => onEdit(item)}
+                title="Edit"
+                style={{ flex: '1', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
               >
-                Edit
+                ✏️
               </button>
               <button
                 className="btn btn-danger"
                 onClick={() => onDelete(item.id)}
+                title="Delete"
+                style={{ flex: '1', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
               >
-                Delete
+                🗑️
               </button>
             </div>
           </div>

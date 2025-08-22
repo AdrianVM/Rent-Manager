@@ -327,19 +327,24 @@ function Tenants() {
                       <td>${tenant.rentAmount.toLocaleString()}</td>
                       <td>{getStatusBadge(tenant.status)}</td>
                       <td>
-                        <button
-                          className="btn btn-primary"
-                          onClick={() => handleEditTenant(tenant)}
-                          style={{ marginRight: '10px' }}
-                        >
-                          Edit
-                        </button>
-                        <button
-                          className="btn btn-danger"
-                          onClick={() => handleDeleteTenant(tenant.id)}
-                        >
-                          Delete
-                        </button>
+                        <div style={{ display: 'flex', gap: '6px', alignItems: 'center' }}>
+                          <button
+                            className="btn btn-primary"
+                            onClick={() => handleEditTenant(tenant)}
+                            title="Edit Tenant"
+                            style={{ padding: '6px 10px', minWidth: '36px' }}
+                          >
+                            ✏️
+                          </button>
+                          <button
+                            className="btn btn-danger"
+                            onClick={() => handleDeleteTenant(tenant.id)}
+                            title="Delete Tenant"
+                            style={{ padding: '6px 10px', minWidth: '36px' }}
+                          >
+                            🗑️
+                          </button>
+                        </div>
                       </td>
                     </tr>
                   ))}
@@ -374,18 +379,22 @@ function Tenants() {
                       <span className="card-item-value">{getStatusBadge(tenant.status)}</span>
                     </div>
                   </div>
-                  <div className="card-item-actions">
+                  <div className="card-item-actions" style={{ gap: '8px' }}>
                     <button
                       className="btn btn-primary"
                       onClick={() => handleEditTenant(tenant)}
+                      title="Edit Tenant"
+                      style={{ flex: '1', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
                     >
-                      Edit
+                      ✏️
                     </button>
                     <button
                       className="btn btn-danger"
                       onClick={() => handleDeleteTenant(tenant.id)}
+                      title="Delete Tenant"
+                      style={{ flex: '1', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
                     >
-                      Delete
+                      🗑️
                     </button>
                   </div>
                 </div>
