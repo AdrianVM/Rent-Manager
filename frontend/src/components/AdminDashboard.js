@@ -546,9 +546,6 @@ function AdminDashboard() {
             </div>
           )}
 
-          <div style={{ marginTop: '40px' }}>
-            <DemoDataSeeder onDataSeeded={loadDashboardData} />
-          </div>
         </div>
       )}
 
@@ -565,7 +562,7 @@ function AdminDashboard() {
           }}>
             <h3>Database Management</h3>
             <p style={{ color: 'var(--text-secondary)', marginBottom: '20px' }}>
-              Manage system data and configurations
+              Load sample data for testing and demonstration purposes. This feature is available only in the System Settings section of the Admin Dashboard.
             </p>
             <DemoDataSeeder onDataSeeded={loadDashboardData} />
           </div>

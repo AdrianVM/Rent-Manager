@@ -3,7 +3,7 @@ import { BrowserRouter as Router, Routes, Route, Link, useLocation } from 'react
 import { useTheme } from './contexts/ThemeContext';
 import authService from './services/authService';
 import Login from './components/Login';
-import Dashboard from './components/Dashboard';
+import PropertyOwnerDashboard from './components/PropertyOwnerDashboard';
 import AdminDashboard from './components/AdminDashboard';
 import RenterDashboard from './components/RenterDashboard';
 import Properties from './components/Properties';
@@ -166,7 +166,7 @@ function App() {
               element={
                 isRenter ? <RenterDashboard /> :
                 isAdmin ? <AdminDashboard /> :
-                <Dashboard />
+                <PropertyOwnerDashboard />
               }
             />
             {canAccessPropertyOwnerFeatures && (

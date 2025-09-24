@@ -852,8 +852,10 @@ function RenterDashboard() {
     <div>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '30px' }}>
         <div>
-          <h1>Renter Dashboard</h1>
-          <p style={{ color: 'var(--text-secondary)', margin: '5px 0 0 0', fontSize: '1.1rem' }}>
+          <h1 style={{ color: 'var(--primary-color)', marginBottom: '10px' }}>
+            Renter Dashboard
+          </h1>
+          <p style={{ color: 'var(--text-secondary)', margin: 0 }}>
             Welcome back, {currentTenant.name}
           </p>
         </div>

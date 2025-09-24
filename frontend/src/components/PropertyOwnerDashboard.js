@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import apiService from '../services/api';
-import DemoDataSeeder from './DemoDataSeeder';
 
 
-function Dashboard() {
+function PropertyOwnerDashboard() {
   const [dashboardData, setDashboardData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -29,7 +28,7 @@ function Dashboard() {
   if (loading) {
     return (
       <div style={{ textAlign: 'center', padding: '40px', color: '#666' }}>
-        <h1>Dashboard</h1>
+        <h1>Property Owner Dashboard</h1>
         <p>Loading dashboard data...</p>
       </div>
     );
@@ -38,7 +37,7 @@ function Dashboard() {
   if (error) {
     return (
       <div style={{ textAlign: 'center', padding: '40px', color: '#dc3545' }}>
-        <h1>Dashboard</h1>
+        <h1>Property Owner Dashboard</h1>
         <p>{error}</p>
         <button className="btn btn-primary" onClick={loadDashboardData}>
           Try Again
@@ -50,7 +49,7 @@ function Dashboard() {
   if (!dashboardData) {
     return (
       <div style={{ textAlign: 'center', padding: '40px', color: '#666' }}>
-        <h1>Dashboard</h1>
+        <h1>Property Owner Dashboard</h1>
         <p>No data available.</p>
       </div>
     );
@@ -72,9 +71,11 @@ function Dashboard() {
     <div>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '30px' }}>
         <div>
-          <h1>AVM Property Management</h1>
-          <p style={{ color: 'var(--text-secondary)', margin: '5px 0 0 0', fontSize: '1.1rem' }}>
-            Professional Property Management Solutions
+          <h1 style={{ color: 'var(--primary-color)', marginBottom: '10px' }}>
+            Property Owner Dashboard
+          </h1>
+          <p style={{ color: 'var(--text-secondary)', margin: 0 }}>
+            Manage your properties, tenants, and revenue
           </p>
         </div>
       </div>
@@ -127,9 +128,6 @@ function Dashboard() {
         </div>
       </div>
 
-      {(stats.totalProperties === 0 && stats.totalTenants === 0) && (
-        <DemoDataSeeder onDataSeeded={loadDashboardData} />
-      )}
 
       {(stats.totalProperties > 0 && stats.totalTenants === 0) && (
         <div className="card" style={{ backgroundColor: '#e3f2fd', border: '1px solid #2196f3' }}>
@@ -242,4 +240,4 @@ function Dashboard() {
   );
 }
 
-export default Dashboard;
+export default PropertyOwnerDashboard;
