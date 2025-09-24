@@ -10,18 +10,60 @@ namespace RentManager.API.Services
         private readonly List<Contract> _contracts = new();
 
         // Properties
-        public Task<List<Property>> GetPropertiesAsync()
+        public Task<List<Property>> GetPropertiesAsync(User? user = null)
         {
-            return Task.FromResult(_properties);
+            if (user == null || user.Role == UserRole.Admin)
+            {
+                return Task.FromResult(_properties);
+            }
+            
+            if (user.Role == UserRole.PropertyOwner)
+            {
+                var ownerProperties = _properties.Where(p => user.PropertyIds.Contains(p.Id)).ToList();
+                return Task.FromResult(ownerProperties);
+            }
+            
+            if (user.Role == UserRole.Renter && !string.IsNullOrEmpty(user.TenantId))
+            {
+                var tenant = _tenants.FirstOrDefault(t => t.Id == user.TenantId);
+                if (tenant != null)
+                {
+                    var renterProperty = _properties.Where(p => p.Id == tenant.PropertyId).ToList();
+                    return Task.FromResult(renterProperty);
+                }
+            }
+            
+            return Task.FromResult(new List<Property>());
         }
 
-        public Task<Property?> GetPropertyAsync(string id)
+        public Task<Property?> GetPropertyAsync(string id, User? user = null)
         {
             var property = _properties.FirstOrDefault(p => p.Id == id);
-            return Task.FromResult(property);
+            if (property == null) return Task.FromResult<Property?>(null);
+            
+            if (user == null || user.Role == UserRole.Admin)
+            {
+                return Task.FromResult<Property?>(property);
+            }
+            
+            if (user.Role == UserRole.PropertyOwner && user.PropertyIds.Contains(id))
+            {
+                return Task.FromResult<Property?>(property);
+            }
+            
+            if (user.Role == UserRole.Renter && !string.IsNullOrEmpty(user.TenantId))
+            {
+                var tenant = _tenants.FirstOrDefault(t => t.Id == user.TenantId);
+                if (tenant != null && tenant.PropertyId == id)
+                {
+                    return Task.FromResult<Property?>(property);
+                }
+            }
+            
+            return Task.FromResult<Property?>(null);
         }
 
-        public Task<Property> CreatePropertyAsync(Property property)
+        public Task<Property> CreatePropertyAsync(Property property, User? user = null)
         {
             property.Id = Guid.NewGuid().ToString();
             property.CreatedAt = DateTime.UtcNow;
@@ -30,7 +72,7 @@ namespace RentManager.API.Services
             return Task.FromResult(property);
         }
 
-        public Task<Property?> UpdatePropertyAsync(string id, Property property)
+        public Task<Property?> UpdatePropertyAsync(string id, Property property, User? user = null)
         {
             var existingProperty = _properties.FirstOrDefault(p => p.Id == id);
             if (existingProperty == null) return Task.FromResult<Property?>(null);
@@ -50,7 +92,7 @@ namespace RentManager.API.Services
             return Task.FromResult<Property?>(existingProperty);
         }
 
-        public Task<bool> DeletePropertyAsync(string id)
+        public Task<bool> DeletePropertyAsync(string id, User? user = null)
         {
             var property = _properties.FirstOrDefault(p => p.Id == id);
             if (property == null) return Task.FromResult(false);
@@ -60,18 +102,35 @@ namespace RentManager.API.Services
         }
 
         // Tenants
-        public Task<List<Tenant>> GetTenantsAsync()
+        public Task<List<Tenant>> GetTenantsAsync(User? user = null)
         {
-            return Task.FromResult(_tenants);
+            if (user == null || user.Role == UserRole.Admin)
+            {
+                return Task.FromResult(_tenants);
+            }
+            
+            if (user.Role == UserRole.PropertyOwner)
+            {
+                var ownerTenants = _tenants.Where(t => user.PropertyIds.Contains(t.PropertyId)).ToList();
+                return Task.FromResult(ownerTenants);
+            }
+            
+            if (user.Role == UserRole.Renter && !string.IsNullOrEmpty(user.TenantId))
+            {
+                var renterTenant = _tenants.Where(t => t.Id == user.TenantId).ToList();
+                return Task.FromResult(renterTenant);
+            }
+            
+            return Task.FromResult(new List<Tenant>());
         }
 
-        public Task<Tenant?> GetTenantAsync(string id)
+        public Task<Tenant?> GetTenantAsync(string id, User? user = null)
         {
             var tenant = _tenants.FirstOrDefault(t => t.Id == id);
             return Task.FromResult(tenant);
         }
 
-        public Task<Tenant> CreateTenantAsync(Tenant tenant)
+        public Task<Tenant> CreateTenantAsync(Tenant tenant, User? user = null)
         {
             tenant.Id = Guid.NewGuid().ToString();
             tenant.CreatedAt = DateTime.UtcNow;
@@ -80,7 +139,7 @@ namespace RentManager.API.Services
             return Task.FromResult(tenant);
         }
 
-        public Task<Tenant?> UpdateTenantAsync(string id, Tenant tenant)
+        public Task<Tenant?> UpdateTenantAsync(string id, Tenant tenant, User? user = null)
         {
             var existingTenant = _tenants.FirstOrDefault(t => t.Id == id);
             if (existingTenant == null) return Task.FromResult<Tenant?>(null);
@@ -99,7 +158,7 @@ namespace RentManager.API.Services
             return Task.FromResult<Tenant?>(existingTenant);
         }
 
-        public Task<bool> DeleteTenantAsync(string id)
+        public Task<bool> DeleteTenantAsync(string id, User? user = null)
         {
             var tenant = _tenants.FirstOrDefault(t => t.Id == id);
             if (tenant == null) return Task.FromResult(false);
@@ -109,18 +168,38 @@ namespace RentManager.API.Services
         }
 
         // Payments
-        public Task<List<Payment>> GetPaymentsAsync()
+        public Task<List<Payment>> GetPaymentsAsync(User? user = null)
         {
-            return Task.FromResult(_payments.OrderByDescending(p => p.Date).ToList());
+            var payments = _payments.OrderByDescending(p => p.Date).ToList();
+            
+            if (user == null || user.Role == UserRole.Admin)
+            {
+                return Task.FromResult(payments);
+            }
+            
+            if (user.Role == UserRole.PropertyOwner)
+            {
+                var ownerTenantIds = _tenants.Where(t => user.PropertyIds.Contains(t.PropertyId)).Select(t => t.Id).ToList();
+                var ownerPayments = payments.Where(p => ownerTenantIds.Contains(p.TenantId)).ToList();
+                return Task.FromResult(ownerPayments);
+            }
+            
+            if (user.Role == UserRole.Renter && !string.IsNullOrEmpty(user.TenantId))
+            {
+                var renterPayments = payments.Where(p => p.TenantId == user.TenantId).ToList();
+                return Task.FromResult(renterPayments);
+            }
+            
+            return Task.FromResult(new List<Payment>());
         }
 
-        public Task<Payment?> GetPaymentAsync(string id)
+        public Task<Payment?> GetPaymentAsync(string id, User? user = null)
         {
             var payment = _payments.FirstOrDefault(p => p.Id == id);
             return Task.FromResult(payment);
         }
 
-        public Task<Payment> CreatePaymentAsync(Payment payment)
+        public Task<Payment> CreatePaymentAsync(Payment payment, User? user = null)
         {
             payment.Id = Guid.NewGuid().ToString();
             payment.CreatedAt = DateTime.UtcNow;
@@ -129,7 +208,7 @@ namespace RentManager.API.Services
             return Task.FromResult(payment);
         }
 
-        public Task<Payment?> UpdatePaymentAsync(string id, Payment payment)
+        public Task<Payment?> UpdatePaymentAsync(string id, Payment payment, User? user = null)
         {
             var existingPayment = _payments.FirstOrDefault(p => p.Id == id);
             if (existingPayment == null) return Task.FromResult<Payment?>(null);
@@ -145,7 +224,7 @@ namespace RentManager.API.Services
             return Task.FromResult<Payment?>(existingPayment);
         }
 
-        public Task<bool> DeletePaymentAsync(string id)
+        public Task<bool> DeletePaymentAsync(string id, User? user = null)
         {
             var payment = _payments.FirstOrDefault(p => p.Id == id);
             if (payment == null) return Task.FromResult(false);
@@ -155,30 +234,49 @@ namespace RentManager.API.Services
         }
 
         // Contracts
-        public Task<List<Contract>> GetContractsAsync()
+        public Task<List<Contract>> GetContractsAsync(User? user = null)
         {
-            return Task.FromResult(_contracts.OrderByDescending(c => c.UploadedAt).ToList());
+            var contracts = _contracts.OrderByDescending(c => c.UploadedAt).ToList();
+            
+            if (user == null || user.Role == UserRole.Admin)
+            {
+                return Task.FromResult(contracts);
+            }
+            
+            if (user.Role == UserRole.PropertyOwner)
+            {
+                var ownerContracts = contracts.Where(c => user.PropertyIds.Contains(c.PropertyId)).ToList();
+                return Task.FromResult(ownerContracts);
+            }
+            
+            if (user.Role == UserRole.Renter && !string.IsNullOrEmpty(user.TenantId))
+            {
+                var renterContracts = contracts.Where(c => c.TenantId == user.TenantId).ToList();
+                return Task.FromResult(renterContracts);
+            }
+            
+            return Task.FromResult(new List<Contract>());
         }
 
-        public Task<Contract?> GetContractAsync(string id)
+        public Task<Contract?> GetContractAsync(string id, User? user = null)
         {
             var contract = _contracts.FirstOrDefault(c => c.Id == id);
             return Task.FromResult(contract);
         }
 
-        public Task<List<Contract>> GetContractsByPropertyIdAsync(string propertyId)
+        public Task<List<Contract>> GetContractsByPropertyIdAsync(string propertyId, User? user = null)
         {
             var contracts = _contracts.Where(c => c.PropertyId == propertyId).OrderByDescending(c => c.UploadedAt).ToList();
             return Task.FromResult(contracts);
         }
 
-        public Task<List<Contract>> GetContractsByTenantIdAsync(string tenantId)
+        public Task<List<Contract>> GetContractsByTenantIdAsync(string tenantId, User? user = null)
         {
             var contracts = _contracts.Where(c => c.TenantId == tenantId).OrderByDescending(c => c.UploadedAt).ToList();
             return Task.FromResult(contracts);
         }
 
-        public Task<Contract> CreateContractAsync(Contract contract)
+        public Task<Contract> CreateContractAsync(Contract contract, User? user = null)
         {
             contract.Id = Guid.NewGuid().ToString();
             contract.UploadedAt = DateTime.UtcNow;
@@ -186,7 +284,7 @@ namespace RentManager.API.Services
             return Task.FromResult(contract);
         }
 
-        public Task<Contract?> UpdateContractAsync(string id, Contract contract)
+        public Task<Contract?> UpdateContractAsync(string id, Contract contract, User? user = null)
         {
             var existingContract = _contracts.FirstOrDefault(c => c.Id == id);
             if (existingContract == null) return Task.FromResult<Contract?>(null);
@@ -200,7 +298,7 @@ namespace RentManager.API.Services
             return Task.FromResult<Contract?>(existingContract);
         }
 
-        public Task<bool> DeleteContractAsync(string id)
+        public Task<bool> DeleteContractAsync(string id, User? user = null)
         {
             var contract = _contracts.FirstOrDefault(c => c.Id == id);
             if (contract == null) return Task.FromResult(false);
@@ -210,7 +308,7 @@ namespace RentManager.API.Services
         }
 
         // Dashboard
-        public Task<DashboardStats> GetDashboardStatsAsync()
+        public Task<DashboardStats> GetDashboardStatsAsync(User? user = null)
         {
             var currentMonth = DateTime.UtcNow.Month;
             var currentYear = DateTime.UtcNow.Year;
