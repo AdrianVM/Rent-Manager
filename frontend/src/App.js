@@ -4,6 +4,7 @@ import { useTheme } from './contexts/ThemeContext';
 import authService from './services/authService';
 import Login from './components/Login';
 import Dashboard from './components/Dashboard';
+import AdminDashboard from './components/AdminDashboard';
 import RenterDashboard from './components/RenterDashboard';
 import Properties from './components/Properties';
 import Tenants from './components/Tenants';
@@ -150,7 +151,8 @@ function App() {
   }
 
   const isRenter = user?.role?.toLowerCase() === 'renter';
-  const canAccessPropertyOwnerFeatures = user?.role?.toLowerCase() === 'admin' || user?.role?.toLowerCase() === 'propertyowner';
+  const isAdmin = user?.role?.toLowerCase() === 'admin';
+  const canAccessPropertyOwnerFeatures = isAdmin || user?.role?.toLowerCase() === 'propertyowner';
 
 
   return (
@@ -162,7 +164,9 @@ function App() {
             <Route
               path="/"
               element={
-                isRenter ? <RenterDashboard /> : <Dashboard />
+                isRenter ? <RenterDashboard /> :
+                isAdmin ? <AdminDashboard /> :
+                <Dashboard />
               }
             />
             {canAccessPropertyOwnerFeatures && (
