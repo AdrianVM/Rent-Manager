@@ -1,11 +1,16 @@
-const API_BASE_URL = 'http://localhost:5057/api';
+const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:5057/api';
 
 class ApiService {
   async request(endpoint, options = {}) {
     const url = `${API_BASE_URL}${endpoint}`;
+    
+    // Get auth token from localStorage
+    const token = localStorage.getItem('authToken');
+    
     const config = {
       headers: {
         'Content-Type': 'application/json',
+        ...(token && { 'Authorization': `Bearer ${token}` }),
         ...options.headers,
       },
       ...options,

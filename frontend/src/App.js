@@ -1,17 +1,21 @@
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Link, useLocation } from 'react-router-dom';
 import { useTheme } from './contexts/ThemeContext';
+import authService from './services/authService';
+import Login from './components/Login';
 import Dashboard from './components/Dashboard';
 import RenterDashboard from './components/RenterDashboard';
 import Properties from './components/Properties';
 import Tenants from './components/Tenants';
 import Payments from './components/Payments';
 
-function Navigation({ userRole, setUserRole }) {
+function Navigation({ user, onLogout }) {
   const location = useLocation();
   const { theme, toggleTheme } = useTheme();
   const [mobileMenuOpen, setMobileMenuOpen] = React.useState(false);
-  
+
+  const canAccessPropertyOwnerFeatures = user?.role?.toLowerCase() === 'admin' || user?.role?.toLowerCase() === 'propertyowner';
+
   return (
     <nav className="nav">
       <div className="container">
@@ -23,25 +27,27 @@ function Navigation({ userRole, setUserRole }) {
           <div className="nav-desktop">
             <ul className="nav-links">
               <li><Link to="/" className={location.pathname === '/' ? 'active' : ''}>Dashboard</Link></li>
-              {userRole === 'manager' && (
+              {canAccessPropertyOwnerFeatures && (
                 <>
                   <li><Link to="/properties" className={location.pathname === '/properties' ? 'active' : ''}>Properties</Link></li>
                   <li><Link to="/tenants" className={location.pathname === '/tenants' ? 'active' : ''}>Tenants</Link></li>
                   <li><Link to="/payments" className={location.pathname === '/payments' ? 'active' : ''}>Payments</Link></li>
                 </>
               )}
-              <li>
+              <li style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                <span style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>
+                  {user?.name} ({user?.role})
+                </span>
                 <button 
-                  onClick={() => setUserRole(userRole === 'manager' ? 'renter' : 'manager')}
+                  onClick={onLogout}
                   className="btn-secondary"
                   style={{ 
                     padding: '6px 12px', 
                     fontSize: '12px', 
-                    marginRight: '10px',
                     borderRadius: '6px'
                   }}
                 >
-                  Switch to {userRole === 'manager' ? 'Renter' : 'Manager'}
+                  Logout
                 </button>
               </li>
               <li>
@@ -66,7 +72,7 @@ function Navigation({ userRole, setUserRole }) {
           <div className="nav-mobile">
             <ul className="nav-links-mobile">
               <li><Link to="/" className={location.pathname === '/' ? 'active' : ''} onClick={() => setMobileMenuOpen(false)}>Dashboard</Link></li>
-              {userRole === 'manager' && (
+              {canAccessPropertyOwnerFeatures && (
                 <>
                   <li><Link to="/properties" className={location.pathname === '/properties' ? 'active' : ''} onClick={() => setMobileMenuOpen(false)}>Properties</Link></li>
                   <li><Link to="/tenants" className={location.pathname === '/tenants' ? 'active' : ''} onClick={() => setMobileMenuOpen(false)}>Tenants</Link></li>
@@ -74,15 +80,20 @@ function Navigation({ userRole, setUserRole }) {
                 </>
               )}
               <li>
+                <div style={{ padding: '8px', fontSize: '12px', color: 'var(--text-secondary)' }}>
+                  {user?.name} ({user?.role})
+                </div>
+              </li>
+              <li>
                 <button 
                   onClick={() => {
-                    setUserRole(userRole === 'manager' ? 'renter' : 'manager');
+                    onLogout();
                     setMobileMenuOpen(false);
                   }}
                   className="theme-toggle-mobile"
                   style={{ backgroundColor: 'var(--secondary-color)', marginBottom: '10px' }}
                 >
-                  Switch to {userRole === 'manager' ? 'Renter' : 'Manager'}
+                  Logout
                 </button>
               </li>
               <li>
@@ -100,29 +111,61 @@ function Navigation({ userRole, setUserRole }) {
 }
 
 function App() {
-  const [userRole, setUserRole] = useState(() => {
-    return localStorage.getItem('rentManager_userRole') || 'manager';
-  });
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    localStorage.setItem('rentManager_userRole', userRole);
-  }, [userRole]);
+    // Check if user is already authenticated on app load
+    if (authService.isAuthenticated()) {
+      setUser(authService.getCurrentUser());
+    }
+    setLoading(false);
+  }, []);
+
+  const handleLoginSuccess = (userData) => {
+    setUser(userData);
+  };
+
+  const handleLogout = async () => {
+    await authService.logout();
+    setUser(null);
+  };
+
+  if (loading) {
+    return (
+      <div style={{
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        height: '100vh',
+        backgroundColor: 'var(--bg-color)'
+      }}>
+        <div style={{ color: 'var(--text-primary)' }}>Loading...</div>
+      </div>
+    );
+  }
+
+  if (!user) {
+    return <Login onLoginSuccess={handleLoginSuccess} />;
+  }
+
+  const isRenter = user?.role?.toLowerCase() === 'renter';
+  const canAccessPropertyOwnerFeatures = user?.role?.toLowerCase() === 'admin' || user?.role?.toLowerCase() === 'propertyowner';
+
 
   return (
     <Router>
       <div className="App">
-        <Navigation userRole={userRole} setUserRole={setUserRole} />
+        <Navigation user={user} onLogout={handleLogout} />
         <div className="container">
           <Routes>
-            <Route 
-              path="/" 
+            <Route
+              path="/"
               element={
-                userRole === 'manager' 
-                  ? <Dashboard /> 
-                  : <RenterDashboard />
-              } 
+                isRenter ? <RenterDashboard /> : <Dashboard />
+              }
             />
-            {userRole === 'manager' && (
+            {canAccessPropertyOwnerFeatures && (
               <>
                 <Route path="/properties" element={<Properties />} />
                 <Route path="/tenants" element={<Tenants />} />
