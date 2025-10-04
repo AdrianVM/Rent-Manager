@@ -419,6 +419,7 @@ function AdminDashboard() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [activeTab, setActiveTab] = useState('overview');
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
 
   useEffect(() => {
     loadDashboardData();
@@ -564,7 +565,72 @@ function AdminDashboard() {
             <p style={{ color: 'var(--text-secondary)', marginBottom: '20px' }}>
               Load sample data for testing and demonstration purposes. This feature is available only in the System Settings section of the Admin Dashboard.
             </p>
-            <DemoDataSeeder onDataSeeded={loadDashboardData} />
+            <DemoDataSeeder
+              disabled={showSuccessModal}
+              onDataSeeded={(success) => {
+                if (success !== false) {
+                  setShowSuccessModal(true);
+                }
+                loadDashboardData();
+              }}
+            />
+          </div>
+        </div>
+      )}
+
+      {/* Success Modal */}
+      {showSuccessModal && (
+        <div style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          backgroundColor: 'rgba(0,0,0,0.5)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          zIndex: 1000
+        }}>
+          <div style={{
+            backgroundColor: 'var(--bg-secondary)',
+            padding: '30px',
+            borderRadius: '12px',
+            width: '90%',
+            maxWidth: '500px',
+            border: '1px solid var(--border-color)',
+            textAlign: 'center'
+          }}>
+            <div style={{
+              fontSize: '48px',
+              marginBottom: '20px'
+            }}>
+              ✅
+            </div>
+            <h3 style={{
+              color: '#198754',
+              marginBottom: '15px',
+              fontWeight: 'bold'
+            }}>
+              Demo Data Loaded Successfully!
+            </h3>
+            <p style={{
+              color: 'var(--text-primary)',
+              marginBottom: '25px',
+              fontSize: '16px'
+            }}>
+              Sample properties, tenants, and payment records have been created. You can now explore all the features of the Rent Manager application.
+            </p>
+            <button
+              className="btn btn-primary"
+              onClick={() => setShowSuccessModal(false)}
+              style={{
+                fontSize: '16px',
+                padding: '10px 30px'
+              }}
+            >
+              OK
+            </button>
           </div>
         </div>
       )}
