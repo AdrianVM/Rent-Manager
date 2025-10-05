@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import authService from '../services/authService';
+import { PrimaryButton, SecondaryButton } from '../components/common';
 
 function Login({ onLoginSuccess }) {
   const [loginData, setLoginData] = useState({
@@ -156,14 +157,13 @@ function Login({ onLoginSuccess }) {
                 style={{ width: '100%' }}
               />
             </div>
-            <button 
-              type="submit" 
-              className="btn btn-primary"
+            <PrimaryButton
+              type="submit"
               disabled={loading}
               style={{ width: '100%', marginBottom: '20px' }}
             >
               {loading ? 'Signing in...' : 'Sign In'}
-            </button>
+            </PrimaryButton>
           </form>
         ) : (
           <form onSubmit={handleRegisterSubmit}>
@@ -224,14 +224,13 @@ function Login({ onLoginSuccess }) {
                 <option value="PropertyOwner">Property Owner</option>
               </select>
             </div>
-            <button 
-              type="submit" 
-              className="btn btn-primary"
+            <PrimaryButton
+              type="submit"
               disabled={loading}
               style={{ width: '100%', marginBottom: '20px' }}
             >
               {loading ? 'Creating account...' : 'Create Account'}
-            </button>
+            </PrimaryButton>
           </form>
         )}
 
@@ -264,30 +263,27 @@ function Login({ onLoginSuccess }) {
                 Quick login for demo:
               </p>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                <button
+                <SecondaryButton
                   onClick={() => quickLogin('admin')}
-                  className="btn"
                   disabled={loading}
                   style={{ fontSize: '14px', padding: '8px 12px' }}
                 >
                   Admin Demo
-                </button>
-                <button
+                </SecondaryButton>
+                <SecondaryButton
                   onClick={() => quickLogin('owner')}
-                  className="btn"
                   disabled={loading}
                   style={{ fontSize: '14px', padding: '8px 12px' }}
                 >
                   Property Owner Demo
-                </button>
-                <button
+                </SecondaryButton>
+                <SecondaryButton
                   onClick={() => quickLogin('renter')}
-                  className="btn"
                   disabled={loading}
                   style={{ fontSize: '14px', padding: '8px 12px' }}
                 >
                   Renter Demo
-                </button>
+                </SecondaryButton>
               </div>
             </div>
           </div>

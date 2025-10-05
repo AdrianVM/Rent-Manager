@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import apiService from '../services/api';
+import { PrimaryButton, SecondaryButton, DangerButton } from '../components/common';
 
 function PaymentForm({ payment, onSave, onCancel, tenants, properties }) {
   const [formData, setFormData] = useState({
@@ -129,8 +130,8 @@ function PaymentForm({ payment, onSave, onCancel, tenants, properties }) {
             />
           </div>
           <div style={{ display: 'flex', gap: '10px', justifyContent: 'flex-end', marginTop: '20px' }}>
-            <button type="button" className="btn" onClick={onCancel}>Cancel</button>
-            <button type="submit" className="btn btn-primary">Save Payment</button>
+            <SecondaryButton type="button" onClick={onCancel}>Cancel</SecondaryButton>
+            <PrimaryButton type="submit">Save Payment</PrimaryButton>
           </div>
         </form>
       </div>
@@ -267,9 +268,9 @@ function Payments() {
     <div>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
         <h1>Rent Payments</h1>
-        <button className="btn btn-primary" onClick={handleAddPayment}>
+        <PrimaryButton onClick={handleAddPayment}>
           Record Payment
-        </button>
+        </PrimaryButton>
       </div>
 
       <div className="dashboard-grid" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))' }}>
@@ -310,9 +311,9 @@ function Payments() {
         ) : error ? (
           <div style={{ textAlign: 'center', padding: '40px', color: '#dc3545' }}>
             <p>{error}</p>
-            <button className="btn btn-primary" onClick={loadData}>
+            <PrimaryButton onClick={loadData}>
               Try Again
-            </button>
+            </PrimaryButton>
           </div>
         ) : filteredPayments.length === 0 ? (
           <div style={{ textAlign: 'center', padding: '40px', color: '#666' }}>
@@ -358,22 +359,20 @@ function Payments() {
                       <td>{getStatusBadge(payment.status)}</td>
                       <td>
                         <div style={{ display: 'flex', gap: '6px', alignItems: 'center' }}>
-                          <button
-                            className="btn btn-primary"
+                          <PrimaryButton
                             onClick={() => handleEditPayment(payment)}
                             title="Edit Payment"
                             style={{ padding: '6px 10px', minWidth: '36px' }}
                           >
                             ✏️
-                          </button>
-                          <button
-                            className="btn btn-danger"
+                          </PrimaryButton>
+                          <DangerButton
                             onClick={() => handleDeletePayment(payment.id)}
                             title="Delete Payment"
                             style={{ padding: '6px 10px', minWidth: '36px' }}
                           >
                             🗑️
-                          </button>
+                          </DangerButton>
                         </div>
                       </td>
                     </tr>
@@ -410,22 +409,20 @@ function Payments() {
                     </div>
                   </div>
                   <div className="card-item-actions" style={{ gap: '8px' }}>
-                    <button
-                      className="btn btn-primary"
+                    <PrimaryButton
                       onClick={() => handleEditPayment(payment)}
                       title="Edit Payment"
                       style={{ flex: '1', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
                     >
                       ✏️
-                    </button>
-                    <button
-                      className="btn btn-danger"
+                    </PrimaryButton>
+                    <DangerButton
                       onClick={() => handleDeletePayment(payment.id)}
                       title="Delete Payment"
                       style={{ flex: '1', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
                     >
                       🗑️
-                    </button>
+                    </DangerButton>
                   </div>
                 </div>
               ))}

@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import apiService from '../services/api';
 import { renderAsync } from 'docx-preview';
+import { PrimaryButton, SecondaryButton, DangerButton } from '../components/common';
 
 function PropertyForm({ property, onSave, onCancel }) {
   const [formData, setFormData] = useState({
@@ -183,8 +184,8 @@ function PropertyForm({ property, onSave, onCancel }) {
             />
           </div>
           <div style={{ display: 'flex', gap: '10px', justifyContent: 'flex-end', marginTop: '20px' }}>
-            <button type="button" className="btn" onClick={onCancel}>Cancel</button>
-            <button type="submit" className="btn btn-primary">Save Property</button>
+            <SecondaryButton type="button" onClick={onCancel}>Cancel</SecondaryButton>
+            <PrimaryButton type="submit">Save Property</PrimaryButton>
           </div>
         </form>
       </div>
@@ -308,10 +309,10 @@ function ContractUpload({ property, tenants, onClose, onUpload }) {
             />
           </div>
           <div style={{ display: 'flex', gap: '10px', justifyContent: 'flex-end', marginTop: '20px' }}>
-            <button type="button" className="btn" onClick={onClose}>Cancel</button>
-            <button type="submit" className="btn btn-primary" disabled={uploading}>
+            <SecondaryButton type="button" onClick={onClose}>Cancel</SecondaryButton>
+            <PrimaryButton type="submit" disabled={uploading}>
               {uploading ? 'Uploading...' : 'Upload Contract'}
-            </button>
+            </PrimaryButton>
           </div>
         </form>
       </div>
@@ -613,30 +614,27 @@ function ContractsView({ property, onClose, onUpdate }) {
                       {contract.signedAt && ` • Signed: ${new Date(contract.signedAt).toLocaleDateString()}`}
                     </span>
                     <div style={{ display: 'flex', gap: '6px', alignItems: 'center' }}>
-                      <button
-                        className="btn btn-accent"
+                      <SecondaryButton
                         style={{ padding: '6px 8px', fontSize: '14px', minWidth: '32px' }}
                         onClick={() => setViewingContract(contract)}
                         title="View Contract"
                       >
                         👁️
-                      </button>
-                      <button
-                        className="btn btn-primary"
+                      </SecondaryButton>
+                      <PrimaryButton
                         style={{ padding: '6px 8px', fontSize: '14px', minWidth: '32px' }}
                         onClick={() => handleDownload(contract)}
                         title="Download Contract"
                       >
                         ⬇️
-                      </button>
-                      <button
-                        className="btn btn-danger"
+                      </PrimaryButton>
+                      <DangerButton
                         style={{ padding: '6px 8px', fontSize: '14px', minWidth: '32px' }}
                         onClick={() => handleDelete(contract.id)}
                         title="Delete Contract"
                       >
                         🗑️
-                      </button>
+                      </DangerButton>
                     </div>
                   </div>
                 </div>
@@ -762,9 +760,9 @@ function Properties() {
     <div>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
         <h1>Properties</h1>
-        <button className="btn btn-primary" onClick={handleAddProperty}>
+        <PrimaryButton onClick={handleAddProperty}>
           Add New Property
-        </button>
+        </PrimaryButton>
       </div>
 
       <div className="card">
@@ -775,9 +773,9 @@ function Properties() {
         ) : error ? (
           <div style={{ textAlign: 'center', padding: '40px', color: '#dc3545' }}>
             <p>{error}</p>
-            <button className="btn btn-primary" onClick={loadProperties}>
+            <PrimaryButton onClick={loadProperties}>
               Try Again
-            </button>
+            </PrimaryButton>
           </div>
         ) : properties.length === 0 ? (
           <div style={{ textAlign: 'center', padding: '40px', color: '#666' }}>
@@ -830,38 +828,34 @@ function Properties() {
                         <td>${property.rentAmount.toLocaleString()}</td>
                         <td>
                           <div style={{ display: 'flex', gap: '6px', alignItems: 'center' }}>
-                            <button
-                              className="btn btn-primary"
+                            <PrimaryButton
                               onClick={() => handleEditProperty(property)}
                               title="Edit Property"
                               style={{ padding: '6px 10px', minWidth: '36px' }}
                             >
                               ✏️
-                            </button>
-                            <button
-                              className="btn btn-accent"
+                            </PrimaryButton>
+                            <SecondaryButton
                               onClick={() => handleUploadContract(property)}
                               title="Upload Contract"
                               style={{ padding: '6px 10px', minWidth: '36px' }}
                             >
                               📤
-                            </button>
-                            <button
-                              className="btn"
+                            </SecondaryButton>
+                            <SecondaryButton
                               onClick={() => handleViewContracts(property)}
                               title="View Contracts"
                               style={{ padding: '6px 10px', minWidth: '36px' }}
                             >
                               👁️
-                            </button>
-                            <button
-                              className="btn btn-danger"
+                            </SecondaryButton>
+                            <DangerButton
                               onClick={() => handleDeleteProperty(property.id)}
                               title="Delete Property"
                               style={{ padding: '6px 10px', minWidth: '36px' }}
                             >
                               🗑️
-                            </button>
+                            </DangerButton>
                           </div>
                         </td>
                       </tr>
@@ -916,38 +910,34 @@ function Properties() {
                       </div>
                     </div>
                     <div className="card-item-actions" style={{ gap: '8px' }}>
-                      <button
-                        className="btn btn-primary"
+                      <PrimaryButton
                         onClick={() => handleEditProperty(property)}
                         title="Edit Property"
                         style={{ flex: '1', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
                       >
                         ✏️
-                      </button>
-                      <button
-                        className="btn btn-accent"
+                      </PrimaryButton>
+                      <SecondaryButton
                         onClick={() => handleUploadContract(property)}
                         title="Upload Contract"
                         style={{ flex: '1', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
                       >
                         📤
-                      </button>
-                      <button
-                        className="btn"
+                      </SecondaryButton>
+                      <SecondaryButton
                         onClick={() => handleViewContracts(property)}
                         title="View Contracts"
                         style={{ flex: '1', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
                       >
                         👁️
-                      </button>
-                      <button
-                        className="btn btn-danger"
+                      </SecondaryButton>
+                      <DangerButton
                         onClick={() => handleDeleteProperty(property.id)}
                         title="Delete Property"
                         style={{ flex: '1', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
                       >
                         🗑️
-                      </button>
+                      </DangerButton>
                     </div>
                   </div>
                 );

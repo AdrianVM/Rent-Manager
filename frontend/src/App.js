@@ -11,6 +11,7 @@ import {
   Tenants,
   Payments
 } from './pages';
+import TenantOnboarding from './pages/TenantOnboarding';
 
 function App() {
   const [user, setUser] = useState(null);
@@ -47,8 +48,18 @@ function App() {
     );
   }
 
+  // Public routes that don't require authentication
+  const publicRoutes = (
+    <Router>
+      <Routes>
+        <Route path="/onboard" element={<TenantOnboarding />} />
+        <Route path="*" element={<Login onLoginSuccess={handleLoginSuccess} />} />
+      </Routes>
+    </Router>
+  );
+
   if (!user) {
-    return <Login onLoginSuccess={handleLoginSuccess} />;
+    return publicRoutes;
   }
 
   const isRenter = user?.role?.toLowerCase() === 'renter';
@@ -58,28 +69,36 @@ function App() {
 
   return (
     <Router>
-      <div className="App">
-        <Navigation user={user} onLogout={handleLogout} />
-        <div className="container">
-          <Routes>
-            <Route
-              path="/"
-              element={
-                isRenter ? <RenterDashboard /> :
-                isAdmin ? <AdminDashboard /> :
-                <PropertyOwnerDashboard />
-              }
-            />
-            {canAccessPropertyOwnerFeatures && (
-              <>
-                <Route path="/properties" element={<Properties />} />
-                <Route path="/tenants" element={<Tenants />} />
-                <Route path="/payments" element={<Payments />} />
-              </>
-            )}
-          </Routes>
-        </div>
-      </div>
+      <Routes>
+        {/* Public route accessible even when logged in */}
+        <Route path="/onboard" element={<TenantOnboarding />} />
+
+        {/* Authenticated routes */}
+        <Route path="/*" element={
+          <div className="App">
+            <Navigation user={user} onLogout={handleLogout} />
+            <div className="container">
+              <Routes>
+                <Route
+                  path="/"
+                  element={
+                    isRenter ? <RenterDashboard /> :
+                    isAdmin ? <AdminDashboard /> :
+                    <PropertyOwnerDashboard />
+                  }
+                />
+                {canAccessPropertyOwnerFeatures && (
+                  <>
+                    <Route path="/properties" element={<Properties />} />
+                    <Route path="/tenants" element={<Tenants />} />
+                    <Route path="/payments" element={<Payments />} />
+                  </>
+                )}
+              </Routes>
+            </div>
+          </div>
+        } />
+      </Routes>
     </Router>
   );
 }

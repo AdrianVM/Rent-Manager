@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import apiService from '../services/api';
+import InviteTenantModal from '../components/common/InviteTenantModal';
+import { PrimaryButton, SecondaryButton, DangerButton } from '../components/common';
 
 function TenantForm({ tenant, onSave, onCancel, properties }) {
   const [formData, setFormData] = useState({
@@ -157,8 +159,8 @@ function TenantForm({ tenant, onSave, onCancel, properties }) {
             </select>
           </div>
           <div style={{ display: 'flex', gap: '10px', justifyContent: 'flex-end', marginTop: '20px' }}>
-            <button type="button" className="btn" onClick={onCancel}>Cancel</button>
-            <button type="submit" className="btn btn-primary">Save Tenant</button>
+            <SecondaryButton type="button" onClick={onCancel}>Cancel</SecondaryButton>
+            <PrimaryButton type="submit">Save Tenant</PrimaryButton>
           </div>
         </form>
       </div>
@@ -172,6 +174,7 @@ function Tenants() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [showForm, setShowForm] = useState(false);
+  const [showInviteModal, setShowInviteModal] = useState(false);
   const [editingTenant, setEditingTenant] = useState(null);
 
   useEffect(() => {
@@ -274,9 +277,14 @@ function Tenants() {
     <div>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
         <h1>Tenants</h1>
-        <button className="btn btn-primary" onClick={handleAddTenant}>
-          Add New Tenant
-        </button>
+        <div style={{ display: 'flex', gap: '10px' }}>
+          <SecondaryButton onClick={() => setShowInviteModal(true)}>
+            📧 Invite Tenant
+          </SecondaryButton>
+          <PrimaryButton onClick={handleAddTenant}>
+            Add New Tenant
+          </PrimaryButton>
+        </div>
       </div>
 
       <div className="card">
@@ -287,9 +295,9 @@ function Tenants() {
         ) : error ? (
           <div style={{ textAlign: 'center', padding: '40px', color: '#dc3545' }}>
             <p>{error}</p>
-            <button className="btn btn-primary" onClick={loadData}>
+            <PrimaryButton onClick={loadData}>
               Try Again
-            </button>
+            </PrimaryButton>
           </div>
         ) : tenants.length === 0 ? (
           <div style={{ textAlign: 'center', padding: '40px', color: '#666' }}>
@@ -328,22 +336,20 @@ function Tenants() {
                       <td>{getStatusBadge(tenant.status)}</td>
                       <td>
                         <div style={{ display: 'flex', gap: '6px', alignItems: 'center' }}>
-                          <button
-                            className="btn btn-primary"
+                          <PrimaryButton
                             onClick={() => handleEditTenant(tenant)}
                             title="Edit Tenant"
                             style={{ padding: '6px 10px', minWidth: '36px' }}
                           >
                             ✏️
-                          </button>
-                          <button
-                            className="btn btn-danger"
+                          </PrimaryButton>
+                          <DangerButton
                             onClick={() => handleDeleteTenant(tenant.id)}
                             title="Delete Tenant"
                             style={{ padding: '6px 10px', minWidth: '36px' }}
                           >
                             🗑️
-                          </button>
+                          </DangerButton>
                         </div>
                       </td>
                     </tr>
@@ -380,22 +386,20 @@ function Tenants() {
                     </div>
                   </div>
                   <div className="card-item-actions" style={{ gap: '8px' }}>
-                    <button
-                      className="btn btn-primary"
+                    <PrimaryButton
                       onClick={() => handleEditTenant(tenant)}
                       title="Edit Tenant"
                       style={{ flex: '1', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
                     >
                       ✏️
-                    </button>
-                    <button
-                      className="btn btn-danger"
+                    </PrimaryButton>
+                    <DangerButton
                       onClick={() => handleDeleteTenant(tenant.id)}
                       title="Delete Tenant"
                       style={{ flex: '1', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
                     >
                       🗑️
-                    </button>
+                    </DangerButton>
                   </div>
                 </div>
               ))}
@@ -409,6 +413,16 @@ function Tenants() {
           tenant={editingTenant}
           onSave={handleSaveTenant}
           onCancel={handleCancel}
+          properties={properties}
+        />
+      )}
+
+      {showInviteModal && (
+        <InviteTenantModal
+          onClose={() => {
+            setShowInviteModal(false);
+            loadData(); // Reload to show any new tenants
+          }}
           properties={properties}
         />
       )}

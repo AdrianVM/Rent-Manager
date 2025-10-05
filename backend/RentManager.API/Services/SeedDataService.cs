@@ -5,10 +5,12 @@ namespace RentManager.API.Services
     public class SeedDataService
     {
         private readonly IDataService _dataService;
+        private readonly IAuthService _authService;
 
-        public SeedDataService(IDataService dataService)
+        public SeedDataService(IDataService dataService, IAuthService authService)
         {
             _dataService = dataService;
+            _authService = authService;
         }
 
         public async Task SeedAllDataAsync()
@@ -20,6 +22,9 @@ namespace RentManager.API.Services
             var properties = await SeedPropertiesAsync();
             var tenants = await SeedTenantsAsync(properties);
             await SeedPaymentsAsync(tenants);
+
+            // Update property owner user with property IDs
+            await UpdatePropertyOwnerWithPropertyIds(properties);
         }
 
         private async Task ClearAllDataAsync()
@@ -274,6 +279,16 @@ namespace RentManager.API.Services
             foreach (var payment in payments)
             {
                 await _dataService.CreatePaymentAsync(payment);
+            }
+        }
+
+        private async Task UpdatePropertyOwnerWithPropertyIds(List<Property> properties)
+        {
+            // Get the property owner user and assign all property IDs to them
+            var propertyOwner = await _authService.GetUserByEmailAsync("owner@rentmanager.com");
+            if (propertyOwner != null)
+            {
+                propertyOwner.PropertyIds = properties.Select(p => p.Id).ToList();
             }
         }
     }

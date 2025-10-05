@@ -17,8 +17,8 @@ builder.Services.AddHealthChecks();
 
 // Register services
 builder.Services.AddSingleton<IDataService, InMemoryDataService>();
+builder.Services.AddSingleton<IAuthService, AuthService>();
 builder.Services.AddScoped<SeedDataService>();
-builder.Services.AddScoped<IAuthService, AuthService>();
 
 // JWT Configuration
 var jwtSettings = builder.Configuration.GetSection("JwtSettings");
