@@ -15,9 +15,9 @@
     "build:backend": "cd backend/RentManager.API && dotnet build",
     "test": "npm run test:frontend && npm run test:backend",
     "test:frontend": "npm run test --workspace=frontend",
-    "test:backend": "cd backend/RentManager.API && dotnet test",
+    "test:backend": "dotnet test",
     "install:all": "npm install && cd backend/RentManager.API && dotnet restore",
-    "clean": "rm -rf node_modules frontend/node_modules && cd backend/RentManager.API && dotnet clean"
+    "clean": "rm -rf node_modules frontend/node_modules frontend/build && dotnet clean"
   },
   "devDependencies": {
     "concurrently": "^7.6.0"
