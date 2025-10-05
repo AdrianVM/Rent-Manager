@@ -2,7 +2,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.5.2.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RentManager.API", "backend\RentManager.API.csproj", "{3053C544-1B96-60C7-DEF1-44F61B39D637}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RentManager.API", "backend\RentManager.API\RentManager.API.csproj", "{3053C544-1B96-60C7-DEF1-44F61B39D637}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RentManager.Tests", "backend\RentManager.Tests\RentManager.Tests.csproj", "{A1B2C3D4-5E6F-7A8B-9C0D-1E2F3A4B5C6D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -14,6 +16,10 @@ Global
 		{3053C544-1B96-60C7-DEF1-44F61B39D637}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3053C544-1B96-60C7-DEF1-44F61B39D637}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3053C544-1B96-60C7-DEF1-44F61B39D637}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A1B2C3D4-5E6F-7A8B-9C0D-1E2F3A4B5C6D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A1B2C3D4-5E6F-7A8B-9C0D-1E2F3A4B5C6D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A1B2C3D4-5E6F-7A8B-9C0D-1E2F3A4B5C6D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A1B2C3D4-5E6F-7A8B-9C0D-1E2F3A4B5C6D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
