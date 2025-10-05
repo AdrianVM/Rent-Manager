@@ -1,0 +1,7 @@
+export { default as Login } from './Login';
+export { default as AdminDashboard } from './AdminDashboard';
+export { default as PropertyOwnerDashboard } from './PropertyOwnerDashboard';
+export { default as RenterDashboard } from './RenterDashboard';
+export { default as Properties } from './Properties';
+export { default as Tenants } from './Tenants';
+export { default as Payments } from './Payments';

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import apiService from '../services/api';
-import DemoDataSeeder from './DemoDataSeeder';
+import DemoDataSeeder from '../components/common/DemoDataSeeder';
 
 const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:5057/api';
 
