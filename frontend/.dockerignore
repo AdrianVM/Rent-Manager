@@ -1,0 +1,17 @@
+node_modules
+npm-debug.log
+build
+.dockerignore
+**/.git
+**/.gitignore
+**/.DS_Store
+**/README.md
+**/LICENSE
+**/.vscode
+**/.idea
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+coverage
+.eslintcache
