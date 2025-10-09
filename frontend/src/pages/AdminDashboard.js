@@ -425,9 +425,11 @@ function AdminDashboard() {
     loadDashboardData();
   }, []);
 
-  const loadDashboardData = async () => {
+  const loadDashboardData = async (showLoadingState = true) => {
     try {
-      setLoading(true);
+      if (showLoadingState) {
+        setLoading(true);
+      }
       const data = await apiService.getDashboardStats();
       setDashboardData(data);
       setError(null);
@@ -435,7 +437,9 @@ function AdminDashboard() {
       setError('Failed to load dashboard data. Please try again.');
       console.error('Error loading dashboard data:', err);
     } finally {
-      setLoading(false);
+      if (showLoadingState) {
+        setLoading(false);
+      }
     }
   };
 
@@ -453,7 +457,7 @@ function AdminDashboard() {
       <div style={{ textAlign: 'center', padding: '40px', color: '#dc3545' }}>
         <h1>Admin Dashboard</h1>
         <p>{error}</p>
-        <button className="btn btn-primary" onClick={loadDashboardData}>
+        <button className="btn btn-primary" onClick={() => loadDashboardData(false)}>
           Try Again
         </button>
       </div>
@@ -571,7 +575,7 @@ function AdminDashboard() {
                 if (success !== false) {
                   setShowSuccessModal(true);
                 }
-                loadDashboardData();
+                loadDashboardData(false);
               }}
             />
           </div>
