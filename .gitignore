@@ -115,6 +115,7 @@ coverage/
 # IDEs and editors
 .vscode/
 .idea/
+.claude/
 *.swp
 *.swo
 *~
@@ -127,6 +128,7 @@ coverage/
 .Trashes
 ehthumbs.db
 Thumbs.db
+*.deb
 
 # React specific
 # See https://facebook.github.io/create-react-app/docs/deployment for more information.
