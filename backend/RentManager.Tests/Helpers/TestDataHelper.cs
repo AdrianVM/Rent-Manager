@@ -88,7 +88,7 @@ namespace RentManager.Tests.Helpers
             return new Tenant
             {
                 Id = id,
-                Name = $"Test Tenant {id}",
+                TenantType = TenantType.Person,
                 Email = $"tenant{id}@example.com",
                 Phone = "+1234567890",
                 PropertyId = "test-property-1",
@@ -97,6 +97,13 @@ namespace RentManager.Tests.Helpers
                 RentAmount = 1500.00m,
                 Deposit = 1500.00m,
                 Status = TenantStatus.Active,
+                PersonDetails = new PersonDetails
+                {
+                    FirstName = "Test",
+                    LastName = $"Tenant {id}",
+                    DateOfBirth = DateTime.UtcNow.AddYears(-30),
+                    Nationality = "American"
+                },
                 CreatedAt = DateTime.UtcNow.AddDays(-1),
                 UpdatedAt = DateTime.UtcNow
             };

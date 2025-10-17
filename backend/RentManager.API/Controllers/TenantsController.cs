@@ -16,9 +16,24 @@ namespace RentManager.API.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<List<Tenant>>> GetTenants()
+        public async Task<ActionResult<List<Tenant>>> GetTenants(
+            [FromQuery] TenantType? type = null,
+            [FromQuery] TenantStatus? status = null)
         {
             var tenants = await _dataService.GetTenantsAsync();
+
+            // Filter by tenant type if specified
+            if (type.HasValue)
+            {
+                tenants = tenants.Where(t => t.TenantType == type.Value).ToList();
+            }
+
+            // Filter by status if specified
+            if (status.HasValue)
+            {
+                tenants = tenants.Where(t => t.Status == status.Value).ToList();
+            }
+
             return Ok(tenants);
         }
 

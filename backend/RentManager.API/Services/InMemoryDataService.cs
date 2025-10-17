@@ -144,7 +144,7 @@ namespace RentManager.API.Services
             var existingTenant = _tenants.FirstOrDefault(t => t.Id == id);
             if (existingTenant == null) return Task.FromResult<Tenant?>(null);
 
-            existingTenant.Name = tenant.Name;
+            existingTenant.TenantType = tenant.TenantType;
             existingTenant.Email = tenant.Email;
             existingTenant.Phone = tenant.Phone;
             existingTenant.PropertyId = tenant.PropertyId;
@@ -153,6 +153,8 @@ namespace RentManager.API.Services
             existingTenant.RentAmount = tenant.RentAmount;
             existingTenant.Deposit = tenant.Deposit;
             existingTenant.Status = tenant.Status;
+            existingTenant.PersonDetails = tenant.PersonDetails;
+            existingTenant.CompanyDetails = tenant.CompanyDetails;
             existingTenant.UpdatedAt = DateTime.UtcNow;
 
             return Task.FromResult<Tenant?>(existingTenant);

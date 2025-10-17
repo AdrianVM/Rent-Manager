@@ -62,10 +62,14 @@ namespace RentManager.API.Controllers
                 return BadRequest(new { message = "A user with this email already exists" });
             }
 
-            // Create tenant record
+            // Create tenant record (assuming person tenant for onboarding)
+            var nameParts = request.Name.Split(' ', 2);
+            var firstName = nameParts[0];
+            var lastName = nameParts.Length > 1 ? nameParts[1] : "";
+
             var tenant = new Tenant
             {
-                Name = request.Name,
+                TenantType = TenantType.Person,
                 Email = request.Email,
                 Phone = request.Phone,
                 PropertyId = invitation.PropertyId,
@@ -73,7 +77,12 @@ namespace RentManager.API.Controllers
                 LeaseStart = invitation.LeaseStart,
                 LeaseEnd = invitation.LeaseEnd,
                 Deposit = invitation.Deposit,
-                Status = TenantStatus.Active
+                Status = TenantStatus.Active,
+                PersonDetails = new PersonDetails
+                {
+                    FirstName = firstName,
+                    LastName = lastName
+                }
             };
 
             tenant = await _dataService.CreateTenantAsync(tenant);

@@ -2,10 +2,13 @@ import React, { useState, useEffect } from 'react';
 import apiService from '../services/api';
 import InviteTenantModal from '../components/common/InviteTenantModal';
 import { PrimaryButton, SecondaryButton, DangerButton } from '../components/common';
+import TenantTypeSelector from '../components/tenants/TenantTypeSelector';
+import PersonTenantForm from '../components/tenants/PersonTenantForm';
+import CompanyTenantForm from '../components/tenants/CompanyTenantForm';
 
 function TenantForm({ tenant, onSave, onCancel, properties }) {
+  const [tenantType, setTenantType] = useState(tenant?.tenantType?.toLowerCase() || 'person');
   const [formData, setFormData] = useState({
-    name: tenant?.name || '',
     email: tenant?.email || '',
     phone: tenant?.phone || '',
     propertyId: tenant?.propertyId || '',
@@ -16,18 +19,61 @@ function TenantForm({ tenant, onSave, onCancel, properties }) {
     status: tenant?.status || 'active'
   });
 
+  const [personDetails, setPersonDetails] = useState(tenant?.personDetails || {
+    firstName: '',
+    lastName: '',
+    dateOfBirth: '',
+    idNumber: '',
+    nationality: '',
+    occupation: '',
+    emergencyContactName: '',
+    emergencyContactPhone: '',
+    emergencyContactRelation: ''
+  });
+
+  const [companyDetails, setCompanyDetails] = useState(tenant?.companyDetails || {
+    companyName: '',
+    taxId: '',
+    registrationNumber: '',
+    legalForm: '',
+    industry: '',
+    contactPersonName: '',
+    contactPersonTitle: '',
+    contactPersonEmail: '',
+    contactPersonPhone: '',
+    billingAddress: ''
+  });
+
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (!formData.name || !formData.email || !formData.propertyId || !formData.rentAmount) {
+
+    // Validate common fields
+    if (!formData.email || !formData.propertyId || !formData.rentAmount) {
       alert('Please fill in all required fields');
       return;
+    }
+
+    // Validate type-specific fields
+    if (tenantType === 'person') {
+      if (!personDetails.firstName || !personDetails.lastName) {
+        alert('Please enter first and last name for person tenant');
+        return;
+      }
+    } else {
+      if (!companyDetails.companyName) {
+        alert('Please enter company name for company tenant');
+        return;
+      }
     }
 
     const tenantData = {
       ...formData,
       id: tenant?.id || Date.now().toString(),
+      tenantType: tenantType,
       rentAmount: parseFloat(formData.rentAmount) || 0,
-      deposit: parseFloat(formData.deposit) || 0
+      deposit: parseFloat(formData.deposit) || 0,
+      personDetails: tenantType === 'person' ? personDetails : null,
+      companyDetails: tenantType === 'company' ? companyDetails : null
     };
 
     onSave(tenantData);
@@ -38,26 +84,33 @@ function TenantForm({ tenant, onSave, onCancel, properties }) {
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
+  const handleTenantTypeChange = (newType) => {
+    setTenantType(newType);
+  };
+
 
   return (
     <div className="modal">
-      <div className="modal-content">
+      <div className="modal-content" style={{ maxWidth: '800px' }}>
         <div className="modal-header">
           <h2>{tenant ? 'Edit Tenant' : 'Add New Tenant'}</h2>
           <button className="close-btn" onClick={onCancel}>&times;</button>
         </div>
         <form onSubmit={handleSubmit}>
-          <div className="form-group">
-            <label>Full Name *</label>
-            <input
-              type="text"
-              name="name"
-              value={formData.name}
-              onChange={handleChange}
-              className="form-control"
-              required
-            />
-          </div>
+          <TenantTypeSelector value={tenantType} onChange={handleTenantTypeChange} />
+
+          {tenantType === 'person' && (
+            <PersonTenantForm data={personDetails} onChange={setPersonDetails} />
+          )}
+
+          {tenantType === 'company' && (
+            <CompanyTenantForm data={companyDetails} onChange={setCompanyDetails} />
+          )}
+
+          <h3 style={{ marginTop: '20px', marginBottom: '15px', color: 'var(--text-primary)' }}>
+            Lease Information
+          </h3>
+
           <div className="form-group">
             <label>Email *</label>
             <input

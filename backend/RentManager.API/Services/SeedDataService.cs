@@ -124,7 +124,7 @@ namespace RentManager.API.Services
             {
                 new Tenant
                 {
-                    Name = "John Smith",
+                    TenantType = TenantType.Person,
                     Email = "john.smith@email.com",
                     Phone = "+1 (555) 123-4567",
                     PropertyId = properties[0].Id, // Sunset Apartments
@@ -132,11 +132,23 @@ namespace RentManager.API.Services
                     LeaseEnd = new DateTime(2024, 5, 31),
                     RentAmount = 2500,
                     Deposit = 2500,
-                    Status = TenantStatus.Active
+                    Status = TenantStatus.Active,
+                    PersonDetails = new PersonDetails
+                    {
+                        FirstName = "John",
+                        LastName = "Smith",
+                        DateOfBirth = new DateTime(1985, 3, 15),
+                        IdNumber = "XXX-XX-1234",
+                        Nationality = "American",
+                        Occupation = "Software Engineer",
+                        EmergencyContactName = "Jane Smith",
+                        EmergencyContactPhone = "+1 (555) 123-9999",
+                        EmergencyContactRelation = "Spouse"
+                    }
                 },
                 new Tenant
                 {
-                    Name = "Sarah Johnson",
+                    TenantType = TenantType.Person,
                     Email = "sarah.johnson@email.com",
                     Phone = "+1 (555) 234-5678",
                     PropertyId = properties[1].Id, // Downtown Luxury Condo
@@ -144,11 +156,23 @@ namespace RentManager.API.Services
                     LeaseEnd = new DateTime(2024, 2, 28),
                     RentAmount = 3200,
                     Deposit = 3200,
-                    Status = TenantStatus.Active
+                    Status = TenantStatus.Active,
+                    PersonDetails = new PersonDetails
+                    {
+                        FirstName = "Sarah",
+                        LastName = "Johnson",
+                        DateOfBirth = new DateTime(1990, 7, 22),
+                        IdNumber = "XXX-XX-5678",
+                        Nationality = "American",
+                        Occupation = "Marketing Manager",
+                        EmergencyContactName = "Robert Johnson",
+                        EmergencyContactPhone = "+1 (555) 234-8888",
+                        EmergencyContactRelation = "Father"
+                    }
                 },
                 new Tenant
                 {
-                    Name = "Michael Davis Family",
+                    TenantType = TenantType.Person,
                     Email = "michael.davis@email.com",
                     Phone = "+1 (555) 345-6789",
                     PropertyId = properties[2].Id, // Family House
@@ -156,11 +180,23 @@ namespace RentManager.API.Services
                     LeaseEnd = new DateTime(2024, 7, 31),
                     RentAmount = 4500,
                     Deposit = 4500,
-                    Status = TenantStatus.Active
+                    Status = TenantStatus.Active,
+                    PersonDetails = new PersonDetails
+                    {
+                        FirstName = "Michael",
+                        LastName = "Davis",
+                        DateOfBirth = new DateTime(1982, 11, 8),
+                        IdNumber = "XXX-XX-9012",
+                        Nationality = "American",
+                        Occupation = "School Teacher",
+                        EmergencyContactName = "Lisa Davis",
+                        EmergencyContactPhone = "+1 (555) 345-7777",
+                        EmergencyContactRelation = "Spouse"
+                    }
                 },
                 new Tenant
                 {
-                    Name = "Corporate Parking LLC",
+                    TenantType = TenantType.Company,
                     Email = "parking@corporate.com",
                     Phone = "+1 (555) 456-7890",
                     PropertyId = properties[3].Id, // Parking Space
@@ -168,11 +204,23 @@ namespace RentManager.API.Services
                     LeaseEnd = new DateTime(2023, 12, 31),
                     RentAmount = 150,
                     Deposit = 300,
-                    Status = TenantStatus.Active
+                    Status = TenantStatus.Active,
+                    CompanyDetails = new CompanyDetails
+                    {
+                        CompanyName = "Corporate Parking LLC",
+                        TaxId = "12-3456789",
+                        RegistrationNumber = "LLC-2020-45678",
+                        LegalForm = "LLC",
+                        Industry = "Parking Management",
+                        ContactPersonName = "David Wilson",
+                        ContactPersonTitle = "Facilities Manager",
+                        ContactPersonEmail = "david.wilson@corporate.com",
+                        ContactPersonPhone = "+1 (555) 456-7890"
+                    }
                 },
                 new Tenant
                 {
-                    Name = "TechCorp Solutions",
+                    TenantType = TenantType.Company,
                     Email = "facilities@techcorp.com",
                     Phone = "+1 (555) 567-8901",
                     PropertyId = properties[4].Id, // Office Suite
@@ -180,11 +228,24 @@ namespace RentManager.API.Services
                     LeaseEnd = new DateTime(2025, 9, 30),
                     RentAmount = 8000,
                     Deposit = 16000,
-                    Status = TenantStatus.Active
+                    Status = TenantStatus.Active,
+                    CompanyDetails = new CompanyDetails
+                    {
+                        CompanyName = "TechCorp Solutions",
+                        TaxId = "98-7654321",
+                        RegistrationNumber = "C-2018-98765",
+                        LegalForm = "Corporation",
+                        Industry = "Technology Services",
+                        ContactPersonName = "Jennifer Martinez",
+                        ContactPersonTitle = "Office Manager",
+                        ContactPersonEmail = "jennifer.martinez@techcorp.com",
+                        ContactPersonPhone = "+1 (555) 567-8901",
+                        BillingAddress = "TechCorp Solutions, P.O. Box 12345, Los Angeles, CA 90001"
+                    }
                 },
                 new Tenant
                 {
-                    Name = "Emily Rodriguez",
+                    TenantType = TenantType.Person,
                     Email = "emily.rodriguez@email.com",
                     Phone = "+1 (555) 678-9012",
                     PropertyId = properties[5].Id, // Garden Apartment
@@ -192,11 +253,23 @@ namespace RentManager.API.Services
                     LeaseEnd = new DateTime(2024, 3, 31),
                     RentAmount = 3800,
                     Deposit = 3800,
-                    Status = TenantStatus.Active
+                    Status = TenantStatus.Active,
+                    PersonDetails = new PersonDetails
+                    {
+                        FirstName = "Emily",
+                        LastName = "Rodriguez",
+                        DateOfBirth = new DateTime(1988, 5, 30),
+                        IdNumber = "XXX-XX-3456",
+                        Nationality = "American",
+                        Occupation = "Graphic Designer",
+                        EmergencyContactName = "Carlos Rodriguez",
+                        EmergencyContactPhone = "+1 (555) 678-6666",
+                        EmergencyContactRelation = "Brother"
+                    }
                 },
                 new Tenant
                 {
-                    Name = "Alex Chen",
+                    TenantType = TenantType.Person,
                     Email = "alex.chen@student.ucla.edu",
                     Phone = "+1 (555) 789-0123",
                     PropertyId = properties[6].Id, // Studio Apartment
@@ -204,7 +277,19 @@ namespace RentManager.API.Services
                     LeaseEnd = new DateTime(2024, 6, 30),
                     RentAmount = 1800,
                     Deposit = 1800,
-                    Status = TenantStatus.Active
+                    Status = TenantStatus.Active,
+                    PersonDetails = new PersonDetails
+                    {
+                        FirstName = "Alex",
+                        LastName = "Chen",
+                        DateOfBirth = new DateTime(2001, 12, 5),
+                        IdNumber = "XXX-XX-7890",
+                        Nationality = "American",
+                        Occupation = "Student",
+                        EmergencyContactName = "Ming Chen",
+                        EmergencyContactPhone = "+1 (555) 789-5555",
+                        EmergencyContactRelation = "Parent"
+                    }
                 }
             };
 
