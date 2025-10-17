@@ -128,8 +128,8 @@ namespace RentManager.API.Services
                     Email = "john.smith@email.com",
                     Phone = "+1 (555) 123-4567",
                     PropertyId = properties[0].Id, // Sunset Apartments
-                    LeaseStart = new DateTime(2023, 6, 1),
-                    LeaseEnd = new DateTime(2024, 5, 31),
+                    LeaseStart = new DateTime(2023, 6, 1, 0, 0, 0, DateTimeKind.Utc),
+                    LeaseEnd = new DateTime(2024, 5, 31, 0, 0, 0, DateTimeKind.Utc),
                     RentAmount = 2500,
                     Deposit = 2500,
                     Status = TenantStatus.Active,
@@ -137,7 +137,7 @@ namespace RentManager.API.Services
                     {
                         FirstName = "John",
                         LastName = "Smith",
-                        DateOfBirth = new DateTime(1985, 3, 15),
+                        DateOfBirth = new DateTime(1985, 3, 15, 0, 0, 0, DateTimeKind.Utc),
                         IdNumber = "XXX-XX-1234",
                         Nationality = "American",
                         Occupation = "Software Engineer",
@@ -152,8 +152,8 @@ namespace RentManager.API.Services
                     Email = "sarah.johnson@email.com",
                     Phone = "+1 (555) 234-5678",
                     PropertyId = properties[1].Id, // Downtown Luxury Condo
-                    LeaseStart = new DateTime(2023, 3, 1),
-                    LeaseEnd = new DateTime(2024, 2, 28),
+                    LeaseStart = new DateTime(2023, 3, 1, 0, 0, 0, DateTimeKind.Utc),
+                    LeaseEnd = new DateTime(2024, 2, 28, 0, 0, 0, DateTimeKind.Utc),
                     RentAmount = 3200,
                     Deposit = 3200,
                     Status = TenantStatus.Active,
@@ -161,7 +161,7 @@ namespace RentManager.API.Services
                     {
                         FirstName = "Sarah",
                         LastName = "Johnson",
-                        DateOfBirth = new DateTime(1990, 7, 22),
+                        DateOfBirth = new DateTime(1990, 7, 22, 0, 0, 0, DateTimeKind.Utc),
                         IdNumber = "XXX-XX-5678",
                         Nationality = "American",
                         Occupation = "Marketing Manager",
@@ -176,8 +176,8 @@ namespace RentManager.API.Services
                     Email = "michael.davis@email.com",
                     Phone = "+1 (555) 345-6789",
                     PropertyId = properties[2].Id, // Family House
-                    LeaseStart = new DateTime(2023, 8, 1),
-                    LeaseEnd = new DateTime(2024, 7, 31),
+                    LeaseStart = new DateTime(2023, 8, 1, 0, 0, 0, DateTimeKind.Utc),
+                    LeaseEnd = new DateTime(2024, 7, 31, 0, 0, 0, DateTimeKind.Utc),
                     RentAmount = 4500,
                     Deposit = 4500,
                     Status = TenantStatus.Active,
@@ -185,7 +185,7 @@ namespace RentManager.API.Services
                     {
                         FirstName = "Michael",
                         LastName = "Davis",
-                        DateOfBirth = new DateTime(1982, 11, 8),
+                        DateOfBirth = new DateTime(1982, 11, 8, 0, 0, 0, DateTimeKind.Utc),
                         IdNumber = "XXX-XX-9012",
                         Nationality = "American",
                         Occupation = "School Teacher",
@@ -200,8 +200,8 @@ namespace RentManager.API.Services
                     Email = "parking@corporate.com",
                     Phone = "+1 (555) 456-7890",
                     PropertyId = properties[3].Id, // Parking Space
-                    LeaseStart = new DateTime(2023, 1, 1),
-                    LeaseEnd = new DateTime(2023, 12, 31),
+                    LeaseStart = new DateTime(2023, 1, 1, 0, 0, 0, DateTimeKind.Utc),
+                    LeaseEnd = new DateTime(2023, 12, 31, 0, 0, 0, DateTimeKind.Utc),
                     RentAmount = 150,
                     Deposit = 300,
                     Status = TenantStatus.Active,
@@ -224,8 +224,8 @@ namespace RentManager.API.Services
                     Email = "facilities@techcorp.com",
                     Phone = "+1 (555) 567-8901",
                     PropertyId = properties[4].Id, // Office Suite
-                    LeaseStart = new DateTime(2022, 10, 1),
-                    LeaseEnd = new DateTime(2025, 9, 30),
+                    LeaseStart = new DateTime(2022, 10, 1, 0, 0, 0, DateTimeKind.Utc),
+                    LeaseEnd = new DateTime(2025, 9, 30, 0, 0, 0, DateTimeKind.Utc),
                     RentAmount = 8000,
                     Deposit = 16000,
                     Status = TenantStatus.Active,
@@ -249,8 +249,8 @@ namespace RentManager.API.Services
                     Email = "emily.rodriguez@email.com",
                     Phone = "+1 (555) 678-9012",
                     PropertyId = properties[5].Id, // Garden Apartment
-                    LeaseStart = new DateTime(2023, 4, 1),
-                    LeaseEnd = new DateTime(2024, 3, 31),
+                    LeaseStart = new DateTime(2023, 4, 1, 0, 0, 0, DateTimeKind.Utc),
+                    LeaseEnd = new DateTime(2024, 3, 31, 0, 0, 0, DateTimeKind.Utc),
                     RentAmount = 3800,
                     Deposit = 3800,
                     Status = TenantStatus.Active,
@@ -258,7 +258,7 @@ namespace RentManager.API.Services
                     {
                         FirstName = "Emily",
                         LastName = "Rodriguez",
-                        DateOfBirth = new DateTime(1988, 5, 30),
+                        DateOfBirth = new DateTime(1988, 5, 30, 0, 0, 0, DateTimeKind.Utc),
                         IdNumber = "XXX-XX-3456",
                         Nationality = "American",
                         Occupation = "Graphic Designer",
@@ -273,8 +273,8 @@ namespace RentManager.API.Services
                     Email = "alex.chen@student.ucla.edu",
                     Phone = "+1 (555) 789-0123",
                     PropertyId = properties[6].Id, // Studio Apartment
-                    LeaseStart = new DateTime(2023, 9, 1),
-                    LeaseEnd = new DateTime(2024, 6, 30),
+                    LeaseStart = new DateTime(2023, 9, 1, 0, 0, 0, DateTimeKind.Utc),
+                    LeaseEnd = new DateTime(2024, 6, 30, 0, 0, 0, DateTimeKind.Utc),
                     RentAmount = 1800,
                     Deposit = 1800,
                     Status = TenantStatus.Active,
@@ -282,7 +282,7 @@ namespace RentManager.API.Services
                     {
                         FirstName = "Alex",
                         LastName = "Chen",
-                        DateOfBirth = new DateTime(2001, 12, 5),
+                        DateOfBirth = new DateTime(2001, 12, 5, 0, 0, 0, DateTimeKind.Utc),
                         IdNumber = "XXX-XX-7890",
                         Nationality = "American",
                         Occupation = "Student",
@@ -312,10 +312,10 @@ namespace RentManager.API.Services
                 // Create payment history for each tenant
                 var paymentDates = new[]
                 {
-                    new DateTime(2024, 1, 1),
-                    new DateTime(2023, 12, 1),
-                    new DateTime(2023, 11, 1),
-                    new DateTime(2023, 10, 1)
+                    new DateTime(2024, 1, 1, 0, 0, 0, DateTimeKind.Utc),
+                    new DateTime(2023, 12, 1, 0, 0, 0, DateTimeKind.Utc),
+                    new DateTime(2023, 11, 1, 0, 0, 0, DateTimeKind.Utc),
+                    new DateTime(2023, 10, 1, 0, 0, 0, DateTimeKind.Utc)
                 };
 
                 var methods = new[] { PaymentMethod.BankTransfer, PaymentMethod.Check, PaymentMethod.Online };
@@ -344,7 +344,7 @@ namespace RentManager.API.Services
                 {
                     TenantId = tenants[1].Id,
                     Amount = tenants[1].RentAmount * 0.5m,
-                    Date = new DateTime(2024, 2, 1),
+                    Date = new DateTime(2024, 2, 1, 0, 0, 0, DateTimeKind.Utc),
                     Method = PaymentMethod.Online,
                     Status = PaymentStatus.Completed,
                     Notes = "Partial February payment"
@@ -354,7 +354,7 @@ namespace RentManager.API.Services
                 {
                     TenantId = tenants[2].Id,
                     Amount = tenants[2].RentAmount,
-                    Date = new DateTime(2024, 2, 5),
+                    Date = new DateTime(2024, 2, 5, 0, 0, 0, DateTimeKind.Utc),
                     Method = PaymentMethod.Check,
                     Status = PaymentStatus.Pending,
                     Notes = "February rent payment - check processing"

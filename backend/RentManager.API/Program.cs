@@ -1,6 +1,8 @@
 using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using RentManager.API.Data;
 using RentManager.API.Services;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -15,9 +17,23 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddHealthChecks();
 
+// Configure PostgreSQL Database
+builder.Services.AddDbContext<RentManagerDbContext>(options =>
+    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+
 // Register services
-builder.Services.AddSingleton<IDataService, InMemoryDataService>();
-builder.Services.AddSingleton<IAuthService, AuthService>();
+// Toggle between InMemoryDataService and PostgresDataService based on configuration
+var usePostgres = builder.Configuration.GetValue<bool>("UsePostgres", false);
+if (usePostgres)
+{
+    builder.Services.AddScoped<IDataService, PostgresDataService>();
+}
+else
+{
+    builder.Services.AddSingleton<IDataService, InMemoryDataService>();
+}
+
+builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<SeedDataService>();
 
 // JWT Configuration
