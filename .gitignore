@@ -164,6 +164,10 @@ project.lock.json
 *.pyc
 nupkg/
 
+# Local configuration files with secrets
+appsettings.Local.json
+appsettings.*.local.json
+
 # Visual Studio Code
 .vscode/
 

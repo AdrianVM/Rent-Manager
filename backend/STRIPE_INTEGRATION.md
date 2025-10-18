@@ -35,19 +35,28 @@ You'll need two sets of keys:
 
 ### 3. Configure the Application
 
-Update `appsettings.json` with your Stripe keys:
+Create a local configuration file for your Stripe keys:
 
-```json
-{
-  "Stripe": {
-    "SecretKey": "sk_test_your_stripe_secret_key_here",
-    "PublishableKey": "pk_test_your_stripe_publishable_key_here",
-    "WebhookSecret": "whsec_your_webhook_secret_here",
-    "Currency": "ron",
-    "EnableTestMode": true
-  }
-}
-```
+1. Copy the template file:
+   ```bash
+   cd backend/RentManager.API
+   cp appsettings.Local.json.template appsettings.Local.json
+   ```
+
+2. Edit `appsettings.Local.json` with your actual Stripe keys:
+   ```json
+   {
+     "Stripe": {
+       "SecretKey": "sk_test_your_actual_secret_key",
+       "PublishableKey": "pk_test_your_actual_publishable_key",
+       "WebhookSecret": "whsec_your_webhook_secret_here",
+       "Currency": "ron",
+       "EnableTestMode": true
+     }
+   }
+   ```
+
+**Note**: `appsettings.Local.json` is gitignored and will not be committed to version control. This keeps your Stripe keys secure.
 
 **Important**: Never commit real API keys to source control. Use environment variables or secrets management in production.
 
