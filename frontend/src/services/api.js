@@ -126,6 +126,37 @@ class ApiService {
     });
   }
 
+  async initiatePayment(paymentData) {
+    return this.request('/payments/initiate', {
+      method: 'POST',
+      body: paymentData,
+    });
+  }
+
+  async processPayment(paymentId, transactionData) {
+    return this.request('/payments/process', {
+      method: 'POST',
+      body: {
+        paymentId,
+        ...transactionData,
+      },
+    });
+  }
+
+  async confirmPayment(paymentId, confirmationCode) {
+    return this.request('/payments/confirm', {
+      method: 'POST',
+      body: {
+        paymentId,
+        confirmationCode,
+      },
+    });
+  }
+
+  async getStripeConfig() {
+    return this.request('/payments/stripe-config');
+  }
+
   // Contracts API
   async getContracts() {
     return this.request('/contracts');

@@ -25,6 +25,9 @@ namespace RentManager.API.Services
 
             // Update property owner user with property IDs
             await UpdatePropertyOwnerWithPropertyIds(properties);
+
+            // Update renter user with tenant ID
+            await UpdateRenterWithTenantId(tenants);
         }
 
         private async Task ClearAllDataAsync()
@@ -124,6 +127,7 @@ namespace RentManager.API.Services
             {
                 new Tenant
                 {
+                    Id = "tenant-1", // Fixed ID to match renter user
                     TenantType = TenantType.Person,
                     Email = "john.smith@email.com",
                     Phone = "+1 (555) 123-4567",
@@ -374,6 +378,16 @@ namespace RentManager.API.Services
             if (propertyOwner != null)
             {
                 propertyOwner.PropertyIds = properties.Select(p => p.Id).ToList();
+            }
+        }
+
+        private async Task UpdateRenterWithTenantId(List<Tenant> tenants)
+        {
+            // Get the renter user and assign the first tenant ID to them
+            var renter = await _authService.GetUserByEmailAsync("renter@rentmanager.com");
+            if (renter != null && tenants.Count > 0)
+            {
+                renter.TenantId = tenants[0].Id;
             }
         }
     }

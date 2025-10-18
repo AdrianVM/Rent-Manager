@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import apiService from '../services/api';
+import PaymentModal from '../components/PaymentModal';
 
 function RentPaymentHistory({ payments, currentTenant }) {
   const tenantPayments = payments
@@ -432,16 +433,18 @@ function LeaseInfo({ currentTenant }) {
   );
 }
 
-function NextPaymentDue({ currentTenant, payments }) {
+function NextPaymentDue({ currentTenant, payments, onPaymentSuccess }) {
+  const [showPaymentModal, setShowPaymentModal] = useState(false);
+
   if (!currentTenant) return null;
 
   const currentMonth = new Date().getMonth();
   const currentYear = new Date().getFullYear();
   const currentDate = new Date();
-  
+
   const currentMonthPayments = payments.filter(payment => {
     const paymentDate = new Date(payment.date);
-    return payment.tenantId === currentTenant.id && 
+    return payment.tenantId === currentTenant.id &&
            payment.status === 'completed' &&
            paymentDate.getMonth() === currentMonth &&
            paymentDate.getFullYear() === currentYear;
@@ -450,7 +453,7 @@ function NextPaymentDue({ currentTenant, payments }) {
   const totalPaid = currentMonthPayments.reduce((sum, payment) => sum + payment.amount, 0);
   const amountDue = currentTenant.rentAmount - totalPaid;
   const isOverdue = amountDue > 0 && currentDate.getDate() > 5;
-  
+
   // Calculate next due date (5th of current/next month)
   const nextDueDate = new Date();
   if (amountDue <= 0 || currentDate.getDate() > 5) {
@@ -458,6 +461,13 @@ function NextPaymentDue({ currentTenant, payments }) {
     nextDueDate.setMonth(nextDueDate.getMonth() + 1);
   }
   nextDueDate.setDate(5);
+
+  const handlePaymentSuccess = () => {
+    setShowPaymentModal(false);
+    if (onPaymentSuccess) {
+      onPaymentSuccess();
+    }
+  };
 
   return (
     <div className="card">
@@ -506,8 +516,29 @@ function NextPaymentDue({ currentTenant, payments }) {
               ${totalPaid.toLocaleString()} already paid this month
             </div>
           )}
+          <button
+            onClick={() => setShowPaymentModal(true)}
+            className="btn btn-primary"
+            style={{
+              marginTop: '15px',
+              width: '100%',
+              padding: '12px',
+              fontSize: '1rem',
+              fontWeight: '600'
+            }}
+          >
+            Pay Now
+          </button>
         </div>
       )}
+
+      <PaymentModal
+        isOpen={showPaymentModal}
+        amount={amountDue}
+        tenantId={currentTenant.id}
+        onSuccess={handlePaymentSuccess}
+        onClose={() => setShowPaymentModal(false)}
+      />
     </div>
   );
 }
@@ -895,7 +926,11 @@ function RenterDashboard() {
           </div>
 
           {/* Payment Due Section */}
-          <NextPaymentDue currentTenant={currentTenant} payments={payments} />
+          <NextPaymentDue
+            currentTenant={currentTenant}
+            payments={payments}
+            onPaymentSuccess={loadData}
+          />
 
           {/* Main Content Grid */}
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))', gap: '20px' }}>

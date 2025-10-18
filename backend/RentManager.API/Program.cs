@@ -34,6 +34,13 @@ else
 }
 
 builder.Services.AddScoped<IAuthService, AuthService>();
+
+// Configure Stripe
+builder.Services.Configure<RentManager.API.Services.PaymentGateway.StripeSettings>(
+    builder.Configuration.GetSection("Stripe"));
+builder.Services.AddScoped<RentManager.API.Services.PaymentGateway.IPaymentGateway, RentManager.API.Services.PaymentGateway.StripePaymentGateway>();
+builder.Services.AddScoped<IPaymentService, PaymentService>();
+
 builder.Services.AddScoped<SeedDataService>();
 
 // JWT Configuration
