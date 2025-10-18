@@ -36,15 +36,24 @@ Or build from scratch:
 docker-compose --env-file .env.docker up --build -d
 ```
 
-### 3. Access the Application
+### 3. Run Database Migrations
+
+The database schema needs to be created with Entity Framework migrations:
+
+```bash
+cd backend/RentManager.API
+dotnet ef database update --connection "Host=localhost;Port=5433;Database=rent-manager;Username=postgres;Password=Test123"
+```
+
+### 4. Access the Application
 
 - **Frontend**: http://localhost:3000
 - **Backend API**: http://localhost:5000
-- **PostgreSQL**: localhost:5432
+- **PostgreSQL**: localhost:5433
 
-### 4. Initialize the Database
+### 5. Initialize the Database
 
-The database will be automatically created. To seed demo data, use the backend's seed endpoint:
+To seed demo data, use the backend's seed endpoint:
 
 ```bash
 curl -X POST http://localhost:5000/api/seed
