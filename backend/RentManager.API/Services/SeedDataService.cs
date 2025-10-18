@@ -15,9 +15,6 @@ namespace RentManager.API.Services
 
         public async Task SeedAllDataAsync()
         {
-            // Clear existing data first
-            await ClearAllDataAsync();
-
             // Seed data in order (properties first, then tenants, then payments)
             var properties = await SeedPropertiesAsync();
             var tenants = await SeedTenantsAsync(properties);
@@ -28,12 +25,6 @@ namespace RentManager.API.Services
 
             // Update renter user with tenant ID
             await UpdateRenterWithTenantId(tenants);
-        }
-
-        private async Task ClearAllDataAsync()
-        {
-            // This would need to be implemented in the data service
-            // For now, we'll assume data is cleared when service is restarted
         }
 
         private async Task<List<Property>> SeedPropertiesAsync()

@@ -158,17 +158,17 @@ namespace RentManager.API.Controllers
 
         [HttpPost("logout")]
         [Authorize]
-        public async Task<ActionResult> Logout()
+        public Task<ActionResult> Logout()
         {
             var userId = GetCurrentUserId();
             if (string.IsNullOrEmpty(userId))
             {
-                return Unauthorized();
+                return Task.FromResult<ActionResult>(Unauthorized());
             }
 
             // For now, just return success since we're using stateless JWT tokens
             // In a production app, you might want to maintain a blacklist of invalidated tokens
-            return Ok(new { message = "Logged out successfully" });
+            return Task.FromResult<ActionResult>(Ok(new { message = "Logged out successfully" }));
         }
 
         private string? GetCurrentUserId()
