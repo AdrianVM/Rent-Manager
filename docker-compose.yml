@@ -1,0 +1,74 @@
+version: '3.8'
+
+services:
+  # PostgreSQL Database
+  postgres:
+    image: postgres:16-alpine
+    container_name: rentmanager-postgres
+    environment:
+      POSTGRES_DB: rent-manager
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-Test123}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - rentmanager-network
+
+  # Backend API (.NET)
+  backend:
+    build:
+      context: ./backend
+      dockerfile: RentManager.API/Dockerfile
+    container_name: rentmanager-backend
+    environment:
+      ASPNETCORE_ENVIRONMENT: Production
+      ASPNETCORE_URLS: http://+:8080
+      ConnectionStrings__DefaultConnection: Host=postgres;Port=5432;Database=rent-manager;Username=postgres;Password=${POSTGRES_PASSWORD:-Test123}
+      FrontendUrl: http://localhost:3000
+      UsePostgres: "true"
+      JwtSettings__SecretKey: ${JWT_SECRET_KEY:-your-super-secret-key-that-is-at-least-32-characters-long}
+      JwtSettings__Issuer: RentManager
+      JwtSettings__Audience: RentManager
+      JwtSettings__ExpiryMinutes: "1440"
+      Stripe__SecretKey: ${STRIPE_SECRET_KEY:-}
+      Stripe__PublishableKey: ${STRIPE_PUBLISHABLE_KEY:-}
+      Stripe__WebhookSecret: ${STRIPE_WEBHOOK_SECRET:-}
+    ports:
+      - "5000:8080"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - rentmanager-network
+    restart: unless-stopped
+
+  # Frontend (React)
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        REACT_APP_API_URL: http://localhost:5000/api
+    container_name: rentmanager-frontend
+    ports:
+      - "3000:80"
+    depends_on:
+      - backend
+    networks:
+      - rentmanager-network
+    restart: unless-stopped
+
+networks:
+  rentmanager-network:
+    driver: bridge
+
+volumes:
+  postgres_data:
+    driver: local
