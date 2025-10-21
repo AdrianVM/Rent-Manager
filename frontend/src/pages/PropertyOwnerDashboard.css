@@ -1,0 +1,254 @@
+/* ===== PROPERTY OWNER DASHBOARD - APPLE-INSPIRED DESIGN ===== */
+
+/* Loading/Error States */
+.po-dashboard-loading,
+.po-dashboard-error,
+.po-dashboard-no-data {
+  text-align: center;
+  padding: 60px 40px;
+  color: var(--text-secondary);
+}
+
+.po-dashboard-error {
+  color: #EF4444;
+}
+
+[data-theme="dark"] .po-dashboard-error {
+  color: #ff6b6b;
+}
+
+/* Header */
+.po-dashboard-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+}
+
+.po-dashboard-title {
+  color: var(--primary-color);
+  margin-bottom: 10px;
+}
+
+.po-dashboard-subtitle {
+  color: var(--text-secondary);
+  margin: 0;
+}
+
+/* Stat Numbers with Dynamic Colors */
+.stat-number-warning {
+  color: #D97706 !important;
+}
+
+.stat-number-success {
+  color: #16A34A !important;
+}
+
+.stat-number-danger {
+  color: #DC2626 !important;
+}
+
+.stat-number-large {
+  font-size: 1.5rem !important;
+}
+
+/* Getting Started Card */
+.po-getting-started-card {
+  background: rgba(227, 242, 253, 0.8);
+  border: 1px solid #2196f3;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+}
+
+[data-theme="dark"] .po-getting-started-card {
+  background: rgba(25, 46, 74, 0.6);
+  border: 1px solid rgba(33, 150, 243, 0.3);
+}
+
+.po-getting-started-title {
+  color: #1976d2;
+  margin-bottom: 15px;
+  font-size: 20px;
+  font-weight: 600;
+}
+
+[data-theme="dark"] .po-getting-started-title {
+  color: #64b5f6;
+}
+
+.po-getting-started-text {
+  margin-bottom: 15px;
+  color: #1565c0;
+}
+
+[data-theme="dark"] .po-getting-started-text {
+  color: #90caf9;
+}
+
+.po-getting-started-list {
+  margin-left: 20px;
+  color: #1565c0;
+}
+
+[data-theme="dark"] .po-getting-started-list {
+  color: #90caf9;
+}
+
+.po-getting-started-list-item {
+  margin-bottom: 8px;
+}
+
+/* Dashboard Grid */
+.po-dashboard-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 20px;
+}
+
+/* Section Title */
+.po-section-title {
+  margin-bottom: 20px;
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+/* Outstanding Rent Section */
+.po-outstanding-all-paid {
+  color: #16A34A;
+  text-align: center;
+  padding: 20px;
+}
+
+[data-theme="dark"] .po-outstanding-all-paid {
+  color: #4ade80;
+}
+
+.po-outstanding-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 0;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+[data-theme="dark"] .po-outstanding-item {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.po-outstanding-item.overdue {
+  background: rgba(255, 245, 245, 0.8);
+  margin-left: -20px;
+  margin-right: -20px;
+  padding-left: 20px;
+  padding-right: 20px;
+  border-radius: 8px;
+}
+
+[data-theme="dark"] .po-outstanding-item.overdue {
+  background: rgba(127, 29, 29, 0.2);
+}
+
+.po-outstanding-tenant-name {
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+.po-outstanding-overdue-badge {
+  color: #DC2626;
+  margin-left: 8px;
+  font-weight: 600;
+  font-size: 12px;
+}
+
+.po-outstanding-property-info {
+  font-size: 14px;
+  color: var(--text-secondary);
+}
+
+.po-outstanding-amount {
+  font-weight: 500;
+}
+
+.po-outstanding-amount.overdue {
+  color: #DC2626;
+}
+
+.po-outstanding-amount.pending {
+  color: #D97706;
+}
+
+/* Recent Payments Section */
+.po-recent-payments-empty {
+  color: var(--text-secondary);
+  text-align: center;
+  padding: 20px;
+}
+
+.po-recent-payment-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 0;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+[data-theme="dark"] .po-recent-payment-item {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.po-payment-tenant-name {
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+.po-payment-property-info {
+  font-size: 14px;
+  color: var(--text-secondary);
+}
+
+.po-payment-amount {
+  font-weight: 500;
+  color: #16A34A;
+}
+
+[data-theme="dark"] .po-payment-amount {
+  color: #4ade80;
+}
+
+.po-payment-status {
+  font-size: 12px;
+  color: var(--text-secondary);
+  text-transform: capitalize;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .po-dashboard-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+  }
+
+  .po-dashboard-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .po-outstanding-item.overdue,
+  .po-getting-started-card {
+    margin-left: 0;
+    margin-right: 0;
+  }
+}
+
+@media (max-width: 480px) {
+  .po-dashboard-loading,
+  .po-dashboard-error,
+  .po-dashboard-no-data {
+    padding: 40px 20px;
+  }
+
+  .stat-number-large {
+    font-size: 1.3rem !important;
+  }
+}
