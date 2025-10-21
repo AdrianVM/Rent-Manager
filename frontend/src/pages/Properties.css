@@ -1,0 +1,341 @@
+/* ===== PROPERTIES PAGE - APPLE-INSPIRED DESIGN ===== */
+
+/* Page Header */
+.properties-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+/* Form Actions */
+.property-form-actions {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+  margin-top: 20px;
+}
+
+/* Loading/Error/Empty States */
+.properties-loading,
+.properties-error,
+.properties-empty {
+  text-align: center;
+  padding: 60px 40px;
+}
+
+.properties-loading {
+  color: var(--text-secondary);
+}
+
+.properties-error {
+  color: #EF4444;
+}
+
+[data-theme="dark"] .properties-error {
+  color: #ff6b6b;
+}
+
+.properties-empty {
+  color: var(--text-secondary);
+}
+
+.properties-empty h3 {
+  color: var(--text-primary);
+  margin-bottom: 12px;
+  font-size: 24px;
+  font-weight: 600;
+}
+
+.properties-empty p {
+  margin-bottom: 8px;
+}
+
+/* Property Type Text */
+.property-type-text {
+  text-transform: capitalize;
+}
+
+/* Desktop Action Buttons */
+.properties-action-buttons {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+
+.property-action-btn {
+  padding: 6px 10px;
+  min-width: 36px;
+  font-size: 16px;
+}
+
+/* Mobile Card Actions */
+.properties-mobile-actions {
+  gap: 8px;
+}
+
+.properties-mobile-action-btn {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Contract Upload */
+.contract-upload-hint {
+  color: var(--text-secondary);
+  font-size: 14px;
+}
+
+/* Contracts View Styles */
+.contracts-view-content {
+  padding: 20px;
+}
+
+.contracts-view-loading,
+.contracts-view-empty {
+  text-align: center;
+  padding: 40px;
+}
+
+.contracts-view-loading {
+  color: var(--text-secondary);
+}
+
+.contracts-view-empty {
+  color: var(--text-secondary);
+}
+
+.contracts-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.contract-item {
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  padding: 16px;
+  background: var(--bg-tertiary);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.contract-item:hover {
+  background: var(--bg-secondary);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+[data-theme="dark"] .contract-item:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.contract-item-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 8px;
+}
+
+.contract-item-title {
+  margin: 0 0 4px 0;
+  color: var(--text-primary);
+  font-weight: 600;
+  font-size: 16px;
+}
+
+.contract-item-tenant {
+  font-size: 14px;
+  color: var(--text-secondary);
+}
+
+/* Contract Status Badges */
+.contract-status-badge {
+  display: inline-block;
+  padding: 4px 8px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: capitalize;
+  letter-spacing: 0.02em;
+}
+
+.contract-status-badge.draft {
+  background: rgba(108, 117, 125, 0.15);
+  color: #6c757d;
+  border: 1px solid rgba(108, 117, 125, 0.3);
+}
+
+.contract-status-badge.pending {
+  background: rgba(251, 191, 36, 0.15);
+  color: #D97706;
+  border: 1px solid rgba(251, 191, 36, 0.3);
+}
+
+.contract-status-badge.signed {
+  background: rgba(34, 197, 94, 0.15);
+  color: #16A34A;
+  border: 1px solid rgba(34, 197, 94, 0.3);
+}
+
+.contract-status-badge.terminated {
+  background: rgba(239, 68, 68, 0.15);
+  color: #DC2626;
+  border: 1px solid rgba(239, 68, 68, 0.3);
+}
+
+.contract-item-notes {
+  font-size: 14px;
+  color: var(--text-secondary);
+  margin-bottom: 8px;
+}
+
+.contract-item-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+.contract-actions {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+
+.contract-action-btn {
+  padding: 6px 8px;
+  font-size: 14px;
+  min-width: 32px;
+}
+
+/* Contract Viewer */
+.contract-viewer-modal-content {
+  max-width: 900px;
+  height: 80vh;
+}
+
+.contract-viewer-content {
+  padding: 20px;
+  height: calc(100% - 60px);
+  overflow: auto;
+}
+
+.contract-viewer-loading {
+  text-align: center;
+  padding: 40px;
+  color: var(--text-secondary);
+}
+
+.contract-viewer-iframe {
+  width: 100%;
+  height: 600px;
+  border: none;
+  border-radius: 8px;
+}
+
+.contract-viewer-docx-container {
+  position: relative;
+  width: 100%;
+  height: 600px;
+}
+
+.contract-viewer-docx-loading {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 10;
+  color: var(--text-secondary);
+}
+
+.contract-viewer-docx-content {
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 20px;
+  background: white;
+}
+
+[data-theme="dark"] .contract-viewer-docx-content {
+  background: var(--bg-secondary);
+  border-color: var(--border-color);
+}
+
+.contract-viewer-error,
+.contract-viewer-unsupported {
+  text-align: center;
+  padding: 40px;
+  color: var(--text-secondary);
+}
+
+.contract-viewer-error-icon,
+.contract-viewer-unsupported-icon {
+  font-size: 2rem;
+  margin-bottom: 20px;
+}
+
+/* Contracts View Modal */
+.contracts-view-modal-content {
+  max-width: 800px;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .properties-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+  }
+
+  .contract-item-header {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .contract-item-footer {
+    flex-direction: column;
+    gap: 12px;
+    align-items: flex-start;
+  }
+
+  .contract-actions {
+    width: 100%;
+  }
+
+  .contract-action-btn {
+    flex: 1;
+  }
+
+  .contract-viewer-modal-content {
+    max-width: 100%;
+    height: 90vh;
+  }
+
+  .contract-viewer-iframe,
+  .contract-viewer-docx-container {
+    height: 400px;
+  }
+}
+
+@media (max-width: 480px) {
+  .properties-loading,
+  .properties-error,
+  .properties-empty {
+    padding: 40px 20px;
+  }
+
+  .properties-empty h3 {
+    font-size: 20px;
+  }
+
+  .contracts-view-loading,
+  .contracts-view-empty {
+    padding: 30px 15px;
+  }
+}

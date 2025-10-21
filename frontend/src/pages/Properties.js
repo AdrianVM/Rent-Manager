@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import apiService from '../services/api';
 import { renderAsync } from 'docx-preview';
 import { PrimaryButton, SecondaryButton, DangerButton } from '../components/common';
+import './Properties.css';
 
 function PropertyForm({ property, onSave, onCancel }) {
   const [formData, setFormData] = useState({
@@ -183,7 +184,7 @@ function PropertyForm({ property, onSave, onCancel }) {
               rows="3"
             />
           </div>
-          <div style={{ display: 'flex', gap: '10px', justifyContent: 'flex-end', marginTop: '20px' }}>
+          <div className="property-form-actions">
             <SecondaryButton type="button" onClick={onCancel}>Cancel</SecondaryButton>
             <PrimaryButton type="submit">Save Property</PrimaryButton>
           </div>
@@ -266,7 +267,7 @@ function ContractUpload({ property, tenants, onClose, onUpload }) {
               className="form-control"
               required
             />
-            <small style={{ color: 'var(--text-secondary)' }}>
+            <small className="contract-upload-hint">
               Supported formats: PDF, DOC, DOCX (Max 10MB)
             </small>
           </div>
@@ -308,7 +309,7 @@ function ContractUpload({ property, tenants, onClose, onUpload }) {
               placeholder="Optional notes about the contract"
             />
           </div>
-          <div style={{ display: 'flex', gap: '10px', justifyContent: 'flex-end', marginTop: '20px' }}>
+          <div className="property-form-actions">
             <SecondaryButton type="button" onClick={onClose}>Cancel</SecondaryButton>
             <PrimaryButton type="submit" disabled={uploading}>
               {uploading ? 'Uploading...' : 'Upload Contract'}
@@ -382,8 +383,8 @@ function ContractViewer({ contract, onClose }) {
         console.error('Error rendering DOCX:', error);
         if (docxContainerRef.current) {
           docxContainerRef.current.innerHTML = `
-            <div style="text-align: center; padding: 40px;">
-              <div style="font-size: 2rem; margin-bottom: 20px;">⚠️</div>
+            <div class="contract-viewer-error">
+              <div class="contract-viewer-error-icon">⚠️</div>
               <p>Error loading Word document</p>
               <p>Please download the file to view its contents.</p>
             </div>
@@ -409,42 +410,29 @@ function ContractViewer({ contract, onClose }) {
       return (
         <iframe
           src={url}
-          style={{ width: '100%', height: '600px', border: 'none' }}
+          className="contract-viewer-iframe"
           title="Contract Viewer"
         />
       );
     } else if (mimeType.includes('wordprocessingml') || mimeType.includes('msword') || contractData.fileName.toLowerCase().endsWith('.docx') || contractData.fileName.toLowerCase().endsWith('.doc')) {
       // Handle Word documents
       return (
-        <div style={{ position: 'relative', width: '100%', height: '600px' }}>
+        <div className="contract-viewer-docx-container">
           {renderingDocx && (
-            <div style={{ 
-              position: 'absolute', 
-              top: '50%', 
-              left: '50%', 
-              transform: 'translate(-50%, -50%)', 
-              zIndex: 10 
-            }}>
+            <div className="contract-viewer-docx-loading">
               Rendering Word document...
             </div>
           )}
-          <div 
+          <div
             ref={docxContainerRef}
-            style={{ 
-              width: '100%', 
-              height: '100%', 
-              overflow: 'auto',
-              border: '1px solid #ddd',
-              padding: '20px',
-              backgroundColor: 'white'
-            }}
+            className="contract-viewer-docx-content"
           />
         </div>
       );
     } else {
       return (
-        <div style={{ textAlign: 'center', padding: '40px' }}>
-          <div style={{ fontSize: '2rem', marginBottom: '20px' }}>📄</div>
+        <div className="contract-viewer-unsupported">
+          <div className="contract-viewer-unsupported-icon">📄</div>
           <p>This file format cannot be previewed in the browser.</p>
           <p>File type: {mimeType}</p>
           <p>Please download the file to view its contents.</p>
@@ -455,14 +443,14 @@ function ContractViewer({ contract, onClose }) {
 
   return (
     <div className="modal">
-      <div className="modal-content" style={{ maxWidth: '900px', height: '80vh' }}>
+      <div className="modal-content contract-viewer-modal-content">
         <div className="modal-header">
           <h2>View Contract: {contract.fileName}</h2>
           <button className="close-btn" onClick={onClose}>&times;</button>
         </div>
-        <div style={{ padding: '20px', height: 'calc(100% - 60px)', overflow: 'auto' }}>
+        <div className="contract-viewer-content">
           {loading ? (
-            <div style={{ textAlign: 'center', padding: '40px' }}>
+            <div className="contract-viewer-loading">
               Loading contract...
             </div>
           ) : (
@@ -512,23 +500,8 @@ function ContractsView({ property, onClose, onUpdate }) {
   };
 
   const getStatusBadge = (status) => {
-    const colors = {
-      draft: '#6c757d',
-      pending: '#ffc107',
-      signed: '#28a745',
-      terminated: '#dc3545'
-    };
     return (
-      <span
-        style={{
-          backgroundColor: colors[status] || colors.draft,
-          color: 'white',
-          padding: '4px 8px',
-          borderRadius: '4px',
-          fontSize: '12px',
-          textTransform: 'capitalize'
-        }}
-      >
+      <span className={`contract-status-badge ${status}`}>
         {status}
       </span>
     );
@@ -566,70 +539,65 @@ function ContractsView({ property, onClose, onUpdate }) {
 
   return (
     <div className="modal">
-      <div className="modal-content" style={{ maxWidth: '800px' }}>
+      <div className="modal-content contracts-view-modal-content">
         <div className="modal-header">
           <h2>Contracts for {property.name}</h2>
           <button className="close-btn" onClick={onClose}>&times;</button>
         </div>
-        <div style={{ padding: '20px' }}>
+        <div className="contracts-view-content">
           {loading ? (
-            <div style={{ textAlign: 'center', padding: '40px' }}>
+            <div className="contracts-view-loading">
               Loading contracts...
             </div>
           ) : contracts.length === 0 ? (
-            <div style={{ textAlign: 'center', padding: '40px', color: 'var(--text-secondary)' }}>
+            <div className="contracts-view-empty">
               <p>No contracts uploaded for this property</p>
             </div>
           ) : (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+            <div className="contracts-list">
               {contracts.map(contract => (
                 <div
                   key={contract.id}
-                  style={{
-                    border: '1px solid var(--border-color)',
-                    borderRadius: '8px',
-                    padding: '16px',
-                    backgroundColor: 'var(--bg-tertiary)'
-                  }}
+                  className="contract-item"
                 >
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '8px' }}>
+                  <div className="contract-item-header">
                     <div>
-                      <h4 style={{ margin: '0 0 4px 0', color: 'var(--text-primary)' }}>
+                      <h4 className="contract-item-title">
                         {contract.fileName}
                       </h4>
-                      <div style={{ fontSize: '14px', color: 'var(--text-secondary)' }}>
+                      <div className="contract-item-tenant">
                         Tenant: {getTenantName(contract.tenantId)}
                       </div>
                     </div>
                     {getStatusBadge(contract.status)}
                   </div>
                   {contract.notes && (
-                    <div style={{ fontSize: '14px', color: 'var(--text-secondary)', marginBottom: '8px' }}>
+                    <div className="contract-item-notes">
                       Notes: {contract.notes}
                     </div>
                   )}
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '12px', color: 'var(--text-secondary)' }}>
+                  <div className="contract-item-footer">
                     <span>
                       Uploaded: {new Date(contract.uploadedAt).toLocaleDateString()}
                       {contract.signedAt && ` • Signed: ${new Date(contract.signedAt).toLocaleDateString()}`}
                     </span>
-                    <div style={{ display: 'flex', gap: '6px', alignItems: 'center' }}>
+                    <div className="contract-actions">
                       <SecondaryButton
-                        style={{ padding: '6px 8px', fontSize: '14px', minWidth: '32px' }}
+                        className="contract-action-btn"
                         onClick={() => setViewingContract(contract)}
                         title="View Contract"
                       >
                         👁️
                       </SecondaryButton>
                       <PrimaryButton
-                        style={{ padding: '6px 8px', fontSize: '14px', minWidth: '32px' }}
+                        className="contract-action-btn"
                         onClick={() => handleDownload(contract)}
                         title="Download Contract"
                       >
                         ⬇️
                       </PrimaryButton>
                       <DangerButton
-                        style={{ padding: '6px 8px', fontSize: '14px', minWidth: '32px' }}
+                        className="contract-action-btn"
                         onClick={() => handleDelete(contract.id)}
                         title="Delete Contract"
                       >
@@ -758,7 +726,7 @@ function Properties() {
 
   return (
     <div>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+      <div className="properties-header">
         <h1>Properties</h1>
         <PrimaryButton onClick={handleAddProperty}>
           Add New Property
@@ -767,18 +735,18 @@ function Properties() {
 
       <div className="card">
         {loading ? (
-          <div style={{ textAlign: 'center', padding: '40px', color: '#666' }}>
+          <div className="properties-loading">
             <p>Loading properties...</p>
           </div>
         ) : error ? (
-          <div style={{ textAlign: 'center', padding: '40px', color: '#dc3545' }}>
+          <div className="properties-error">
             <p>{error}</p>
             <PrimaryButton onClick={loadProperties}>
               Try Again
             </PrimaryButton>
           </div>
         ) : properties.length === 0 ? (
-          <div style={{ textAlign: 'center', padding: '40px', color: '#666' }}>
+          <div className="properties-empty">
             <h3>No properties yet</h3>
             <p>Add your first property to get started managing rentals</p>
           </div>
@@ -821,38 +789,38 @@ function Properties() {
                       <tr key={property.id}>
                         <td>{property.name}</td>
                         <td>{property.address}</td>
-                        <td style={{ textTransform: 'capitalize' }}>
+                        <td className="property-type-text">
                           {property.type.replace('_', ' ')}
                         </td>
                         <td>{getPropertyDetails(property)}</td>
                         <td>${property.rentAmount.toLocaleString()}</td>
                         <td>
-                          <div style={{ display: 'flex', gap: '6px', alignItems: 'center' }}>
+                          <div className="properties-action-buttons">
                             <PrimaryButton
                               onClick={() => handleEditProperty(property)}
                               title="Edit Property"
-                              style={{ padding: '6px 10px', minWidth: '36px' }}
+                              className="property-action-btn"
                             >
                               ✏️
                             </PrimaryButton>
                             <SecondaryButton
                               onClick={() => handleUploadContract(property)}
                               title="Upload Contract"
-                              style={{ padding: '6px 10px', minWidth: '36px' }}
+                              className="property-action-btn"
                             >
                               📤
                             </SecondaryButton>
                             <SecondaryButton
                               onClick={() => handleViewContracts(property)}
                               title="View Contracts"
-                              style={{ padding: '6px 10px', minWidth: '36px' }}
+                              className="property-action-btn"
                             >
                               👁️
                             </SecondaryButton>
                             <DangerButton
                               onClick={() => handleDeleteProperty(property.id)}
                               title="Delete Property"
-                              style={{ padding: '6px 10px', minWidth: '36px' }}
+                              className="property-action-btn"
                             >
                               🗑️
                             </DangerButton>
@@ -896,7 +864,7 @@ function Properties() {
                       </div>
                       <div className="card-item-detail">
                         <span className="card-item-label">Type:</span>
-                        <span className="card-item-value" style={{ textTransform: 'capitalize' }}>
+                        <span className="card-item-value property-type-text">
                           {property.type.replace('_', ' ')}
                         </span>
                       </div>
@@ -909,32 +877,32 @@ function Properties() {
                         <span className="card-item-value">${property.rentAmount.toLocaleString()}</span>
                       </div>
                     </div>
-                    <div className="card-item-actions" style={{ gap: '8px' }}>
+                    <div className="card-item-actions properties-mobile-actions">
                       <PrimaryButton
                         onClick={() => handleEditProperty(property)}
                         title="Edit Property"
-                        style={{ flex: '1', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                        className="properties-mobile-action-btn"
                       >
                         ✏️
                       </PrimaryButton>
                       <SecondaryButton
                         onClick={() => handleUploadContract(property)}
                         title="Upload Contract"
-                        style={{ flex: '1', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                        className="properties-mobile-action-btn"
                       >
                         📤
                       </SecondaryButton>
                       <SecondaryButton
                         onClick={() => handleViewContracts(property)}
                         title="View Contracts"
-                        style={{ flex: '1', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                        className="properties-mobile-action-btn"
                       >
                         👁️
                       </SecondaryButton>
                       <DangerButton
                         onClick={() => handleDeleteProperty(property.id)}
                         title="Delete Property"
-                        style={{ flex: '1', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                        className="properties-mobile-action-btn"
                       >
                         🗑️
                       </DangerButton>
