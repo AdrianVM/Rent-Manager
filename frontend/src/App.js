@@ -12,17 +12,24 @@ import {
   Payments
 } from './pages';
 import TenantOnboarding from './pages/TenantOnboarding';
+import AuthCallback from './pages/AuthCallback';
+import Logout from './pages/Logout';
 
 function App() {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Check if user is already authenticated on app load
-    if (authService.isAuthenticated()) {
-      setUser(authService.getCurrentUser());
-    }
-    setLoading(false);
+    // Initialize auth service and check if user is already authenticated
+    const initAuth = async () => {
+      await authService.init();
+      if (authService.isAuthenticated()) {
+        setUser(authService.getCurrentUser());
+      }
+      setLoading(false);
+    };
+
+    initAuth();
   }, []);
 
   const handleLoginSuccess = (userData) => {
@@ -52,6 +59,8 @@ function App() {
   const publicRoutes = (
     <Router>
       <Routes>
+        <Route path="/auth/callback" element={<AuthCallback onAuthSuccess={handleLoginSuccess} />} />
+        <Route path="/logout" element={<Logout />} />
         <Route path="/onboard" element={<TenantOnboarding />} />
         <Route path="*" element={<Login onLoginSuccess={handleLoginSuccess} />} />
       </Routes>
@@ -70,6 +79,12 @@ function App() {
   return (
     <Router>
       <Routes>
+        {/* OAuth callback route */}
+        <Route path="/auth/callback" element={<AuthCallback />} />
+
+        {/* Logout route */}
+        <Route path="/logout" element={<Logout />} />
+
         {/* Public route accessible even when logged in */}
         <Route path="/onboard" element={<TenantOnboarding />} />
 
@@ -79,6 +94,12 @@ function App() {
             <Navigation user={user} onLogout={handleLogout} />
             <div className="container">
               <Routes>
+                {/* Role-based dashboard routes */}
+                <Route path="/admin/dashboard" element={<AdminDashboard />} />
+                <Route path="/owner/dashboard" element={<PropertyOwnerDashboard />} />
+                <Route path="/tenant/dashboard" element={<RenterDashboard />} />
+
+                {/* Default route - redirect to appropriate dashboard */}
                 <Route
                   path="/"
                   element={
@@ -87,6 +108,8 @@ function App() {
                     <PropertyOwnerDashboard />
                   }
                 />
+
+                {/* Feature routes - only accessible by property owners and admins */}
                 {canAccessPropertyOwnerFeatures && (
                   <>
                     <Route path="/properties" element={<Properties />} />

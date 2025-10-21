@@ -1,12 +1,14 @@
+import authService from './authService';
+
 const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:5057/api';
 
 class ApiService {
   async request(endpoint, options = {}) {
     const url = `${API_BASE_URL}${endpoint}`;
-    
-    // Get auth token from localStorage
-    const token = localStorage.getItem('authToken');
-    
+
+    // Get auth token from authService (supports both local and Zitadel auth)
+    const token = authService.getToken();
+
     const config = {
       headers: {
         'Content-Type': 'application/json',
@@ -196,7 +198,14 @@ class ApiService {
 
   async downloadContract(id) {
     const url = `${API_BASE_URL}/contracts/${id}/download`;
-    const response = await fetch(url);
+    const token = authService.getToken();
+
+    const response = await fetch(url, {
+      headers: {
+        ...(token && { 'Authorization': `Bearer ${token}` }),
+      },
+    });
+
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }

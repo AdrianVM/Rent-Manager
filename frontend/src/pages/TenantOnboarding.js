@@ -1,8 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import WizardStepper from '../components/common/WizardStepper';
 import { PrimaryButton, SecondaryButton } from '../components/common';
-import apiService from '../services/api';
 
 const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:5057/api';
 
@@ -34,17 +33,7 @@ function TenantOnboarding() {
 
   const steps = ['Verify Invitation', 'Personal Info', 'Emergency Contact', 'Additional Info', 'Review & Submit'];
 
-  useEffect(() => {
-    if (!token) {
-      setError('Invalid invitation link');
-      setLoading(false);
-      return;
-    }
-
-    loadInvitationData();
-  }, [token]);
-
-  const loadInvitationData = async () => {
+  const loadInvitationData = useCallback(async () => {
     try {
       setLoading(true);
       const response = await fetch(`${API_BASE_URL}/tenantinvitations/token/${token}`);
@@ -70,7 +59,17 @@ function TenantOnboarding() {
       setError(err.message);
       setLoading(false);
     }
-  };
+  }, [token]);
+
+  useEffect(() => {
+    if (!token) {
+      setError('Invalid invitation link');
+      setLoading(false);
+      return;
+    }
+
+    loadInvitationData();
+  }, [token, loadInvitationData]);
 
   const handleInputChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -144,7 +143,7 @@ function TenantOnboarding() {
         throw new Error(errorData.message || 'Failed to complete onboarding');
       }
 
-      const result = await response.json();
+      await response.json();
       alert('Welcome! Your account has been created successfully. Please login with your credentials.');
       navigate('/');
     } catch (err) {

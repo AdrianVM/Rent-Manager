@@ -65,6 +65,19 @@ function Login({ onLoginSuccess }) {
     }));
   };
 
+  const handleZitadelLogin = async () => {
+    setLoading(true);
+    setError('');
+
+    try {
+      await authService.loginWithZitadel();
+      // User will be redirected to Zitadel, then back to callback page
+    } catch (error) {
+      setError(error.message || 'OAuth login failed');
+      setLoading(false);
+    }
+  };
+
   const quickLogin = async (userType) => {
     setLoading(true);
     setError('');
@@ -77,13 +90,13 @@ function Login({ onLoginSuccess }) {
 
     const creds = credentials[userType];
     const result = await authService.login(creds.email, creds.password);
-    
+
     if (result.success) {
       onLoginSuccess(result.user);
     } else {
       setError(result.error || 'Quick login failed');
     }
-    
+
     setLoading(false);
   };
 
@@ -128,43 +141,78 @@ function Login({ onLoginSuccess }) {
         )}
 
         {isLogin ? (
-          <form onSubmit={handleLoginSubmit}>
-            <div style={{ marginBottom: '20px' }}>
-              <label style={{ display: 'block', marginBottom: '5px', color: 'var(--text-primary)' }}>
-                Email
-              </label>
-              <input
-                type="email"
-                name="email"
-                value={loginData.email}
-                onChange={handleLoginChange}
-                className="form-control"
-                required
-                style={{ width: '100%' }}
-              />
-            </div>
-            <div style={{ marginBottom: '30px' }}>
-              <label style={{ display: 'block', marginBottom: '5px', color: 'var(--text-primary)' }}>
-                Password
-              </label>
-              <input
-                type="password"
-                name="password"
-                value={loginData.password}
-                onChange={handleLoginChange}
-                className="form-control"
-                required
-                style={{ width: '100%' }}
-              />
-            </div>
+          <>
+            {/* Zitadel OAuth Login */}
             <PrimaryButton
-              type="submit"
+              onClick={handleZitadelLogin}
               disabled={loading}
-              style={{ width: '100%', marginBottom: '20px' }}
+              style={{
+                width: '100%',
+                marginBottom: '20px',
+                background: '#5469D4',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '10px'
+              }}
             >
-              {loading ? 'Signing in...' : 'Sign In'}
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M12 2L2 7L12 12L22 7L12 2Z" fill="white"/>
+                <path d="M2 17L12 22L22 17" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                <path d="M2 12L12 17L22 12" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+              Sign in with Zitadel
             </PrimaryButton>
-          </form>
+
+            <div style={{
+              display: 'flex',
+              alignItems: 'center',
+              margin: '20px 0',
+              color: 'var(--text-secondary)'
+            }}>
+              <div style={{ flex: 1, height: '1px', backgroundColor: 'var(--border-color)' }} />
+              <span style={{ padding: '0 10px', fontSize: '14px' }}>or</span>
+              <div style={{ flex: 1, height: '1px', backgroundColor: 'var(--border-color)' }} />
+            </div>
+
+            <form onSubmit={handleLoginSubmit}>
+              <div style={{ marginBottom: '20px' }}>
+                <label style={{ display: 'block', marginBottom: '5px', color: 'var(--text-primary)' }}>
+                  Email
+                </label>
+                <input
+                  type="email"
+                  name="email"
+                  value={loginData.email}
+                  onChange={handleLoginChange}
+                  className="form-control"
+                  required
+                  style={{ width: '100%' }}
+                />
+              </div>
+              <div style={{ marginBottom: '30px' }}>
+                <label style={{ display: 'block', marginBottom: '5px', color: 'var(--text-primary)' }}>
+                  Password
+                </label>
+                <input
+                  type="password"
+                  name="password"
+                  value={loginData.password}
+                  onChange={handleLoginChange}
+                  className="form-control"
+                  required
+                  style={{ width: '100%' }}
+                />
+              </div>
+              <PrimaryButton
+                type="submit"
+                disabled={loading}
+                style={{ width: '100%', marginBottom: '20px' }}
+              >
+                {loading ? 'Signing in...' : 'Sign In'}
+              </PrimaryButton>
+            </form>
+          </>
         ) : (
           <form onSubmit={handleRegisterSubmit}>
             <div style={{ marginBottom: '20px' }}>

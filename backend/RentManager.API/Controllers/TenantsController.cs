@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using RentManager.API.Models;
 using RentManager.API.Services;
@@ -6,6 +7,7 @@ namespace RentManager.API.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
+    [Authorize]
     public class TenantsController : ControllerBase
     {
         private readonly IDataService _dataService;

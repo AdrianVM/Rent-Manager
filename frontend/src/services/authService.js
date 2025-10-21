@@ -1,9 +1,12 @@
+import zitadelAuthService from './zitadelAuth';
+
 const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:5057/api';
 
 class AuthService {
   constructor() {
     this.token = localStorage.getItem('authToken');
     this.user = null;
+    this.authMethod = localStorage.getItem('authMethod') || 'local'; // 'local' or 'zitadel'
 
     // Load user data from localStorage if token exists
     if (this.token) {
@@ -16,6 +19,27 @@ class AuthService {
           this.logout(); // Clear invalid data
         }
       }
+    }
+  }
+
+  // Initialize - check for Zitadel auth
+  async init() {
+    try {
+      await zitadelAuthService.init();
+
+      if (zitadelAuthService.isAuthenticated()) {
+        const profile = zitadelAuthService.getProfile();
+        this.user = profile;
+        this.authMethod = 'zitadel';
+        localStorage.setItem('authMethod', 'zitadel');
+        localStorage.setItem('currentUser', JSON.stringify(profile));
+        return profile;
+      }
+
+      return this.user;
+    } catch (error) {
+      console.error('Auth init error:', error);
+      return null;
     }
   }
 
@@ -36,10 +60,12 @@ class AuthService {
       const data = await response.json();
       this.token = data.token;
       this.user = data.user;
-      
+      this.authMethod = 'local';
+
       localStorage.setItem('authToken', this.token);
       localStorage.setItem('currentUser', JSON.stringify(this.user));
-      
+      localStorage.setItem('authMethod', 'local');
+
       return { success: true, user: this.user };
     } catch (error) {
       console.error('Login error:', error);
@@ -69,9 +95,28 @@ class AuthService {
     }
   }
 
+  // Zitadel OAuth login
+  async loginWithZitadel() {
+    try {
+      await zitadelAuthService.signin();
+    } catch (error) {
+      console.error('Zitadel login error:', error);
+      return { success: false, error: error.message };
+    }
+  }
+
   async logout() {
+    // Handle Zitadel logout
+    if (this.authMethod === 'zitadel') {
+      try {
+        await zitadelAuthService.signout();
+      } catch (error) {
+        console.error('Zitadel logout error:', error);
+      }
+    }
+
     // Call backend logout endpoint if we have a token
-    if (this.token) {
+    if (this.token && this.authMethod === 'local') {
       try {
         await fetch(`${API_BASE_URL}/auth/logout`, {
           method: 'POST',
@@ -86,16 +131,31 @@ class AuthService {
     // Clear local storage and memory
     this.token = null;
     this.user = null;
+    this.authMethod = 'local';
     localStorage.removeItem('authToken');
     localStorage.removeItem('currentUser');
+    localStorage.removeItem('authMethod');
     localStorage.removeItem('rentManager_userRole'); // Remove old role storage
   }
 
   isAuthenticated() {
+    if (this.authMethod === 'zitadel') {
+      return zitadelAuthService.isAuthenticated();
+    }
     return !!this.token && !!this.user;
   }
 
   getCurrentUser() {
+    // Check if using Zitadel auth
+    if (zitadelAuthService.isAuthenticated()) {
+      this.authMethod = 'zitadel';
+      return zitadelAuthService.getProfile();
+    }
+
+    if (this.authMethod === 'zitadel') {
+      return zitadelAuthService.getProfile();
+    }
+
     if (!this.user && this.token) {
       // Try to get user from localStorage if not in memory
       const storedUser = localStorage.getItem('currentUser');
@@ -107,6 +167,16 @@ class AuthService {
   }
 
   getToken() {
+    // Check if using Zitadel auth
+    if (zitadelAuthService.isAuthenticated()) {
+      this.authMethod = 'zitadel';
+      return zitadelAuthService.getAccessToken();
+    }
+
+    if (this.authMethod === 'zitadel') {
+      return zitadelAuthService.getAccessToken();
+    }
+
     return this.token;
   }
 
@@ -129,11 +199,45 @@ class AuthService {
 
   // Get authorization headers for API calls
   getAuthHeaders() {
+    if (this.authMethod === 'zitadel') {
+      return zitadelAuthService.getAuthHeaders();
+    }
+
     return {
       'Authorization': `Bearer ${this.token}`,
       'Content-Type': 'application/json',
     };
   }
+
+  // Get auth method
+  getAuthMethod() {
+    return this.authMethod;
+  }
+
+  // Get dashboard path based on user role
+  getDashboardPath() {
+    if (this.authMethod === 'zitadel') {
+      return zitadelAuthService.getDashboardPath();
+    }
+
+    // For local auth, determine dashboard based on user role
+    const user = this.getCurrentUser();
+    if (!user || !user.role) {
+      return '/';
+    }
+
+    switch (user.role) {
+      case 'Admin':
+        return '/admin/dashboard';
+      case 'PropertyOwner':
+        return '/owner/dashboard';
+      case 'Renter':
+        return '/tenant/dashboard';
+      default:
+        return '/';
+    }
+  }
 }
 
-export default new AuthService();
+const authServiceInstance = new AuthService();
+export default authServiceInstance;
