@@ -1,0 +1,164 @@
+/* ===== TENANTS PAGE - APPLE-INSPIRED DESIGN ===== */
+
+/* Page Header */
+.tenants-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.tenants-header-actions {
+  display: flex;
+  gap: 10px;
+}
+
+/* Tenant Form Modal */
+.tenant-form-modal-content {
+  max-width: 800px;
+}
+
+.tenant-form-section-title {
+  margin-top: 20px;
+  margin-bottom: 15px;
+  color: var(--text-primary);
+  font-size: 20px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+
+.tenant-form-actions {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+  margin-top: 20px;
+}
+
+/* Status Badge */
+.status-badge {
+  display: inline-block;
+  padding: 4px 8px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: capitalize;
+  letter-spacing: 0.02em;
+}
+
+.status-badge.active {
+  background: rgba(34, 197, 94, 0.15);
+  color: #16A34A;
+  border: 1px solid rgba(34, 197, 94, 0.3);
+}
+
+.status-badge.inactive {
+  background: rgba(113, 128, 150, 0.15);
+  color: #475569;
+  border: 1px solid rgba(113, 128, 150, 0.3);
+}
+
+.status-badge.pending {
+  background: rgba(251, 191, 36, 0.15);
+  color: #D97706;
+  border: 1px solid rgba(251, 191, 36, 0.3);
+}
+
+/* Loading States */
+.tenants-loading,
+.tenants-error,
+.tenants-empty {
+  text-align: center;
+  padding: 60px 40px;
+}
+
+.tenants-loading {
+  color: var(--text-secondary);
+}
+
+.tenants-error {
+  color: #EF4444;
+}
+
+[data-theme="dark"] .tenants-error {
+  color: #ff6b6b;
+}
+
+.tenants-empty {
+  color: var(--text-secondary);
+}
+
+.tenants-empty h3 {
+  color: var(--text-primary);
+  margin-bottom: 12px;
+  font-size: 24px;
+  font-weight: 600;
+}
+
+.tenants-empty p {
+  margin-bottom: 8px;
+}
+
+.tenants-empty-warning {
+  color: #EF4444;
+  margin-top: 10px;
+  font-weight: 500;
+}
+
+[data-theme="dark"] .tenants-empty-warning {
+  color: #ff6b6b;
+}
+
+/* Action Buttons in Table */
+.tenants-action-buttons {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+
+.tenant-action-btn {
+  padding: 6px 10px;
+  min-width: 36px;
+  font-size: 16px;
+}
+
+/* Mobile Card Actions */
+.tenants-mobile-actions {
+  gap: 8px;
+}
+
+.tenants-mobile-action-btn {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .tenants-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+  }
+
+  .tenants-header-actions {
+    width: 100%;
+    flex-direction: column;
+  }
+
+  .tenant-form-modal-content {
+    max-width: 95%;
+  }
+}
+
+@media (max-width: 480px) {
+  .tenants-loading,
+  .tenants-error,
+  .tenants-empty {
+    padding: 40px 20px;
+  }
+
+  .tenants-empty h3 {
+    font-size: 20px;
+  }
+}

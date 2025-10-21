@@ -5,6 +5,7 @@ import { PrimaryButton, SecondaryButton, DangerButton } from '../components/comm
 import TenantTypeSelector from '../components/tenants/TenantTypeSelector';
 import PersonTenantForm from '../components/tenants/PersonTenantForm';
 import CompanyTenantForm from '../components/tenants/CompanyTenantForm';
+import './Tenants.css';
 
 function TenantForm({ tenant, onSave, onCancel, properties }) {
   const [tenantType, setTenantType] = useState(tenant?.tenantType?.toLowerCase() || 'person');
@@ -91,7 +92,7 @@ function TenantForm({ tenant, onSave, onCancel, properties }) {
 
   return (
     <div className="modal">
-      <div className="modal-content" style={{ maxWidth: '800px' }}>
+      <div className="modal-content tenant-form-modal-content">
         <div className="modal-header">
           <h2>{tenant ? 'Edit Tenant' : 'Add New Tenant'}</h2>
           <button className="close-btn" onClick={onCancel}>&times;</button>
@@ -107,7 +108,7 @@ function TenantForm({ tenant, onSave, onCancel, properties }) {
             <CompanyTenantForm data={companyDetails} onChange={setCompanyDetails} />
           )}
 
-          <h3 style={{ marginTop: '20px', marginBottom: '15px', color: 'var(--text-primary)' }}>
+          <h3 className="tenant-form-section-title">
             Lease Information
           </h3>
 
@@ -211,7 +212,7 @@ function TenantForm({ tenant, onSave, onCancel, properties }) {
               <option value="pending">Pending</option>
             </select>
           </div>
-          <div style={{ display: 'flex', gap: '10px', justifyContent: 'flex-end', marginTop: '20px' }}>
+          <div className="tenant-form-actions">
             <SecondaryButton type="button" onClick={onCancel}>Cancel</SecondaryButton>
             <PrimaryButton type="submit">Save Tenant</PrimaryButton>
           </div>
@@ -305,22 +306,8 @@ function Tenants() {
   };
 
   const getStatusBadge = (status) => {
-    const colors = {
-      active: '#28a745',
-      inactive: '#6c757d',
-      pending: '#ffc107'
-    };
     return (
-      <span
-        style={{
-          backgroundColor: colors[status] || colors.inactive,
-          color: 'white',
-          padding: '4px 8px',
-          borderRadius: '4px',
-          fontSize: '12px',
-          textTransform: 'capitalize'
-        }}
-      >
+      <span className={`status-badge ${status}`}>
         {status}
       </span>
     );
@@ -328,9 +315,9 @@ function Tenants() {
 
   return (
     <div>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+      <div className="tenants-header">
         <h1>Tenants</h1>
-        <div style={{ display: 'flex', gap: '10px' }}>
+        <div className="tenants-header-actions">
           <SecondaryButton onClick={() => setShowInviteModal(true)}>
             📧 Invite Tenant
           </SecondaryButton>
@@ -342,22 +329,22 @@ function Tenants() {
 
       <div className="card">
         {loading ? (
-          <div style={{ textAlign: 'center', padding: '40px', color: '#666' }}>
+          <div className="tenants-loading">
             <p>Loading tenants...</p>
           </div>
         ) : error ? (
-          <div style={{ textAlign: 'center', padding: '40px', color: '#dc3545' }}>
+          <div className="tenants-error">
             <p>{error}</p>
             <PrimaryButton onClick={loadData}>
               Try Again
             </PrimaryButton>
           </div>
         ) : tenants.length === 0 ? (
-          <div style={{ textAlign: 'center', padding: '40px', color: '#666' }}>
+          <div className="tenants-empty">
             <h3>No tenants yet</h3>
             <p>Add your first tenant to start tracking rent payments</p>
             {properties.length === 0 && (
-              <p style={{ color: '#dc3545', marginTop: '10px' }}>
+              <p className="tenants-empty-warning">
                 Note: You need to add properties first before adding tenants
               </p>
             )}
@@ -388,18 +375,18 @@ function Tenants() {
                       <td>${tenant.rentAmount.toLocaleString()}</td>
                       <td>{getStatusBadge(tenant.status)}</td>
                       <td>
-                        <div style={{ display: 'flex', gap: '6px', alignItems: 'center' }}>
+                        <div className="tenants-action-buttons">
                           <PrimaryButton
                             onClick={() => handleEditTenant(tenant)}
                             title="Edit Tenant"
-                            style={{ padding: '6px 10px', minWidth: '36px' }}
+                            className="tenant-action-btn"
                           >
                             ✏️
                           </PrimaryButton>
                           <DangerButton
                             onClick={() => handleDeleteTenant(tenant.id)}
                             title="Delete Tenant"
-                            style={{ padding: '6px 10px', minWidth: '36px' }}
+                            className="tenant-action-btn"
                           >
                             🗑️
                           </DangerButton>
@@ -438,18 +425,18 @@ function Tenants() {
                       <span className="card-item-value">{getStatusBadge(tenant.status)}</span>
                     </div>
                   </div>
-                  <div className="card-item-actions" style={{ gap: '8px' }}>
+                  <div className="card-item-actions tenants-mobile-actions">
                     <PrimaryButton
                       onClick={() => handleEditTenant(tenant)}
                       title="Edit Tenant"
-                      style={{ flex: '1', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                      className="tenants-mobile-action-btn"
                     >
                       ✏️
                     </PrimaryButton>
                     <DangerButton
                       onClick={() => handleDeleteTenant(tenant.id)}
                       title="Delete Tenant"
-                      style={{ flex: '1', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                      className="tenants-mobile-action-btn"
                     >
                       🗑️
                     </DangerButton>
