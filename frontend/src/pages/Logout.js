@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import './Logout.css';
 
 function Logout() {
   const navigate = useNavigate();
@@ -11,30 +12,44 @@ function Logout() {
     // Redirect to login after a short delay
     const timer = setTimeout(() => {
       navigate('/login', { replace: true });
-    }, 2000);
+    }, 3000);
 
     return () => clearTimeout(timer);
   }, [navigate]);
 
   return (
-    <div style={{
-      display: 'flex',
-      justifyContent: 'center',
-      alignItems: 'center',
-      minHeight: '100vh',
-      backgroundColor: 'var(--bg-secondary)'
-    }}>
-      <div className="card" style={{ textAlign: 'center', maxWidth: '400px' }}>
-        <div style={{ fontSize: '48px', marginBottom: '20px' }}>👋</div>
-        <h2 style={{ color: 'var(--primary-color)', marginBottom: '15px' }}>
-          Logged Out Successfully
-        </h2>
-        <p style={{ color: 'var(--text-secondary)', marginBottom: '20px' }}>
-          You have been logged out of your account.
+    <div className="logout-container">
+      {/* Animated Background Orbs */}
+      <div className="logout-background-orb logout-orb-1"></div>
+      <div className="logout-background-orb logout-orb-2"></div>
+      <div className="logout-background-orb logout-orb-3"></div>
+
+      {/* Main Card */}
+      <div className="logout-card">
+        {/* Success Checkmark */}
+        <div className="logout-checkmark-container">
+          <span className="logout-checkmark">✓</span>
+        </div>
+
+        {/* Title */}
+        <h1 className="logout-title">Successfully Logged Out</h1>
+
+        {/* Message */}
+        <p className="logout-message">
+          Your session has been securely terminated. Thank you for using Rent Manager.
         </p>
-        <p style={{ color: 'var(--text-secondary)', fontSize: '14px' }}>
-          Redirecting to login...
-        </p>
+
+        {/* Security Badge */}
+        <div className="logout-security-badge">
+          <span className="logout-security-icon">🔒</span>
+          <span>Session data cleared</span>
+        </div>
+
+        {/* Redirect Notice */}
+        <div className="logout-redirect-text">
+          <div className="logout-spinner"></div>
+          <span>Redirecting to login page...</span>
+        </div>
       </div>
     </div>
   );

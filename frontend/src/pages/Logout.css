@@ -1,0 +1,395 @@
+/* Logout Page Styles - Apple-inspired Design */
+
+.logout-container {
+  position: relative;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  background: linear-gradient(135deg, #1F4E79 0%, #1CA9A3 100%);
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+/* Animated Background Orbs */
+.logout-background-orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(80px);
+  opacity: 0.4;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.logout-orb-1 {
+  width: 500px;
+  height: 500px;
+  background: radial-gradient(circle, rgba(242, 140, 40, 0.6) 0%, rgba(242, 140, 40, 0) 70%);
+  top: -10%;
+  left: -10%;
+  animation: floatOrb1 20s ease-in-out infinite;
+}
+
+.logout-orb-2 {
+  width: 400px;
+  height: 400px;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.4) 0%, rgba(255, 255, 255, 0) 70%);
+  bottom: -10%;
+  right: -10%;
+  animation: floatOrb2 15s ease-in-out infinite;
+}
+
+.logout-orb-3 {
+  width: 350px;
+  height: 350px;
+  background: radial-gradient(circle, rgba(28, 169, 163, 0.5) 0%, rgba(28, 169, 163, 0) 70%);
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  animation: floatOrb3 18s ease-in-out infinite;
+}
+
+/* Card Container */
+.logout-card {
+  position: relative;
+  z-index: 2;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-radius: 24px;
+  padding: 60px 50px;
+  box-shadow:
+    0 8px 32px rgba(31, 78, 121, 0.15),
+    0 2px 8px rgba(0, 0, 0, 0.08),
+    inset 0 1px 1px rgba(255, 255, 255, 0.9);
+  max-width: 480px;
+  width: 90%;
+  text-align: center;
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  animation: cardFadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  opacity: 0;
+  transform: translateY(30px);
+}
+
+/* Icon Container */
+.logout-icon-container {
+  margin-bottom: 32px;
+  animation: iconFadeIn 1s ease-out 0.3s forwards;
+  opacity: 0;
+}
+
+.logout-wave-icon {
+  font-size: 80px;
+  display: inline-block;
+  animation: waveAnimation 2.5s ease-in-out infinite;
+  transform-origin: 70% 70%;
+}
+
+/* Typography */
+.logout-title {
+  color: #1F4E79;
+  font-size: 32px;
+  font-weight: 700;
+  margin-bottom: 16px;
+  letter-spacing: -0.5px;
+  animation: textFadeIn 0.8s ease-out 0.5s forwards;
+  opacity: 0;
+}
+
+.logout-message {
+  color: #4A5568;
+  font-size: 16px;
+  line-height: 1.6;
+  margin-bottom: 32px;
+  font-weight: 400;
+  animation: textFadeIn 0.8s ease-out 0.6s forwards;
+  opacity: 0;
+}
+
+.logout-redirect-text {
+  color: #718096;
+  font-size: 14px;
+  margin-top: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  animation: textFadeIn 0.8s ease-out 0.7s forwards;
+  opacity: 0;
+}
+
+/* Loading Spinner */
+.logout-spinner {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(28, 169, 163, 0.2);
+  border-top-color: #1CA9A3;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+/* Success Checkmark */
+.logout-checkmark-container {
+  width: 80px;
+  height: 80px;
+  margin: 0 auto 24px;
+  background: linear-gradient(135deg, #1CA9A3 0%, #16857F 100%);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow:
+    0 4px 16px rgba(28, 169, 163, 0.3),
+    0 2px 4px rgba(0, 0, 0, 0.1);
+  animation: checkmarkBounce 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55) 0.4s forwards;
+  opacity: 0;
+  transform: scale(0);
+}
+
+.logout-checkmark {
+  color: white;
+  font-size: 42px;
+}
+
+/* Security Badge */
+.logout-security-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(28, 169, 163, 0.1);
+  border: 1px solid rgba(28, 169, 163, 0.3);
+  border-radius: 12px;
+  padding: 12px 20px;
+  margin-top: 24px;
+  color: #1F4E79;
+  font-size: 13px;
+  font-weight: 500;
+  animation: badgeFadeIn 0.8s ease-out 0.8s forwards;
+  opacity: 0;
+}
+
+.logout-security-icon {
+  font-size: 16px;
+}
+
+/* Animations */
+@keyframes cardFadeInUp {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes iconFadeIn {
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes textFadeIn {
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes badgeFadeIn {
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes waveAnimation {
+  0%, 100% {
+    transform: rotate(0deg);
+  }
+  10%, 30% {
+    transform: rotate(14deg);
+  }
+  20% {
+    transform: rotate(-8deg);
+  }
+  40% {
+    transform: rotate(14deg);
+  }
+  50% {
+    transform: rotate(0deg);
+  }
+}
+
+@keyframes checkmarkBounce {
+  0% {
+    opacity: 0;
+    transform: scale(0);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes floatOrb1 {
+  0%, 100% {
+    transform: translate(0, 0) scale(1);
+  }
+  33% {
+    transform: translate(50px, -50px) scale(1.1);
+  }
+  66% {
+    transform: translate(-30px, 30px) scale(0.9);
+  }
+}
+
+@keyframes floatOrb2 {
+  0%, 100% {
+    transform: translate(0, 0) scale(1);
+  }
+  33% {
+    transform: translate(-60px, 40px) scale(1.15);
+  }
+  66% {
+    transform: translate(40px, -40px) scale(0.95);
+  }
+}
+
+@keyframes floatOrb3 {
+  0%, 100% {
+    transform: translate(-50%, -50%) scale(1);
+  }
+  33% {
+    transform: translate(-60%, -40%) scale(1.05);
+  }
+  66% {
+    transform: translate(-40%, -60%) scale(0.95);
+  }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .logout-card {
+    padding: 48px 32px;
+    border-radius: 20px;
+    max-width: 90%;
+  }
+
+  .logout-title {
+    font-size: 28px;
+  }
+
+  .logout-message {
+    font-size: 15px;
+  }
+
+  .logout-wave-icon {
+    font-size: 64px;
+  }
+
+  .logout-checkmark-container {
+    width: 64px;
+    height: 64px;
+  }
+
+  .logout-checkmark {
+    font-size: 36px;
+  }
+
+  .logout-orb-1,
+  .logout-orb-2,
+  .logout-orb-3 {
+    width: 250px;
+    height: 250px;
+  }
+}
+
+@media (max-width: 480px) {
+  .logout-card {
+    padding: 40px 24px;
+    border-radius: 16px;
+  }
+
+  .logout-title {
+    font-size: 24px;
+  }
+
+  .logout-message {
+    font-size: 14px;
+    margin-bottom: 24px;
+  }
+
+  .logout-wave-icon {
+    font-size: 56px;
+  }
+
+  .logout-security-badge {
+    font-size: 12px;
+    padding: 10px 16px;
+  }
+}
+
+/* Dark Mode Support */
+@media (prefers-color-scheme: dark) {
+  .logout-card {
+    background: rgba(26, 32, 44, 0.95);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .logout-title {
+    color: #E2E8F0;
+  }
+
+  .logout-message {
+    color: #CBD5E0;
+  }
+
+  .logout-redirect-text {
+    color: #A0AEC0;
+  }
+
+  .logout-security-badge {
+    background: rgba(28, 169, 163, 0.15);
+    border: 1px solid rgba(28, 169, 163, 0.3);
+    color: #9AE6E1;
+  }
+}
+
+/* Accessibility */
+@media (prefers-reduced-motion: reduce) {
+  .logout-card,
+  .logout-icon-container,
+  .logout-title,
+  .logout-message,
+  .logout-redirect-text,
+  .logout-security-badge,
+  .logout-checkmark-container {
+    animation: none;
+    opacity: 1;
+    transform: none;
+  }
+
+  .logout-wave-icon {
+    animation: none;
+  }
+
+  .logout-background-orb {
+    animation: none;
+  }
+
+  .logout-spinner {
+    animation: spin 0.8s linear infinite;
+  }
+}
+
+/* Focus Visible for Accessibility */
+*:focus-visible {
+  outline: 2px solid #1CA9A3;
+  outline-offset: 2px;
+}
