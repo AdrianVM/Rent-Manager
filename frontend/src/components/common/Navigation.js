@@ -1,13 +1,15 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useTheme } from '../../contexts/ThemeContext';
+import RoleSwitcher from './RoleSwitcher';
 
-function Navigation({ user, onLogout }) {
+function Navigation({ user, availableRoles, currentRole, onRoleChange, onLogout }) {
   const location = useLocation();
   const { theme, toggleTheme } = useTheme();
   const [mobileMenuOpen, setMobileMenuOpen] = React.useState(false);
 
-  const canAccessPropertyOwnerFeatures = user?.role?.toLowerCase() === 'admin' || user?.role?.toLowerCase() === 'propertyowner';
+  const activeRole = currentRole || user?.role;
+  const canAccessPropertyOwnerFeatures = activeRole?.toLowerCase() === 'admin' || activeRole?.toLowerCase() === 'propertyowner';
 
   return (
     <nav className="nav">
@@ -27,9 +29,18 @@ function Navigation({ user, onLogout }) {
                   <li><Link to="/payments" className={location.pathname === '/payments' ? 'active' : ''}>Payments</Link></li>
                 </>
               )}
+              {availableRoles && availableRoles.length > 1 && (
+                <li>
+                  <RoleSwitcher
+                    availableRoles={availableRoles}
+                    currentRole={activeRole}
+                    onRoleChange={onRoleChange}
+                  />
+                </li>
+              )}
               <li className="nav-user-info">
                 <span className="nav-user-name">
-                  {user?.name} ({user?.role})
+                  {user?.name}
                 </span>
                 <button
                   onClick={onLogout}
@@ -69,9 +80,21 @@ function Navigation({ user, onLogout }) {
               )}
               <li>
                 <div className="nav-user-info-mobile">
-                  {user?.name} ({user?.role})
+                  {user?.name}
                 </div>
               </li>
+              {availableRoles && availableRoles.length > 1 && (
+                <li>
+                  <RoleSwitcher
+                    availableRoles={availableRoles}
+                    currentRole={activeRole}
+                    onRoleChange={(role) => {
+                      onRoleChange(role);
+                      setMobileMenuOpen(false);
+                    }}
+                  />
+                </li>
+              )}
               <li>
                 <button
                   onClick={() => {

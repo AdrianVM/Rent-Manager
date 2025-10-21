@@ -171,9 +171,9 @@ class ZitadelAuthService {
     };
   }
 
-  // Determine user role (you can customize this based on your Zitadel claims)
-  getUserRole() {
-    if (!this.user) return null;
+  // Get all user roles from Zitadel claims
+  getAllUserRoles() {
+    if (!this.user) return [];
 
     // Check for roles in different claim formats
     let roles = this.user.profile.roles ||
@@ -195,16 +195,36 @@ class ZitadelAuthService {
     }
 
     // Map Zitadel roles to your app roles
-    // Expected Zitadel roles: admin, property-owner, tenant
-    if (roles.includes('admin') || roles.includes('Admin')) {
+    const mappedRoles = [];
+
+    if (roles.some(r => r.toLowerCase() === 'admin')) {
+      mappedRoles.push('Admin');
+    }
+    if (roles.some(r => r.toLowerCase() === 'property-owner' || r.toLowerCase() === 'propertyowner')) {
+      mappedRoles.push('PropertyOwner');
+    }
+    if (roles.some(r => r.toLowerCase() === 'tenant' || r.toLowerCase() === 'renter')) {
+      mappedRoles.push('Renter');
+    }
+
+    // Default to Renter if no role is specified
+    return mappedRoles.length > 0 ? mappedRoles : ['Renter'];
+  }
+
+  // Determine user role (you can customize this based on your Zitadel claims)
+  // Returns the primary role or first available role
+  getUserRole() {
+    const allRoles = this.getAllUserRoles();
+
+    // Priority: Admin > PropertyOwner > Renter
+    if (allRoles.includes('Admin')) {
       return 'Admin';
-    } else if (roles.includes('property-owner') || roles.includes('PropertyOwner')) {
+    } else if (allRoles.includes('PropertyOwner')) {
       return 'PropertyOwner';
-    } else if (roles.includes('tenant') || roles.includes('Renter')) {
+    } else if (allRoles.includes('Renter')) {
       return 'Renter';
     } else {
-      // Default to Renter if no role is specified
-      return 'Renter';
+      return allRoles[0] || 'Renter';
     }
   }
 

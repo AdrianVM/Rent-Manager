@@ -65,9 +65,20 @@ class AuthService {
     return zitadelAuthService.getAccessToken();
   }
 
+  getAllUserRoles() {
+    if (zitadelAuthService.isAuthenticated()) {
+      return zitadelAuthService.getAllUserRoles();
+    }
+    return [];
+  }
+
+  hasMultipleRoles() {
+    return this.getAllUserRoles().length > 1;
+  }
+
   hasRole(role) {
-    const user = this.getCurrentUser();
-    return user?.role?.toLowerCase() === role.toLowerCase();
+    const allRoles = this.getAllUserRoles();
+    return allRoles.some(r => r.toLowerCase() === role.toLowerCase());
   }
 
   canAccessAdminFeatures() {

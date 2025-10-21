@@ -18,13 +18,27 @@ import Logout from './pages/Logout';
 function App() {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [availableRoles, setAvailableRoles] = useState([]);
+  const [currentRole, setCurrentRole] = useState(null);
 
   useEffect(() => {
     // Initialize auth service and check if user is already authenticated
     const initAuth = async () => {
       await authService.init();
       if (authService.isAuthenticated()) {
-        setUser(authService.getCurrentUser());
+        const userData = authService.getCurrentUser();
+        const roles = authService.getAllUserRoles();
+        setUser(userData);
+        setAvailableRoles(roles);
+
+        // Check if there's a saved active role preference
+        const savedRole = localStorage.getItem('activeRole');
+        if (savedRole && roles.includes(savedRole)) {
+          setCurrentRole(savedRole);
+        } else {
+          // Default to user's primary role
+          setCurrentRole(userData.role);
+        }
       }
       setLoading(false);
     };
@@ -33,12 +47,24 @@ function App() {
   }, []);
 
   const handleLoginSuccess = (userData) => {
+    const roles = authService.getAllUserRoles();
     setUser(userData);
+    setAvailableRoles(roles);
+    setCurrentRole(userData.role);
+    localStorage.setItem('activeRole', userData.role);
   };
 
   const handleLogout = async () => {
     await authService.logout();
     setUser(null);
+    setAvailableRoles([]);
+    setCurrentRole(null);
+    localStorage.removeItem('activeRole');
+  };
+
+  const handleRoleChange = (newRole) => {
+    setCurrentRole(newRole);
+    localStorage.setItem('activeRole', newRole);
   };
 
   if (loading) {
@@ -65,10 +91,11 @@ function App() {
     return publicRoutes;
   }
 
-  const isRenter = user?.role?.toLowerCase() === 'renter';
-  const isAdmin = user?.role?.toLowerCase() === 'admin';
-  const canAccessPropertyOwnerFeatures = isAdmin || user?.role?.toLowerCase() === 'propertyowner';
-
+  const activeRole = currentRole || user?.role;
+  const isRenter = activeRole?.toLowerCase() === 'renter';
+  const isAdmin = activeRole?.toLowerCase() === 'admin';
+  const isPropertyOwner = activeRole?.toLowerCase() === 'propertyowner';
+  const canAccessPropertyOwnerFeatures = isAdmin || isPropertyOwner;
 
   return (
     <Router>
@@ -85,7 +112,13 @@ function App() {
         {/* Authenticated routes */}
         <Route path="/*" element={
           <div className="App">
-            <Navigation user={user} onLogout={handleLogout} />
+            <Navigation
+              user={user}
+              availableRoles={availableRoles}
+              currentRole={activeRole}
+              onRoleChange={handleRoleChange}
+              onLogout={handleLogout}
+            />
             <div className="container">
               <Routes>
                 {/* Role-based dashboard routes */}
@@ -93,13 +126,14 @@ function App() {
                 <Route path="/owner/dashboard" element={<PropertyOwnerDashboard />} />
                 <Route path="/tenant/dashboard" element={<RenterDashboard />} />
 
-                {/* Default route - redirect to appropriate dashboard */}
+                {/* Default route - redirect to appropriate dashboard based on active role */}
                 <Route
                   path="/"
                   element={
                     isRenter ? <RenterDashboard /> :
                     isAdmin ? <AdminDashboard /> :
-                    <PropertyOwnerDashboard />
+                    isPropertyOwner ? <PropertyOwnerDashboard /> :
+                    <RenterDashboard />
                   }
                 />
 
