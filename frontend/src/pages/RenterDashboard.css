@@ -1,0 +1,755 @@
+/* ===== RENTER DASHBOARD - APPLE-INSPIRED DESIGN ===== */
+
+/* Page Header */
+.renter-dashboard-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+}
+
+.renter-dashboard-title {
+  color: var(--primary-color);
+  margin-bottom: 10px;
+}
+
+.renter-dashboard-subtitle {
+  color: var(--text-secondary);
+  margin: 0;
+}
+
+/* Loading/Error/Empty States */
+.renter-dashboard-loading,
+.renter-dashboard-error,
+.renter-dashboard-no-tenant {
+  text-align: center;
+  padding: 60px 40px;
+  color: var(--text-secondary);
+}
+
+.renter-dashboard-error {
+  color: #EF4444;
+}
+
+[data-theme="dark"] .renter-dashboard-error {
+  color: #ff6b6b;
+}
+
+/* Section Titles */
+.renter-section-title {
+  margin-bottom: 20px;
+  color: var(--primary-color);
+  font-size: 20px;
+  font-weight: 600;
+}
+
+/* Rent Payment History */
+.rent-payment-history-empty {
+  color: var(--text-secondary);
+  text-align: center;
+  padding: 20px;
+}
+
+.rent-payment-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.rent-payment-amount {
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+.rent-payment-details {
+  font-size: 14px;
+  color: var(--text-secondary);
+}
+
+/* Rent Payment Status Badges */
+.rent-payment-status-badge {
+  display: inline-block;
+  padding: 4px 8px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: capitalize;
+  letter-spacing: 0.02em;
+}
+
+.rent-payment-status-badge.completed {
+  background: rgba(34, 197, 94, 0.15);
+  color: #16A34A;
+  border: 1px solid rgba(34, 197, 94, 0.3);
+}
+
+.rent-payment-status-badge.pending {
+  background: rgba(251, 191, 36, 0.15);
+  color: #D97706;
+  border: 1px solid rgba(251, 191, 36, 0.3);
+}
+
+.rent-payment-status-badge.failed {
+  background: rgba(239, 68, 68, 0.15);
+  color: #DC2626;
+  border: 1px solid rgba(239, 68, 68, 0.3);
+}
+
+/* Property Info */
+.property-info-empty {
+  color: var(--text-secondary);
+  text-align: center;
+  padding: 20px;
+}
+
+.property-info-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.property-info-name {
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.property-info-detail {
+  color: var(--text-secondary);
+}
+
+.property-info-description {
+  color: var(--text-secondary);
+  font-size: 14px;
+  margin-top: 8px;
+}
+
+/* Lease Info */
+.lease-info-empty {
+  color: var(--text-secondary);
+  text-align: center;
+  padding: 20px;
+}
+
+.lease-info-grid {
+  display: grid;
+  gap: 16px;
+}
+
+.lease-info-row {
+  display: flex;
+  justify-content: space-between;
+}
+
+.lease-info-label {
+  color: var(--text-secondary);
+}
+
+.lease-info-value {
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+.lease-info-value-highlight {
+  font-weight: 600;
+  color: var(--primary-color);
+}
+
+.lease-info-expiry {
+  display: flex;
+  justify-content: space-between;
+  padding: 12px;
+  border-radius: 8px;
+  border: 1px solid var(--border-color);
+  background: var(--bg-tertiary);
+}
+
+.lease-info-expiry.warning {
+  background: rgba(255, 243, 205, 0.5);
+  border: 1px solid #ffeaa7;
+}
+
+[data-theme="dark"] .lease-info-expiry.warning {
+  background: rgba(255, 243, 205, 0.1);
+  border: 1px solid rgba(255, 234, 167, 0.3);
+}
+
+.lease-info-expiry-value {
+  font-weight: 600;
+}
+
+.lease-info-expiry-value.warning {
+  color: var(--warning-color);
+}
+
+.lease-info-expiry-value.success {
+  color: var(--success-color);
+}
+
+/* Next Payment Due */
+.next-payment-paid {
+  text-align: center;
+  padding: 20px;
+}
+
+.next-payment-paid-icon {
+  font-size: 2rem;
+  margin-bottom: 10px;
+}
+
+.next-payment-paid-text {
+  font-weight: 600;
+  color: var(--success-color);
+  font-size: 1.1rem;
+}
+
+.next-payment-paid-date {
+  color: var(--text-secondary);
+  margin-top: 8px;
+}
+
+.next-payment-due {
+  text-align: center;
+  padding: 20px;
+  border-radius: 8px;
+  border: 1px solid #fed7aa;
+  background: rgba(255, 248, 240, 0.8);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+.next-payment-due.overdue {
+  background: rgba(255, 245, 245, 0.8);
+  border: 1px solid #fecaca;
+}
+
+[data-theme="dark"] .next-payment-due {
+  background: rgba(217, 119, 6, 0.1);
+  border: 1px solid rgba(254, 215, 170, 0.3);
+}
+
+[data-theme="dark"] .next-payment-due.overdue {
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid rgba(254, 202, 202, 0.3);
+}
+
+.next-payment-amount {
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+.next-payment-amount.warning {
+  color: var(--warning-color);
+}
+
+.next-payment-amount.danger {
+  color: var(--danger-color);
+}
+
+.next-payment-status {
+  font-weight: 600;
+  font-size: 1.1rem;
+  margin-bottom: 8px;
+}
+
+.next-payment-status.warning {
+  color: var(--warning-color);
+}
+
+.next-payment-status.danger {
+  color: var(--danger-color);
+}
+
+.next-payment-date {
+  color: var(--text-secondary);
+}
+
+.next-payment-partial {
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  margin-top: 4px;
+}
+
+.next-payment-button {
+  margin-top: 15px;
+  width: 100%;
+  padding: 12px;
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+/* Contracts Section */
+.contracts-section-empty {
+  color: var(--text-secondary);
+  text-align: center;
+  padding: 20px;
+}
+
+.contracts-section-loading {
+  text-align: center;
+  padding: 20px;
+  color: var(--text-secondary);
+}
+
+.contracts-section-empty-icon {
+  font-size: 2rem;
+  margin-bottom: 10px;
+}
+
+.contracts-section-empty-hint {
+  font-size: 0.9rem;
+  margin-top: 4px;
+}
+
+.contracts-section-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.renter-contract-item {
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  padding: 16px;
+  background: var(--bg-tertiary);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.renter-contract-item:hover {
+  background: var(--bg-secondary);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+[data-theme="dark"] .renter-contract-item:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.renter-contract-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 8px;
+}
+
+.renter-contract-title {
+  margin: 0 0 4px 0;
+  color: var(--text-primary);
+  font-weight: 600;
+  font-size: 16px;
+}
+
+.renter-contract-date {
+  font-size: 14px;
+  color: var(--text-secondary);
+}
+
+.renter-contract-notes {
+  font-size: 14px;
+  color: var(--text-secondary);
+  margin-bottom: 8px;
+}
+
+.renter-contract-signed {
+  font-size: 12px;
+  color: var(--text-secondary);
+  margin-bottom: 8px;
+}
+
+.renter-contract-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 6px;
+}
+
+.renter-contract-action-btn {
+  padding: 6px 10px;
+  font-size: 16px;
+  min-width: 36px;
+}
+
+/* Contract Status Badges (reuse from Properties) */
+.renter-contract-status-badge {
+  display: inline-block;
+  padding: 4px 8px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: capitalize;
+  letter-spacing: 0.02em;
+}
+
+.renter-contract-status-badge.draft {
+  background: rgba(108, 117, 125, 0.15);
+  color: #6c757d;
+  border: 1px solid rgba(108, 117, 125, 0.3);
+}
+
+.renter-contract-status-badge.pending {
+  background: rgba(251, 191, 36, 0.15);
+  color: #D97706;
+  border: 1px solid rgba(251, 191, 36, 0.3);
+}
+
+.renter-contract-status-badge.signed {
+  background: rgba(34, 197, 94, 0.15);
+  color: #16A34A;
+  border: 1px solid rgba(34, 197, 94, 0.3);
+}
+
+.renter-contract-status-badge.terminated {
+  background: rgba(239, 68, 68, 0.15);
+  color: #DC2626;
+  border: 1px solid rgba(239, 68, 68, 0.3);
+}
+
+/* Maintenance Requests */
+.maintenance-empty {
+  text-align: center;
+  padding: 20px;
+  color: var(--text-secondary);
+}
+
+.maintenance-empty-icon {
+  font-size: 2rem;
+  margin-bottom: 10px;
+}
+
+.maintenance-empty-hint {
+  font-size: 0.9rem;
+  margin-top: 4px;
+}
+
+.maintenance-request-item {
+  padding: 16px;
+  border-radius: 12px;
+  border: 1px solid var(--border-color);
+  margin-bottom: 12px;
+  background: var(--bg-tertiary);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.maintenance-request-item:hover {
+  background: var(--bg-secondary);
+  transform: translateY(-1px);
+}
+
+.maintenance-request-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 8px;
+}
+
+.maintenance-request-title-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.maintenance-request-title {
+  color: var(--text-primary);
+  font-weight: 600;
+}
+
+.maintenance-request-description {
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  margin-bottom: 8px;
+}
+
+.maintenance-request-date {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+}
+
+.maintenance-submit-button {
+  width: 100%;
+  margin-top: 12px;
+}
+
+/* Maintenance Status Badges */
+.maintenance-status-badge {
+  display: inline-block;
+  padding: 4px 8px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: capitalize;
+  letter-spacing: 0.02em;
+}
+
+.maintenance-status-badge.pending {
+  background: rgba(251, 191, 36, 0.15);
+  color: #D97706;
+  border: 1px solid rgba(251, 191, 36, 0.3);
+}
+
+.maintenance-status-badge.in_progress {
+  background: rgba(59, 130, 246, 0.15);
+  color: #2563EB;
+  border: 1px solid rgba(59, 130, 246, 0.3);
+}
+
+.maintenance-status-badge.completed {
+  background: rgba(34, 197, 94, 0.15);
+  color: #16A34A;
+  border: 1px solid rgba(34, 197, 94, 0.3);
+}
+
+.maintenance-status-badge.cancelled {
+  background: rgba(239, 68, 68, 0.15);
+  color: #DC2626;
+  border: 1px solid rgba(239, 68, 68, 0.3);
+}
+
+/* Important Notices */
+.notice-item {
+  padding: 16px;
+  border-radius: 12px;
+  margin-bottom: 12px;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.notice-item:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+[data-theme="dark"] .notice-item:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.notice-item.info {
+  border: 1px solid rgba(59, 130, 246, 0.2);
+  background: rgba(59, 130, 246, 0.08);
+}
+
+.notice-item.warning {
+  border: 1px solid rgba(251, 191, 36, 0.2);
+  background: rgba(251, 191, 36, 0.08);
+}
+
+.notice-item.urgent {
+  border: 1px solid rgba(239, 68, 68, 0.2);
+  background: rgba(239, 68, 68, 0.08);
+}
+
+.notice-content {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.notice-icon {
+  font-size: 1.2rem;
+}
+
+.notice-text {
+  flex: 1;
+}
+
+.notice-title {
+  margin-bottom: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.notice-title.info {
+  color: var(--primary-color);
+}
+
+.notice-title.warning {
+  color: var(--warning-color);
+}
+
+.notice-title.urgent {
+  color: var(--danger-color);
+}
+
+.notice-message {
+  color: var(--text-primary);
+  font-size: 0.9rem;
+  margin-bottom: 8px;
+}
+
+.notice-date {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+}
+
+/* Contact Info */
+.contact-info-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.contact-info-item {
+  padding: 16px;
+  background: var(--bg-tertiary);
+  border-radius: 12px;
+  border: 1px solid var(--border-color);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.contact-info-item:hover {
+  background: var(--bg-secondary);
+  transform: translateY(-1px);
+}
+
+.contact-info-title {
+  color: var(--primary-color);
+  margin-bottom: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.contact-info-name {
+  color: var(--text-primary);
+  font-weight: 500;
+  margin-bottom: 4px;
+}
+
+.contact-info-details {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  font-size: 0.9rem;
+}
+
+.contact-info-detail {
+  color: var(--text-secondary);
+}
+
+.contact-info-hours {
+  color: var(--text-secondary);
+  font-size: 0.8rem;
+}
+
+/* Main Content Grid */
+.renter-content-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+  gap: 20px;
+}
+
+/* Lease Status Color */
+.lease-status-active {
+  color: var(--success-color);
+}
+
+.lease-status-inactive {
+  color: var(--warning-color);
+}
+
+/* Contract Viewer (reuse from Properties) */
+.renter-contract-viewer-modal {
+  max-width: 900px;
+  height: 80vh;
+}
+
+.renter-contract-viewer-content {
+  padding: 20px;
+  height: calc(100% - 60px);
+  overflow: auto;
+}
+
+.renter-contract-viewer-loading {
+  text-align: center;
+  padding: 40px;
+  color: var(--text-secondary);
+}
+
+.renter-contract-viewer-iframe {
+  width: 100%;
+  height: 600px;
+  border: none;
+  border-radius: 8px;
+}
+
+.renter-contract-viewer-unsupported {
+  text-align: center;
+  padding: 40px;
+  color: var(--text-secondary);
+}
+
+.renter-contract-viewer-unsupported-icon {
+  font-size: 2rem;
+  margin-bottom: 20px;
+}
+
+/* No Tenant Profile */
+.no-tenant-profile {
+  text-align: center;
+  padding: 40px;
+  color: var(--text-secondary);
+}
+
+.no-tenant-profile h3 {
+  color: var(--text-primary);
+  margin-bottom: 12px;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .renter-dashboard-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+  }
+
+  .renter-content-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .lease-info-expiry {
+    flex-direction: column;
+    gap: 8px;
+    align-items: flex-start;
+  }
+
+  .maintenance-request-header {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .renter-contract-viewer-modal {
+    max-width: 100%;
+    height: 90vh;
+  }
+
+  .renter-contract-viewer-iframe {
+    height: 400px;
+  }
+}
+
+@media (max-width: 480px) {
+  .renter-dashboard-loading,
+  .renter-dashboard-error,
+  .renter-dashboard-no-tenant {
+    padding: 40px 20px;
+  }
+
+  .next-payment-amount {
+    font-size: 2rem;
+  }
+
+  .contact-info-list {
+    gap: 12px;
+  }
+
+  .property-info-list {
+    gap: 10px;
+  }
+}

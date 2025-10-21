@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import apiService from '../services/api';
 import PaymentModal from '../components/PaymentModal';
+import './RenterDashboard.css';
 
 function RentPaymentHistory({ payments, currentTenant }) {
   const tenantPayments = payments
@@ -9,22 +10,8 @@ function RentPaymentHistory({ payments, currentTenant }) {
     .slice(0, 10);
 
   const getStatusBadge = (status) => {
-    const colors = {
-      completed: '#28a745',
-      pending: '#ffc107',
-      failed: '#dc3545'
-    };
     return (
-      <span
-        style={{
-          backgroundColor: colors[status] || colors.pending,
-          color: 'white',
-          padding: '4px 8px',
-          borderRadius: '4px',
-          fontSize: '12px',
-          textTransform: 'capitalize'
-        }}
-      >
+      <span className={`rent-payment-status-badge ${status}`}>
         {status}
       </span>
     );
@@ -32,11 +19,11 @@ function RentPaymentHistory({ payments, currentTenant }) {
 
   return (
     <div className="card">
-      <h3 style={{ marginBottom: '20px', color: 'var(--primary-color)' }}>
+      <h3 className="renter-section-title">
         Payment History
       </h3>
       {tenantPayments.length === 0 ? (
-        <p style={{ color: 'var(--text-secondary)', textAlign: 'center', padding: '20px' }}>
+        <p className="rent-payment-history-empty">
           No payment history available
         </p>
       ) : (
@@ -44,23 +31,17 @@ function RentPaymentHistory({ payments, currentTenant }) {
           {tenantPayments.map(payment => (
             <div
               key={payment.id}
-              style={{
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-                padding: '12px 0',
-                borderBottom: '1px solid var(--border-color)'
-              }}
+              className="rent-payment-item"
             >
               <div>
-                <div style={{ fontWeight: '500' }}>
+                <div className="rent-payment-amount">
                   ${payment.amount.toLocaleString()}
                 </div>
-                <div style={{ fontSize: '14px', color: 'var(--text-secondary)' }}>
+                <div className="rent-payment-details">
                   {new Date(payment.date).toLocaleDateString()} • {payment.method.replace(/([A-Z])/g, ' $1').replace('_', ' ').replace(/^\w/, c => c.toUpperCase())}
                 </div>
               </div>
-              <div style={{ textAlign: 'right' }}>
+              <div>
                 {getStatusBadge(payment.status)}
               </div>
             </div>
@@ -75,10 +56,10 @@ function PropertyInfo({ property }) {
   if (!property) {
     return (
       <div className="card">
-        <h3 style={{ marginBottom: '20px', color: 'var(--primary-color)' }}>
+        <h3 className="renter-section-title">
           My Property
         </h3>
-        <p style={{ color: 'var(--text-secondary)', textAlign: 'center', padding: '20px' }}>
+        <p className="property-info-empty">
           Property information not available
         </p>
       </div>
@@ -105,21 +86,21 @@ function PropertyInfo({ property }) {
 
   return (
     <div className="card">
-      <h3 style={{ marginBottom: '20px', color: 'var(--primary-color)' }}>
+      <h3 className="renter-section-title">
         My Property
       </h3>
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+      <div className="property-info-list">
         <div>
-          <strong style={{ color: 'var(--text-primary)' }}>{property.name}</strong>
+          <strong className="property-info-name">{property.name}</strong>
         </div>
-        <div style={{ color: 'var(--text-secondary)' }}>
+        <div className="property-info-detail">
           📍 {property.address}
         </div>
-        <div style={{ color: 'var(--text-secondary)' }}>
+        <div className="property-info-detail">
           🏠 {property.type.replace('_', ' ')} • {getPropertyDetails(property)}
         </div>
         {property.description && (
-          <div style={{ color: 'var(--text-secondary)', fontSize: '14px', marginTop: '8px' }}>
+          <div className="property-info-description">
             {property.description}
           </div>
         )}
@@ -154,22 +135,22 @@ function ContractViewer({ contract, onClose }) {
     }
 
     const mimeType = contractData.mimeType || '';
-    
+
     if (mimeType.includes('pdf')) {
       const blob = new Blob([Uint8Array.from(atob(contractData.fileContentBase64), c => c.charCodeAt(0))], { type: 'application/pdf' });
       const url = URL.createObjectURL(blob);
-      
+
       return (
         <iframe
           src={url}
-          style={{ width: '100%', height: '600px', border: 'none' }}
+          className="renter-contract-viewer-iframe"
           title="Contract Viewer"
         />
       );
     } else {
       return (
-        <div style={{ textAlign: 'center', padding: '40px' }}>
-          <div style={{ fontSize: '2rem', marginBottom: '20px' }}>📄</div>
+        <div className="renter-contract-viewer-unsupported">
+          <div className="renter-contract-viewer-unsupported-icon">📄</div>
           <p>This file format cannot be previewed in the browser.</p>
           <p>File type: {mimeType}</p>
           <p>Please download the file to view its contents.</p>
@@ -180,14 +161,14 @@ function ContractViewer({ contract, onClose }) {
 
   return (
     <div className="modal">
-      <div className="modal-content" style={{ maxWidth: '900px', height: '80vh' }}>
+      <div className="modal-content renter-contract-viewer-modal">
         <div className="modal-header">
           <h2>View Contract: {contract.fileName}</h2>
           <button className="close-btn" onClick={onClose}>&times;</button>
         </div>
-        <div style={{ padding: '20px', height: 'calc(100% - 60px)', overflow: 'auto' }}>
+        <div className="renter-contract-viewer-content">
           {loading ? (
-            <div style={{ textAlign: 'center', padding: '40px' }}>
+            <div className="renter-contract-viewer-loading">
               Loading contract...
             </div>
           ) : (
@@ -222,23 +203,8 @@ function ContractsSection({ currentTenant, onViewContract }) {
   };
 
   const getStatusBadge = (status) => {
-    const colors = {
-      draft: '#6c757d',
-      pending: '#ffc107',
-      signed: '#28a745',
-      terminated: '#dc3545'
-    };
     return (
-      <span
-        style={{
-          backgroundColor: colors[status] || colors.draft,
-          color: 'white',
-          padding: '4px 8px',
-          borderRadius: '4px',
-          fontSize: '12px',
-          textTransform: 'capitalize'
-        }}
-      >
+      <span className={`renter-contract-status-badge ${status}`}>
         {status}
       </span>
     );
@@ -265,10 +231,10 @@ function ContractsSection({ currentTenant, onViewContract }) {
   if (!currentTenant) {
     return (
       <div className="card">
-        <h3 style={{ marginBottom: '20px', color: 'var(--primary-color)' }}>
+        <h3 className="renter-section-title">
           My Contracts
         </h3>
-        <p style={{ color: 'var(--text-secondary)', textAlign: 'center', padding: '20px' }}>
+        <p className="contracts-section-empty">
           Tenant information not available
         </p>
       </div>
@@ -277,64 +243,57 @@ function ContractsSection({ currentTenant, onViewContract }) {
 
   return (
     <div className="card">
-      <h3 style={{ marginBottom: '20px', color: 'var(--primary-color)' }}>
+      <h3 className="renter-section-title">
         My Contracts
       </h3>
       {loading ? (
-        <div style={{ textAlign: 'center', padding: '20px', color: 'var(--text-secondary)' }}>
+        <div className="contracts-section-loading">
           Loading contracts...
         </div>
       ) : contracts.length === 0 ? (
-        <div style={{ textAlign: 'center', padding: '20px', color: 'var(--text-secondary)' }}>
-          <div style={{ fontSize: '2rem', marginBottom: '10px' }}>📄</div>
+        <div className="contracts-section-empty">
+          <div className="contracts-section-empty-icon">📄</div>
           <p>No contracts available</p>
-          <p style={{ fontSize: '0.9rem' }}>Contact your property manager if you need access to your lease documents</p>
+          <p className="contracts-section-empty-hint">Contact your property manager if you need access to your lease documents</p>
         </div>
       ) : (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+        <div className="contracts-section-list">
           {contracts.map(contract => (
             <div
               key={contract.id}
-              style={{
-                border: '1px solid var(--border-color)',
-                borderRadius: '8px',
-                padding: '16px',
-                backgroundColor: 'var(--bg-tertiary)'
-              }}
+              className="renter-contract-item"
             >
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '8px' }}>
+              <div className="renter-contract-header">
                 <div>
-                  <h4 style={{ margin: '0 0 4px 0', color: 'var(--text-primary)' }}>
+                  <h4 className="renter-contract-title">
                     {contract.fileName}
                   </h4>
-                  <div style={{ fontSize: '14px', color: 'var(--text-secondary)' }}>
+                  <div className="renter-contract-date">
                     Uploaded: {new Date(contract.uploadedAt).toLocaleDateString()}
                   </div>
                 </div>
                 {getStatusBadge(contract.status)}
               </div>
               {contract.notes && (
-                <div style={{ fontSize: '14px', color: 'var(--text-secondary)', marginBottom: '8px' }}>
+                <div className="renter-contract-notes">
                   Notes: {contract.notes}
                 </div>
               )}
               {contract.signedAt && (
-                <div style={{ fontSize: '12px', color: 'var(--text-secondary)', marginBottom: '8px' }}>
+                <div className="renter-contract-signed">
                   Signed: {new Date(contract.signedAt).toLocaleDateString()}
                 </div>
               )}
-              <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '6px' }}>
+              <div className="renter-contract-actions">
                 <button
-                  className="btn btn-accent"
-                  style={{ padding: '6px 10px', fontSize: '16px', minWidth: '36px' }}
+                  className="btn btn-accent renter-contract-action-btn"
                   onClick={() => onViewContract(contract)}
                   title="View Contract"
                 >
                   👁️
                 </button>
                 <button
-                  className="btn btn-primary"
-                  style={{ padding: '6px 10px', fontSize: '16px', minWidth: '36px' }}
+                  className="btn btn-primary renter-contract-action-btn"
                   onClick={() => handleDownload(contract)}
                   title="Download Contract"
                 >
@@ -353,10 +312,10 @@ function LeaseInfo({ currentTenant }) {
   if (!currentTenant) {
     return (
       <div className="card">
-        <h3 style={{ marginBottom: '20px', color: 'var(--primary-color)' }}>
+        <h3 className="renter-section-title">
           Lease Information
         </h3>
-        <p style={{ color: 'var(--text-secondary)', textAlign: 'center', padding: '20px' }}>
+        <p className="lease-info-empty">
           Lease information not available
         </p>
       </div>
@@ -370,60 +329,48 @@ function LeaseInfo({ currentTenant }) {
 
   return (
     <div className="card">
-      <h3 style={{ marginBottom: '20px', color: 'var(--primary-color)' }}>
+      <h3 className="renter-section-title">
         Lease Information
       </h3>
-      <div style={{ display: 'grid', gap: '16px' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-          <span style={{ color: 'var(--text-secondary)' }}>Monthly Rent:</span>
-          <span style={{ fontWeight: '600', color: 'var(--primary-color)' }}>
+      <div className="lease-info-grid">
+        <div className="lease-info-row">
+          <span className="lease-info-label">Monthly Rent:</span>
+          <span className="lease-info-value-highlight">
             ${currentTenant.rentAmount.toLocaleString()}
           </span>
         </div>
-        
+
         {currentTenant.deposit > 0 && (
-          <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-            <span style={{ color: 'var(--text-secondary)' }}>Security Deposit:</span>
-            <span style={{ fontWeight: '500' }}>
+          <div className="lease-info-row">
+            <span className="lease-info-label">Security Deposit:</span>
+            <span className="lease-info-value">
               ${currentTenant.deposit.toLocaleString()}
             </span>
           </div>
         )}
-        
+
         {leaseStart && (
-          <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-            <span style={{ color: 'var(--text-secondary)' }}>Lease Start:</span>
-            <span style={{ fontWeight: '500' }}>
+          <div className="lease-info-row">
+            <span className="lease-info-label">Lease Start:</span>
+            <span className="lease-info-value">
               {leaseStart.toLocaleDateString()}
             </span>
           </div>
         )}
-        
+
         {leaseEnd && (
-          <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-            <span style={{ color: 'var(--text-secondary)' }}>Lease End:</span>
-            <span style={{ fontWeight: '500' }}>
+          <div className="lease-info-row">
+            <span className="lease-info-label">Lease End:</span>
+            <span className="lease-info-value">
               {leaseEnd.toLocaleDateString()}
             </span>
           </div>
         )}
-        
+
         {daysUntilExpiry !== null && (
-          <div 
-            style={{ 
-              display: 'flex', 
-              justifyContent: 'space-between',
-              padding: '12px',
-              backgroundColor: daysUntilExpiry < 30 ? '#fff3cd' : 'var(--bg-tertiary)',
-              borderRadius: '8px',
-              border: daysUntilExpiry < 30 ? '1px solid #ffeaa7' : '1px solid var(--border-color)'
-            }}
-          >
-            <span style={{ color: 'var(--text-secondary)' }}>Days Until Expiry:</span>
-            <span style={{ 
-              fontWeight: '600', 
-              color: daysUntilExpiry < 30 ? 'var(--warning-color)' : 'var(--success-color)' 
-            }}>
+          <div className={`lease-info-expiry ${daysUntilExpiry < 30 ? 'warning' : ''}`}>
+            <span className="lease-info-label">Days Until Expiry:</span>
+            <span className={`lease-info-expiry-value ${daysUntilExpiry < 30 ? 'warning' : 'success'}`}>
               {daysUntilExpiry > 0 ? `${daysUntilExpiry} days` : 'Expired'}
             </span>
           </div>
@@ -471,61 +418,38 @@ function NextPaymentDue({ currentTenant, payments, onPaymentSuccess }) {
 
   return (
     <div className="card">
-      <h3 style={{ marginBottom: '20px', color: 'var(--primary-color)' }}>
+      <h3 className="renter-section-title">
         Next Payment Due
       </h3>
       {amountDue <= 0 ? (
-        <div style={{ textAlign: 'center', padding: '20px' }}>
-          <div style={{ fontSize: '2rem', marginBottom: '10px' }}>✅</div>
-          <div style={{ fontWeight: '600', color: 'var(--success-color)', fontSize: '1.1rem' }}>
+        <div className="next-payment-paid">
+          <div className="next-payment-paid-icon">✅</div>
+          <div className="next-payment-paid-text">
             All Caught Up!
           </div>
-          <div style={{ color: 'var(--text-secondary)', marginTop: '8px' }}>
+          <div className="next-payment-paid-date">
             Next payment due: {nextDueDate.toLocaleDateString()}
           </div>
         </div>
       ) : (
-        <div style={{ 
-          textAlign: 'center', 
-          padding: '20px',
-          backgroundColor: isOverdue ? '#fff5f5' : '#fff8f0',
-          borderRadius: '8px',
-          border: `1px solid ${isOverdue ? '#fecaca' : '#fed7aa'}`
-        }}>
-          <div style={{ 
-            fontSize: '2.5rem', 
-            fontWeight: '700',
-            color: isOverdue ? 'var(--danger-color)' : 'var(--warning-color)',
-            marginBottom: '8px'
-          }}>
+        <div className={`next-payment-due ${isOverdue ? 'overdue' : ''}`}>
+          <div className={`next-payment-amount ${isOverdue ? 'danger' : 'warning'}`}>
             ${amountDue.toLocaleString()}
           </div>
-          <div style={{ 
-            fontWeight: '600', 
-            color: isOverdue ? 'var(--danger-color)' : 'var(--warning-color)',
-            fontSize: '1.1rem',
-            marginBottom: '8px'
-          }}>
+          <div className={`next-payment-status ${isOverdue ? 'danger' : 'warning'}`}>
             {isOverdue ? 'OVERDUE' : 'Due Soon'}
           </div>
-          <div style={{ color: 'var(--text-secondary)' }}>
+          <div className="next-payment-date">
             Due Date: {nextDueDate.toLocaleDateString()}
           </div>
           {totalPaid > 0 && (
-            <div style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', marginTop: '4px' }}>
+            <div className="next-payment-partial">
               ${totalPaid.toLocaleString()} already paid this month
             </div>
           )}
           <button
             onClick={() => setShowPaymentModal(true)}
-            className="btn btn-primary"
-            style={{
-              marginTop: '15px',
-              width: '100%',
-              padding: '12px',
-              fontSize: '1rem',
-              fontWeight: '600'
-            }}
+            className="btn btn-primary next-payment-button"
           >
             Pay Now
           </button>
@@ -565,23 +489,8 @@ function MaintenanceRequests() {
   ]);
 
   const getStatusBadge = (status) => {
-    const colors = {
-      pending: '#ffc107',
-      in_progress: '#007bff',
-      completed: '#28a745',
-      cancelled: '#dc3545'
-    };
     return (
-      <span
-        style={{
-          backgroundColor: colors[status] || colors.pending,
-          color: 'white',
-          padding: '4px 8px',
-          borderRadius: '4px',
-          fontSize: '12px',
-          textTransform: 'capitalize'
-        }}
-      >
+      <span className={`maintenance-status-badge ${status}`}>
         {status.replace('_', ' ')}
       </span>
     );
@@ -598,46 +507,39 @@ function MaintenanceRequests() {
 
   return (
     <div className="card">
-      <h3 style={{ marginBottom: '20px', color: 'var(--primary-color)' }}>
+      <h3 className="renter-section-title">
         Maintenance Requests
       </h3>
       {requests.length === 0 ? (
-        <div style={{ textAlign: 'center', padding: '20px', color: 'var(--text-secondary)' }}>
-          <div style={{ fontSize: '2rem', marginBottom: '10px' }}>🔧</div>
+        <div className="maintenance-empty">
+          <div className="maintenance-empty-icon">🔧</div>
           <p>No maintenance requests</p>
-          <p style={{ fontSize: '0.9rem' }}>Submit a request if you need assistance</p>
+          <p className="maintenance-empty-hint">Submit a request if you need assistance</p>
         </div>
       ) : (
         <div>
           {requests.map(request => (
             <div
               key={request.id}
-              style={{
-                padding: '16px',
-                borderRadius: '8px',
-                border: '1px solid var(--border-color)',
-                marginBottom: '12px',
-                backgroundColor: 'var(--bg-tertiary)'
-              }}
+              className="maintenance-request-item"
             >
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '8px' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <div className="maintenance-request-header">
+                <div className="maintenance-request-title-row">
                   <span>{getPriorityIcon(request.priority)}</span>
-                  <strong style={{ color: 'var(--text-primary)' }}>{request.title}</strong>
+                  <strong className="maintenance-request-title">{request.title}</strong>
                 </div>
                 {getStatusBadge(request.status)}
               </div>
-              <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', marginBottom: '8px' }}>
+              <p className="maintenance-request-description">
                 {request.description}
               </p>
-              <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>
+              <div className="maintenance-request-date">
                 Submitted: {new Date(request.dateSubmitted).toLocaleDateString()}
               </div>
             </div>
           ))}
-          <button 
-            className="btn btn-accent"
-            style={{ width: '100%', marginTop: '12px' }}
+          <button
+            className="btn btn-accent maintenance-submit-button"
             onClick={() => alert('Maintenance request form would open here')}
           >
             + Submit New Request
@@ -682,47 +584,27 @@ function ImportantNotices() {
     return icons[type] || '📢';
   };
 
-  const getNoticeColor = (type) => {
-    const colors = {
-      info: 'var(--primary-color)',
-      warning: 'var(--warning-color)',
-      urgent: 'var(--danger-color)'
-    };
-    return colors[type] || 'var(--primary-color)';
-  };
-
   return (
     <div className="card">
-      <h3 style={{ marginBottom: '20px', color: 'var(--primary-color)' }}>
+      <h3 className="renter-section-title">
         Important Notices
       </h3>
       <div>
         {notices.map(notice => (
           <div
             key={notice.id}
-            style={{
-              padding: '16px',
-              borderRadius: '8px',
-              border: `1px solid ${getNoticeColor(notice.type)}20`,
-              backgroundColor: `${getNoticeColor(notice.type)}08`,
-              marginBottom: '12px'
-            }}
+            className={`notice-item ${notice.type}`}
           >
-            <div style={{ display: 'flex', alignItems: 'flex-start', gap: '12px' }}>
-              <span style={{ fontSize: '1.2rem' }}>{getNoticeIcon(notice.type)}</span>
-              <div style={{ flex: 1 }}>
-                <h4 style={{ 
-                  color: getNoticeColor(notice.type), 
-                  marginBottom: '8px',
-                  fontSize: '1rem',
-                  fontWeight: '600'
-                }}>
+            <div className="notice-content">
+              <span className="notice-icon">{getNoticeIcon(notice.type)}</span>
+              <div className="notice-text">
+                <h4 className={`notice-title ${notice.type}`}>
                   {notice.title}
                 </h4>
-                <p style={{ color: 'var(--text-primary)', fontSize: '0.9rem', marginBottom: '8px' }}>
+                <p className="notice-message">
                   {notice.message}
                 </p>
-                <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>
+                <div className="notice-date">
                   {new Date(notice.date).toLocaleDateString()}
                 </div>
               </div>
@@ -761,31 +643,26 @@ function ContactInfo() {
 
   return (
     <div className="card">
-      <h3 style={{ marginBottom: '20px', color: 'var(--primary-color)' }}>
+      <h3 className="renter-section-title">
         Contact Information
       </h3>
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+      <div className="contact-info-list">
         {contacts.map((contact, index) => (
-          <div key={index} style={{ 
-            padding: '16px', 
-            backgroundColor: 'var(--bg-tertiary)', 
-            borderRadius: '8px',
-            border: '1px solid var(--border-color)'
-          }}>
-            <h4 style={{ color: 'var(--primary-color)', marginBottom: '8px', fontSize: '1rem' }}>
+          <div key={index} className="contact-info-item">
+            <h4 className="contact-info-title">
               {contact.title}
             </h4>
-            <div style={{ color: 'var(--text-primary)', fontWeight: '500', marginBottom: '4px' }}>
+            <div className="contact-info-name">
               {contact.name}
             </div>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '2px', fontSize: '0.9rem' }}>
-              <div style={{ color: 'var(--text-secondary)' }}>
+            <div className="contact-info-details">
+              <div className="contact-info-detail">
                 📞 {contact.phone}
               </div>
-              <div style={{ color: 'var(--text-secondary)' }}>
+              <div className="contact-info-detail">
                 📧 {contact.email}
               </div>
-              <div style={{ color: 'var(--text-secondary)', fontSize: '0.8rem' }}>
+              <div className="contact-info-hours">
                 🕒 {contact.hours}
               </div>
             </div>
@@ -851,7 +728,7 @@ function RenterDashboard() {
 
   if (loading) {
     return (
-      <div style={{ textAlign: 'center', padding: '40px', color: '#666' }}>
+      <div className="renter-dashboard-loading">
         <h1>Renter Dashboard</h1>
         <p>Loading your rental information...</p>
       </div>
@@ -860,7 +737,7 @@ function RenterDashboard() {
 
   if (error) {
     return (
-      <div style={{ textAlign: 'center', padding: '40px', color: '#dc3545' }}>
+      <div className="renter-dashboard-error">
         <h1>Renter Dashboard</h1>
         <p>{error}</p>
         <button className="btn btn-primary" onClick={loadData}>
@@ -872,7 +749,7 @@ function RenterDashboard() {
 
   if (!currentTenant) {
     return (
-      <div style={{ textAlign: 'center', padding: '40px', color: '#666' }}>
+      <div className="renter-dashboard-no-tenant">
         <h1>Renter Dashboard</h1>
         <p>No active tenant data found. Please contact your property manager.</p>
       </div>
@@ -881,12 +758,12 @@ function RenterDashboard() {
 
   return (
     <div>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '30px' }}>
+      <div className="renter-dashboard-header">
         <div>
-          <h1 style={{ color: 'var(--primary-color)', marginBottom: '10px' }}>
+          <h1 className="renter-dashboard-title">
             Renter Dashboard
           </h1>
-          <p style={{ color: 'var(--text-secondary)', margin: 0 }}>
+          <p className="renter-dashboard-subtitle">
             Welcome back, {currentTenant.name}
           </p>
         </div>
@@ -894,7 +771,7 @@ function RenterDashboard() {
 
       {!currentTenant ? (
         <div className="card">
-          <div style={{ textAlign: 'center', padding: '40px', color: 'var(--text-secondary)' }}>
+          <div className="no-tenant-profile">
             <h3>No Tenant Profile Found</h3>
             <p>Please contact your property manager to set up your tenant profile.</p>
           </div>
@@ -916,9 +793,7 @@ function RenterDashboard() {
               <div className="stat-label">Total Amount Paid</div>
             </div>
             <div className="stat-card">
-              <div className="stat-number" style={{ 
-                color: currentTenant.status === 'active' ? 'var(--success-color)' : 'var(--warning-color)' 
-              }}>
+              <div className={`stat-number ${currentTenant.status === 'active' ? 'lease-status-active' : 'lease-status-inactive'}`}>
                 {currentTenant.status.charAt(0).toUpperCase() + currentTenant.status.slice(1)}
               </div>
               <div className="stat-label">Lease Status</div>
@@ -933,12 +808,12 @@ function RenterDashboard() {
           />
 
           {/* Main Content Grid */}
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))', gap: '20px' }}>
+          <div className="renter-content-grid">
             <div>
               <PropertyInfo property={currentProperty} />
               <LeaseInfo currentTenant={currentTenant} />
-              <ContractsSection 
-                currentTenant={currentTenant} 
+              <ContractsSection
+                currentTenant={currentTenant}
                 onViewContract={setViewingContract}
               />
               <ContactInfo />
