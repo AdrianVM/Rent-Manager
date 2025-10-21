@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import apiService from '../services/api';
 import { PrimaryButton, SecondaryButton, DangerButton } from '../components/common';
+import './Payments.css';
 
 function PaymentForm({ payment, onSave, onCancel, tenants, properties }) {
   const [formData, setFormData] = useState({
@@ -129,7 +130,7 @@ function PaymentForm({ payment, onSave, onCancel, tenants, properties }) {
               placeholder="Additional notes about this payment..."
             />
           </div>
-          <div style={{ display: 'flex', gap: '10px', justifyContent: 'flex-end', marginTop: '20px' }}>
+          <div className="payment-form-actions">
             <SecondaryButton type="button" onClick={onCancel}>Cancel</SecondaryButton>
             <PrimaryButton type="submit">Save Payment</PrimaryButton>
           </div>
@@ -234,22 +235,8 @@ function Payments() {
   };
 
   const getStatusBadge = (status) => {
-    const colors = {
-      completed: '#28a745',
-      pending: '#ffc107',
-      failed: '#dc3545'
-    };
     return (
-      <span
-        style={{
-          backgroundColor: colors[status] || colors.pending,
-          color: 'white',
-          padding: '4px 8px',
-          borderRadius: '4px',
-          fontSize: '12px',
-          textTransform: 'capitalize'
-        }}
-      >
+      <span className={`payment-status-badge ${status.toLowerCase()}`}>
         {status}
       </span>
     );
@@ -266,14 +253,14 @@ function Payments() {
 
   return (
     <div>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+      <div className="payments-header">
         <h1>Rent Payments</h1>
         <PrimaryButton onClick={handleAddPayment}>
           Record Payment
         </PrimaryButton>
       </div>
 
-      <div className="dashboard-grid" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))' }}>
+      <div className="dashboard-grid payments-stats-grid">
         <div className="stat-card">
           <div className="stat-number">${totalPayments.toLocaleString()}</div>
           <div className="stat-label">Total Collected</div>
@@ -289,13 +276,12 @@ function Payments() {
       </div>
 
       <div className="card">
-        <div style={{ marginBottom: '20px' }}>
-          <label style={{ marginRight: '10px' }}>Filter by status:</label>
+        <div className="payments-filter-section">
+          <label className="payments-filter-label">Filter by status:</label>
           <select
             value={filter}
             onChange={(e) => setFilter(e.target.value)}
-            className="form-control"
-            style={{ width: 'auto', display: 'inline-block' }}
+            className="form-control payments-filter-select"
           >
             <option value="all">All Payments</option>
             <option value="completed">Completed</option>
@@ -305,27 +291,27 @@ function Payments() {
         </div>
 
         {loading ? (
-          <div style={{ textAlign: 'center', padding: '40px', color: '#666' }}>
+          <div className="payments-loading">
             <p>Loading payments...</p>
           </div>
         ) : error ? (
-          <div style={{ textAlign: 'center', padding: '40px', color: '#dc3545' }}>
+          <div className="payments-error">
             <p>{error}</p>
             <PrimaryButton onClick={loadData}>
               Try Again
             </PrimaryButton>
           </div>
         ) : filteredPayments.length === 0 ? (
-          <div style={{ textAlign: 'center', padding: '40px', color: '#666' }}>
+          <div className="payments-empty">
             <h3>No payments found</h3>
             <p>
-              {filter === 'all' 
+              {filter === 'all'
                 ? 'Record your first payment to start tracking rent collection'
                 : `No ${filter} payments found`
               }
             </p>
             {tenants.filter(t => t.status.toLowerCase() === 'active').length === 0 && (
-              <p style={{ color: '#dc3545', marginTop: '10px' }}>
+              <p className="payments-empty-warning">
                 Note: You need to have active tenants before recording payments
               </p>
             )}
@@ -353,23 +339,23 @@ function Payments() {
                       <td>{getTenantName(payment.tenantId)}</td>
                       <td>{getPropertyName(payment.tenantId)}</td>
                       <td>${payment.amount.toLocaleString()}</td>
-                      <td style={{ textTransform: 'capitalize' }}>
+                      <td className="payment-method-text">
                         {payment.method.replace(/([A-Z])/g, ' $1').replace('_', ' ').replace(/^\w/, c => c.toUpperCase())}
                       </td>
                       <td>{getStatusBadge(payment.status)}</td>
                       <td>
-                        <div style={{ display: 'flex', gap: '6px', alignItems: 'center' }}>
+                        <div className="payments-action-buttons">
                           <PrimaryButton
                             onClick={() => handleEditPayment(payment)}
                             title="Edit Payment"
-                            style={{ padding: '6px 10px', minWidth: '36px' }}
+                            className="payment-action-btn"
                           >
                             ✏️
                           </PrimaryButton>
                           <DangerButton
                             onClick={() => handleDeletePayment(payment.id)}
                             title="Delete Payment"
-                            style={{ padding: '6px 10px', minWidth: '36px' }}
+                            className="payment-action-btn"
                           >
                             🗑️
                           </DangerButton>
@@ -399,7 +385,7 @@ function Payments() {
                     </div>
                     <div className="card-item-detail">
                       <span className="card-item-label">Method:</span>
-                      <span className="card-item-value" style={{ textTransform: 'capitalize' }}>
+                      <span className="card-item-value payment-method-text">
                         {payment.method.replace(/([A-Z])/g, ' $1').replace('_', ' ').replace(/^\w/, c => c.toUpperCase())}
                       </span>
                     </div>
@@ -408,18 +394,18 @@ function Payments() {
                       <span className="card-item-value">{getStatusBadge(payment.status)}</span>
                     </div>
                   </div>
-                  <div className="card-item-actions" style={{ gap: '8px' }}>
+                  <div className="card-item-actions payments-mobile-actions">
                     <PrimaryButton
                       onClick={() => handleEditPayment(payment)}
                       title="Edit Payment"
-                      style={{ flex: '1', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                      className="payments-mobile-action-btn"
                     >
                       ✏️
                     </PrimaryButton>
                     <DangerButton
                       onClick={() => handleDeletePayment(payment.id)}
                       title="Delete Payment"
-                      style={{ flex: '1', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                      className="payments-mobile-action-btn"
                     >
                       🗑️
                     </DangerButton>
