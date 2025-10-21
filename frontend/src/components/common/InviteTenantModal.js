@@ -82,7 +82,7 @@ function InviteTenantModal({ onClose, properties = [] }) {
             </p>
             <div style={{
               padding: '15px',
-              backgroundColor: 'var(--bg-color)',
+              backgroundColor: 'var(--bg-secondary)',
               borderRadius: '8px',
               border: '1px solid #e0e0e0',
               wordBreak: 'break-all',

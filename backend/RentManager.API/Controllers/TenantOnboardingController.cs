@@ -9,17 +9,15 @@ namespace RentManager.API.Controllers
     [Route("api/[controller]")]
     public class TenantOnboardingController : ControllerBase
     {
-        private readonly IAuthService _authService;
         private readonly IDataService _dataService;
 
-        public TenantOnboardingController(IAuthService authService, IDataService dataService)
+        public TenantOnboardingController(IDataService dataService)
         {
-            _authService = authService;
             _dataService = dataService;
         }
 
         [HttpPost]
-        [AllowAnonymous]
+        [Authorize]
         public async Task<IActionResult> OnboardTenant([FromBody] TenantOnboardingRequest request)
         {
             // Find the invitation
@@ -47,19 +45,11 @@ namespace RentManager.API.Controllers
                 return BadRequest(new { message = "Email does not match invitation" });
             }
 
-            // Register user via AuthService
-            var registrationRequest = new UserRegistrationRequest
+            // Get the authenticated user's ID from Zitadel token
+            var userId = User.FindFirst("sub")?.Value ?? User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+            if (string.IsNullOrEmpty(userId))
             {
-                Name = request.Name,
-                Email = request.Email,
-                Password = request.Password,
-                Role = UserRole.Renter
-            };
-
-            var user = await _authService.RegisterAsync(registrationRequest);
-            if (user == null)
-            {
-                return BadRequest(new { message = "A user with this email already exists" });
+                return Unauthorized(new { message = "User not authenticated" });
             }
 
             // Create tenant record (assuming person tenant for onboarding)
@@ -94,14 +84,13 @@ namespace RentManager.API.Controllers
             return Ok(new
             {
                 message = "Tenant onboarding completed successfully",
-                userId = user.Id,
+                userId = userId,
                 tenantId = tenant.Id,
-                user = new
+                tenant = new
                 {
-                    id = user.Id,
-                    name = user.Name,
-                    email = user.Email,
-                    role = user.Role.ToString()
+                    id = tenant.Id,
+                    email = tenant.Email,
+                    propertyId = tenant.PropertyId
                 }
             });
         }

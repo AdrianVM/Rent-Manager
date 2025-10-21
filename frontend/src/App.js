@@ -48,7 +48,7 @@ function App() {
         justifyContent: 'center',
         alignItems: 'center',
         height: '100vh',
-        backgroundColor: 'var(--bg-color)'
+        backgroundColor: 'var(--bg-secondary)'
       }}>
         <div style={{ color: 'var(--text-primary)' }}>Loading...</div>
       </div>

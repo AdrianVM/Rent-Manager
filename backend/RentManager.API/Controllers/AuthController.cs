@@ -16,42 +16,6 @@ namespace RentManager.API.Controllers
             _authService = authService;
         }
 
-        [HttpPost("login")]
-        public async Task<ActionResult<UserLoginResponse>> Login([FromBody] UserLoginRequest request)
-        {
-            if (string.IsNullOrEmpty(request.Email) || string.IsNullOrEmpty(request.Password))
-            {
-                return BadRequest("Email and password are required");
-            }
-
-            var response = await _authService.LoginAsync(request);
-            if (response == null)
-            {
-                return Unauthorized("Invalid email or password");
-            }
-
-            return Ok(response);
-        }
-
-        [HttpPost("register")]
-        public async Task<ActionResult<User>> Register([FromBody] UserRegistrationRequest request)
-        {
-            if (string.IsNullOrEmpty(request.Email) || string.IsNullOrEmpty(request.Password) || string.IsNullOrEmpty(request.Name))
-            {
-                return BadRequest("Email, password, and name are required");
-            }
-
-            var user = await _authService.RegisterAsync(request);
-            if (user == null)
-            {
-                return Conflict("User with this email already exists");
-            }
-
-            // Remove password hash from response
-            user.PasswordHash = "";
-            return Ok(user);
-        }
-
         [HttpGet("me")]
         [Authorize]
         public async Task<ActionResult<User>> GetCurrentUser()
@@ -94,31 +58,12 @@ namespace RentManager.API.Controllers
             return Ok(user);
         }
 
-        [HttpPost("change-password")]
-        [Authorize]
-        public async Task<ActionResult> ChangePassword([FromBody] ChangePasswordRequest request)
-        {
-            var userId = GetCurrentUserId();
-            if (string.IsNullOrEmpty(userId))
-            {
-                return Unauthorized();
-            }
-
-            var success = await _authService.ChangePasswordAsync(userId, request.CurrentPassword, request.NewPassword);
-            if (!success)
-            {
-                return BadRequest("Current password is incorrect");
-            }
-
-            return Ok();
-        }
-
         [HttpGet("users")]
         [Authorize(Roles = "Admin")]
         public async Task<ActionResult<List<User>>> GetUsers()
         {
             var users = await _authService.GetUsersAsync();
-            
+
             // Remove password hashes from response
             foreach (var user in users)
             {
@@ -156,30 +101,10 @@ namespace RentManager.API.Controllers
             return NoContent();
         }
 
-        [HttpPost("logout")]
-        [Authorize]
-        public Task<ActionResult> Logout()
-        {
-            var userId = GetCurrentUserId();
-            if (string.IsNullOrEmpty(userId))
-            {
-                return Task.FromResult<ActionResult>(Unauthorized());
-            }
-
-            // For now, just return success since we're using stateless JWT tokens
-            // In a production app, you might want to maintain a blacklist of invalidated tokens
-            return Task.FromResult<ActionResult>(Ok(new { message = "Logged out successfully" }));
-        }
-
         private string? GetCurrentUserId()
         {
-            return User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+            // Try to get the user ID from Zitadel's "sub" claim first, then fall back to NameIdentifier
+            return User.FindFirst("sub")?.Value ?? User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
         }
-    }
-
-    public class ChangePasswordRequest
-    {
-        public string CurrentPassword { get; set; } = string.Empty;
-        public string NewPassword { get; set; } = string.Empty;
     }
 }

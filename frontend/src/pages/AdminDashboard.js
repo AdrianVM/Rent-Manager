@@ -121,7 +121,7 @@ function UserManagement() {
       <div style={{ overflowX: 'auto' }}>
         <table style={{ width: '100%', borderCollapse: 'collapse', backgroundColor: 'var(--bg-secondary)', borderRadius: '8px' }}>
           <thead>
-            <tr style={{ backgroundColor: 'var(--bg-color)' }}>
+            <tr style={{ backgroundColor: 'var(--bg-secondary)' }}>
               <th style={{ padding: '12px', textAlign: 'left', borderBottom: '1px solid var(--border-color)' }}>Name</th>
               <th style={{ padding: '12px', textAlign: 'left', borderBottom: '1px solid var(--border-color)' }}>Email</th>
               <th style={{ padding: '12px', textAlign: 'left', borderBottom: '1px solid var(--border-color)' }}>Role</th>

@@ -176,7 +176,7 @@ function TenantOnboarding() {
   }
 
   return (
-    <div style={{ minHeight: '100vh', padding: '20px', backgroundColor: 'var(--bg-color)' }}>
+    <div style={{ minHeight: '100vh', padding: '20px', backgroundColor: 'var(--bg-secondary)' }}>
       <div className="container" style={{ maxWidth: '800px', margin: '0 auto' }}>
         <div className="card" style={{ marginTop: '20px' }}>
           <h1 style={{ textAlign: 'center', marginBottom: '10px', color: 'var(--primary-color)' }}>
@@ -193,7 +193,7 @@ function TenantOnboarding() {
             <div>
               <h3>Invitation Details</h3>
               {property && (
-                <div style={{ marginTop: '20px', padding: '20px', backgroundColor: 'var(--bg-color)', borderRadius: '8px' }}>
+                <div style={{ marginTop: '20px', padding: '20px', backgroundColor: 'var(--bg-secondary)', borderRadius: '8px' }}>
                   <h4 style={{ marginTop: 0 }}>Property Information</h4>
                   <p><strong>Property:</strong> {property.name}</p>
                   <p><strong>Address:</strong> {property.address}</p>
@@ -202,7 +202,7 @@ function TenantOnboarding() {
                   {property.bathrooms && <p><strong>Bathrooms:</strong> {property.bathrooms}</p>}
                 </div>
               )}
-              <div style={{ marginTop: '20px', padding: '20px', backgroundColor: 'var(--bg-color)', borderRadius: '8px' }}>
+              <div style={{ marginTop: '20px', padding: '20px', backgroundColor: 'var(--bg-secondary)', borderRadius: '8px' }}>
                 <h4 style={{ marginTop: 0 }}>Lease Details</h4>
                 <p><strong>Email:</strong> {invitation.email}</p>
                 {invitation.rentAmount && <p><strong>Monthly Rent:</strong> ${invitation.rentAmount.toLocaleString()}</p>}
@@ -352,20 +352,20 @@ function TenantOnboarding() {
           {currentStep === 4 && (
             <div>
               <h3>Review Your Information</h3>
-              <div style={{ marginTop: '20px', padding: '20px', backgroundColor: 'var(--bg-color)', borderRadius: '8px' }}>
+              <div style={{ marginTop: '20px', padding: '20px', backgroundColor: 'var(--bg-secondary)', borderRadius: '8px' }}>
                 <h4 style={{ marginTop: 0 }}>Personal Information</h4>
                 <p><strong>Name:</strong> {formData.name}</p>
                 <p><strong>Email:</strong> {formData.email}</p>
                 {formData.phone && <p><strong>Phone:</strong> {formData.phone}</p>}
               </div>
               {(formData.emergencyContactName || formData.emergencyContactPhone) && (
-                <div style={{ marginTop: '15px', padding: '20px', backgroundColor: 'var(--bg-color)', borderRadius: '8px' }}>
+                <div style={{ marginTop: '15px', padding: '20px', backgroundColor: 'var(--bg-secondary)', borderRadius: '8px' }}>
                   <h4 style={{ marginTop: 0 }}>Emergency Contact</h4>
                   {formData.emergencyContactName && <p><strong>Name:</strong> {formData.emergencyContactName}</p>}
                   {formData.emergencyContactPhone && <p><strong>Phone:</strong> {formData.emergencyContactPhone}</p>}
                 </div>
               )}
-              <div style={{ marginTop: '15px', padding: '20px', backgroundColor: 'var(--bg-color)', borderRadius: '8px' }}>
+              <div style={{ marginTop: '15px', padding: '20px', backgroundColor: 'var(--bg-secondary)', borderRadius: '8px' }}>
                 <h4 style={{ marginTop: 0 }}>Additional Information</h4>
                 {formData.numberOfOccupants && <p><strong>Number of Occupants:</strong> {formData.numberOfOccupants}</p>}
                 <p><strong>Pets:</strong> {formData.hasPets ? 'Yes' : 'No'}</p>

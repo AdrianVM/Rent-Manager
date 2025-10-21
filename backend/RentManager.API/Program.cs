@@ -1,4 +1,3 @@
-using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -46,55 +45,37 @@ builder.Services.AddScoped<IPaymentService, PaymentService>();
 
 builder.Services.AddScoped<SeedDataService>();
 
-// JWT Configuration - Support both local JWT and Zitadel OAuth tokens
-var jwtSettings = builder.Configuration.GetSection("JwtSettings");
-var secretKey = jwtSettings["SecretKey"] ?? "your-super-secret-key-that-is-at-least-32-characters-long";
+// Zitadel OAuth Configuration
 var zitadelSettings = builder.Configuration.GetSection("Zitadel");
+var zitadelAuthority = zitadelSettings["Authority"];
+var zitadelAudience = zitadelSettings["Audience"];
+
+if (string.IsNullOrEmpty(zitadelAuthority) || zitadelAuthority == "your-authority")
+{
+    throw new InvalidOperationException("Zitadel Authority must be configured in appsettings.json or environment variables");
+}
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
-        var zitadelAuthority = zitadelSettings["Authority"];
-        var zitadelAudience = zitadelSettings["Audience"];
-
-        // Configure for Zitadel if authority is set, otherwise use local JWT
-        if (!string.IsNullOrEmpty(zitadelAuthority) && zitadelAuthority != "https://your-instance.zitadel.cloud")
+        options.Authority = zitadelAuthority;
+        options.TokenValidationParameters = new TokenValidationParameters
         {
-            // Zitadel OAuth configuration
-            options.Authority = zitadelAuthority;
-            options.TokenValidationParameters = new TokenValidationParameters
-            {
-                ValidateIssuer = true,
-                ValidateAudience = true,
-                ValidateLifetime = true,
-                ValidIssuer = zitadelAuthority,
-                ValidAudience = zitadelAudience,
-                // Zitadel tokens can have multiple audiences
-                ValidAudiences = new[] { zitadelAudience ?? "", builder.Configuration["FrontendUrl"] ?? "" },
-                // For Zitadel, we validate the signing key from the OIDC discovery document
-                ValidateIssuerSigningKey = true
-            };
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidateLifetime = true,
+            ValidIssuer = zitadelAuthority,
+            ValidAudience = zitadelAudience,
+            // Zitadel tokens can have multiple audiences
+            ValidAudiences = new[] { zitadelAudience ?? "", builder.Configuration["FrontendUrl"] ?? "" },
+            // For Zitadel, we validate the signing key from the OIDC discovery document
+            ValidateIssuerSigningKey = true
+        };
 
-            // Allow HTTP for local development
-            if (builder.Environment.IsDevelopment())
-            {
-                options.RequireHttpsMetadata = false;
-            }
-
-        }
-        else
+        // Allow HTTP for local development
+        if (builder.Environment.IsDevelopment())
         {
-            // Local JWT configuration (for email/password auth)
-            options.TokenValidationParameters = new TokenValidationParameters
-            {
-                ValidateIssuer = true,
-                ValidateAudience = true,
-                ValidateLifetime = true,
-                ValidateIssuerSigningKey = true,
-                ValidIssuer = jwtSettings["Issuer"] ?? "RentManager",
-                ValidAudience = jwtSettings["Audience"] ?? "RentManager",
-                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey))
-            };
+            options.RequireHttpsMetadata = false;
         }
     });
 

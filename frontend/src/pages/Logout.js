@@ -22,7 +22,7 @@ function Logout() {
       justifyContent: 'center',
       alignItems: 'center',
       minHeight: '100vh',
-      backgroundColor: 'var(--bg-color)'
+      backgroundColor: 'var(--bg-secondary)'
     }}>
       <div className="card" style={{ textAlign: 'center', maxWidth: '400px' }}>
         <div style={{ fontSize: '48px', marginBottom: '20px' }}>👋</div>

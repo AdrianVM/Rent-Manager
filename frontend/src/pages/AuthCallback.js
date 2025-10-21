@@ -54,7 +54,7 @@ function AuthCallback({ onAuthSuccess }) {
         justifyContent: 'center',
         alignItems: 'center',
         minHeight: '100vh',
-        backgroundColor: 'var(--bg-color)'
+        backgroundColor: 'var(--bg-secondary)'
       }}>
         <div className="card" style={{ maxWidth: '500px', textAlign: 'center' }}>
           <h2 style={{ color: 'var(--error-color)', marginBottom: '15px' }}>Authentication Error</h2>
@@ -73,7 +73,7 @@ function AuthCallback({ onAuthSuccess }) {
       justifyContent: 'center',
       alignItems: 'center',
       minHeight: '100vh',
-      backgroundColor: 'var(--bg-color)'
+      backgroundColor: 'var(--bg-secondary)'
     }}>
       <div className="card" style={{ textAlign: 'center' }}>
         <h2 style={{ color: 'var(--primary-color)', marginBottom: '15px' }}>
