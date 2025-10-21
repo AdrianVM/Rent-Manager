@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import apiService from '../services/api';
 import DemoDataSeeder from '../components/common/DemoDataSeeder';
+import './AdminDashboard.css';
 
 const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:5057/api';
 
@@ -82,15 +83,6 @@ function UserManagement() {
     }
   };
 
-  const getRoleBadgeColor = (role) => {
-    const colors = {
-      admin: '#dc3545',
-      propertyowner: '#0d6efd',
-      renter: '#198754'
-    };
-    return colors[role?.toLowerCase()] || '#6c757d';
-  };
-
   if (loading) {
     return <div style={{ padding: '20px' }}>Loading users...</div>;
   }
@@ -107,69 +99,61 @@ function UserManagement() {
   }
 
   return (
-    <div style={{ padding: '20px' }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+    <div className="user-management-container">
+      <div className="user-management-header">
         <h2>User Management</h2>
         <button
-          className="btn btn-primary"
+          className="btn-modern"
           onClick={() => setShowCreateUser(true)}
         >
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <line x1="12" y1="5" x2="12" y2="19"></line>
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+          </svg>
           Create User
         </button>
       </div>
 
-      <div style={{ overflowX: 'auto' }}>
-        <table style={{ width: '100%', borderCollapse: 'collapse', backgroundColor: 'var(--bg-secondary)', borderRadius: '8px' }}>
+      <div className="table-container">
+        <table className="modern-table">
           <thead>
-            <tr style={{ backgroundColor: 'var(--bg-secondary)' }}>
-              <th style={{ padding: '12px', textAlign: 'left', borderBottom: '1px solid var(--border-color)' }}>Name</th>
-              <th style={{ padding: '12px', textAlign: 'left', borderBottom: '1px solid var(--border-color)' }}>Email</th>
-              <th style={{ padding: '12px', textAlign: 'left', borderBottom: '1px solid var(--border-color)' }}>Role</th>
-              <th style={{ padding: '12px', textAlign: 'left', borderBottom: '1px solid var(--border-color)' }}>Status</th>
-              <th style={{ padding: '12px', textAlign: 'left', borderBottom: '1px solid var(--border-color)' }}>Last Login</th>
-              <th style={{ padding: '12px', textAlign: 'left', borderBottom: '1px solid var(--border-color)' }}>Actions</th>
+            <tr>
+              <th>Name</th>
+              <th>Email</th>
+              <th>Role</th>
+              <th>Status</th>
+              <th>Last Login</th>
+              <th>Actions</th>
             </tr>
           </thead>
           <tbody>
             {users.map(user => (
-              <tr key={user.id} style={{ borderBottom: '1px solid var(--border-color)' }}>
-                <td style={{ padding: '12px' }}>{user.name}</td>
-                <td style={{ padding: '12px' }}>{user.email}</td>
-                <td style={{ padding: '12px' }}>
-                  <span style={{
-                    backgroundColor: getRoleBadgeColor(user.role),
-                    color: 'white',
-                    padding: '4px 8px',
-                    borderRadius: '4px',
-                    fontSize: '12px',
-                    textTransform: 'capitalize'
-                  }}>
+              <tr key={user.id}>
+                <td>{user.name}</td>
+                <td>{user.email}</td>
+                <td>
+                  <span className={`role-badge ${user.role?.toLowerCase()}`}>
                     {user.role}
                   </span>
                 </td>
-                <td style={{ padding: '12px' }}>
-                  <span style={{
-                    color: user.isActive ? '#198754' : '#dc3545',
-                    fontWeight: 'bold'
-                  }}>
+                <td>
+                  <span className={`status-badge ${user.isActive ? 'active' : 'inactive'}`}>
                     {user.isActive ? 'Active' : 'Inactive'}
                   </span>
                 </td>
-                <td style={{ padding: '12px' }}>
+                <td>
                   {user.lastLoginAt ? new Date(user.lastLoginAt).toLocaleDateString() : 'Never'}
                 </td>
-                <td style={{ padding: '12px' }}>
-                  <div style={{ display: 'flex', gap: '8px' }}>
+                <td>
+                  <div className="action-buttons">
                     <button
-                      className="btn btn-sm"
-                      style={{ backgroundColor: '#0d6efd', color: 'white', fontSize: '12px', padding: '4px 8px' }}
+                      className="btn-modern btn-modern-secondary btn-modern-small"
                       onClick={() => setEditingUser(user)}
                     >
                       Edit
                     </button>
                     <button
-                      className="btn btn-sm"
-                      style={{ backgroundColor: '#dc3545', color: 'white', fontSize: '12px', padding: '4px 8px' }}
+                      className="btn-modern btn-modern-danger btn-modern-small"
                       onClick={() => handleDeleteUser(user.id)}
                     >
                       Delete
@@ -214,78 +198,60 @@ function EditUserModal({ user, onSave, onClose }) {
   };
 
   return (
-    <div style={{
-      position: 'fixed',
-      top: 0,
-      left: 0,
-      right: 0,
-      bottom: 0,
-      backgroundColor: 'rgba(0,0,0,0.5)',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      zIndex: 1000
-    }}>
-      <div style={{
-        backgroundColor: 'var(--bg-secondary)',
-        padding: '30px',
-        borderRadius: '12px',
-        width: '90%',
-        maxWidth: '500px',
-        border: '1px solid var(--border-color)'
-      }}>
-        <h3 style={{ marginBottom: '20px' }}>Edit User</h3>
+    <div className="modal-overlay">
+      <div className="modal-container">
+        <div className="modal-header">
+          <h3>Edit User</h3>
+        </div>
         <form onSubmit={handleSubmit}>
-          <div style={{ marginBottom: '15px' }}>
-            <label style={{ display: 'block', marginBottom: '5px' }}>Name</label>
+          <div className="form-group">
+            <label className="form-label">Name</label>
             <input
               type="text"
               value={formData.name}
               onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-              className="form-control"
-              style={{ width: '100%' }}
+              className="form-input"
               required
             />
           </div>
-          <div style={{ marginBottom: '15px' }}>
-            <label style={{ display: 'block', marginBottom: '5px' }}>Email</label>
+          <div className="form-group">
+            <label className="form-label">Email</label>
             <input
               type="email"
               value={formData.email}
               onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-              className="form-control"
-              style={{ width: '100%' }}
+              className="form-input"
               required
             />
           </div>
-          <div style={{ marginBottom: '15px' }}>
-            <label style={{ display: 'block', marginBottom: '5px' }}>Role</label>
+          <div className="form-group">
+            <label className="form-label">Role</label>
             <select
               value={formData.role}
               onChange={(e) => setFormData({ ...formData, role: e.target.value })}
-              className="form-control"
-              style={{ width: '100%' }}
+              className="form-select"
             >
               <option value="renter">Renter</option>
               <option value="propertyowner">Property Owner</option>
               <option value="admin">Admin</option>
             </select>
           </div>
-          <div style={{ marginBottom: '20px' }}>
-            <label style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <div className="form-group">
+            <label className="form-checkbox-container">
               <input
                 type="checkbox"
                 checked={formData.isActive}
                 onChange={(e) => setFormData({ ...formData, isActive: e.target.checked })}
+                className="form-checkbox"
               />
-              Active
+              <span className="form-label" style={{ marginBottom: 0 }}>Active</span>
             </label>
           </div>
-          <div style={{ display: 'flex', gap: '10px', justifyContent: 'flex-end' }}>
-            <button type="button" className="btn btn-secondary" onClick={onClose}>
+          <div className="modal-actions">
+            <button type="button" className="btn-modern btn-modern-secondary" onClick={onClose}>
               Cancel
             </button>
-            <button type="submit" className="btn btn-primary">
+            <button type="submit" className="btn-modern">
               Save Changes
             </button>
           </div>
@@ -332,79 +298,59 @@ function CreateUserModal({ onClose, onUserCreated }) {
   };
 
   return (
-    <div style={{
-      position: 'fixed',
-      top: 0,
-      left: 0,
-      right: 0,
-      bottom: 0,
-      backgroundColor: 'rgba(0,0,0,0.5)',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      zIndex: 1000
-    }}>
-      <div style={{
-        backgroundColor: 'var(--bg-secondary)',
-        padding: '30px',
-        borderRadius: '12px',
-        width: '90%',
-        maxWidth: '500px',
-        border: '1px solid var(--border-color)'
-      }}>
-        <h3 style={{ marginBottom: '20px' }}>Create New User</h3>
+    <div className="modal-overlay">
+      <div className="modal-container">
+        <div className="modal-header">
+          <h3>Create New User</h3>
+        </div>
         <form onSubmit={handleSubmit}>
-          <div style={{ marginBottom: '15px' }}>
-            <label style={{ display: 'block', marginBottom: '5px' }}>Name</label>
+          <div className="form-group">
+            <label className="form-label">Name</label>
             <input
               type="text"
               value={formData.name}
               onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-              className="form-control"
-              style={{ width: '100%' }}
+              className="form-input"
               required
             />
           </div>
-          <div style={{ marginBottom: '15px' }}>
-            <label style={{ display: 'block', marginBottom: '5px' }}>Email</label>
+          <div className="form-group">
+            <label className="form-label">Email</label>
             <input
               type="email"
               value={formData.email}
               onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-              className="form-control"
-              style={{ width: '100%' }}
+              className="form-input"
               required
             />
           </div>
-          <div style={{ marginBottom: '15px' }}>
-            <label style={{ display: 'block', marginBottom: '5px' }}>Password</label>
+          <div className="form-group">
+            <label className="form-label">Password</label>
             <input
               type="password"
               value={formData.password}
               onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-              className="form-control"
-              style={{ width: '100%' }}
+              className="form-input"
               required
             />
           </div>
-          <div style={{ marginBottom: '20px' }}>
-            <label style={{ display: 'block', marginBottom: '5px' }}>Role</label>
+          <div className="form-group">
+            <label className="form-label">Role</label>
             <select
               value={formData.role}
               onChange={(e) => setFormData({ ...formData, role: e.target.value })}
-              className="form-control"
-              style={{ width: '100%' }}
+              className="form-select"
             >
               <option value="renter">Renter</option>
               <option value="propertyowner">Property Owner</option>
               <option value="admin">Admin</option>
             </select>
           </div>
-          <div style={{ display: 'flex', gap: '10px', justifyContent: 'flex-end' }}>
-            <button type="button" className="btn btn-secondary" onClick={onClose}>
+          <div className="modal-actions">
+            <button type="button" className="btn-modern btn-modern-secondary" onClick={onClose}>
               Cancel
             </button>
-            <button type="submit" className="btn btn-primary" disabled={loading}>
+            <button type="submit" className="btn-modern" disabled={loading}>
               {loading ? 'Creating...' : 'Create User'}
             </button>
           </div>
@@ -445,196 +391,139 @@ function AdminDashboard() {
 
   if (loading) {
     return (
-      <div style={{ textAlign: 'center', padding: '40px', color: 'var(--text-secondary)' }}>
-        <h1>Admin Dashboard</h1>
-        <p>Loading dashboard data...</p>
+      <div className="admin-dashboard-container">
+        <div className="loading-container">
+          <h1>Admin Dashboard</h1>
+          <p>Loading dashboard data...</p>
+        </div>
       </div>
     );
   }
 
   if (error) {
     return (
-      <div style={{ textAlign: 'center', padding: '40px', color: '#dc3545' }}>
-        <h1>Admin Dashboard</h1>
-        <p>{error}</p>
-        <button className="btn btn-primary" onClick={() => loadDashboardData(false)}>
-          Try Again
-        </button>
+      <div className="admin-dashboard-container">
+        <div className="error-container">
+          <h1>Admin Dashboard</h1>
+          <p>{error}</p>
+          <button className="btn-modern" onClick={() => loadDashboardData(false)}>
+            Try Again
+          </button>
+        </div>
       </div>
     );
   }
 
   return (
-    <div>
-      <div style={{ marginBottom: '30px' }}>
-        <h1 style={{ color: 'var(--primary-color)', marginBottom: '10px' }}>
-          Admin Dashboard
-        </h1>
-        <p style={{ color: 'var(--text-secondary)', margin: 0 }}>
-          System administration and user management
-        </p>
+    <div className="admin-dashboard-container">
+      <div className="admin-header">
+        <div className="admin-header-content">
+          <h1 className="admin-title">
+            Admin Dashboard
+          </h1>
+          <p className="admin-subtitle">
+            System administration and user management
+          </p>
+        </div>
       </div>
 
-      <div style={{ marginBottom: '30px' }}>
-        <nav style={{ borderBottom: '1px solid var(--border-color)' }}>
-          <div style={{ display: 'flex', gap: '20px' }}>
-            <button
-              onClick={() => setActiveTab('overview')}
-              style={{
-                background: 'none',
-                border: 'none',
-                padding: '12px 0',
-                borderBottom: activeTab === 'overview' ? '2px solid var(--primary-color)' : '2px solid transparent',
-                color: activeTab === 'overview' ? 'var(--primary-color)' : 'var(--text-secondary)',
-                cursor: 'pointer',
-                fontSize: '16px'
-              }}
-            >
-              Overview
-            </button>
-            <button
-              onClick={() => setActiveTab('users')}
-              style={{
-                background: 'none',
-                border: 'none',
-                padding: '12px 0',
-                borderBottom: activeTab === 'users' ? '2px solid var(--primary-color)' : '2px solid transparent',
-                color: activeTab === 'users' ? 'var(--primary-color)' : 'var(--text-secondary)',
-                cursor: 'pointer',
-                fontSize: '16px'
-              }}
-            >
-              User Management
-            </button>
-            <button
-              onClick={() => setActiveTab('system')}
-              style={{
-                background: 'none',
-                border: 'none',
-                padding: '12px 0',
-                borderBottom: activeTab === 'system' ? '2px solid var(--primary-color)' : '2px solid transparent',
-                color: activeTab === 'system' ? 'var(--primary-color)' : 'var(--text-secondary)',
-                cursor: 'pointer',
-                fontSize: '16px'
-              }}
-            >
-              System Settings
-            </button>
-          </div>
+      <div className="admin-tabs">
+        <nav className="admin-tabs-container">
+          <button
+            onClick={() => setActiveTab('overview')}
+            className={`admin-tab ${activeTab === 'overview' ? 'active' : ''}`}
+          >
+            Overview
+          </button>
+          <button
+            onClick={() => setActiveTab('users')}
+            className={`admin-tab ${activeTab === 'users' ? 'active' : ''}`}
+          >
+            User Management
+          </button>
+          <button
+            onClick={() => setActiveTab('system')}
+            className={`admin-tab ${activeTab === 'system' ? 'active' : ''}`}
+          >
+            System Settings
+          </button>
         </nav>
       </div>
 
-      {activeTab === 'overview' && (
-        <div>
-          {dashboardData && (
-            <div className="stats-grid">
-              <div className="stat-card">
-                <h3>Total Properties</h3>
-                <div className="stat-number">{dashboardData.totalProperties}</div>
-                <div className="stat-change positive">System-wide</div>
+      <div className="admin-content">
+        {activeTab === 'overview' && (
+          <div>
+            {dashboardData && (
+              <div className="stats-grid">
+                <div className="stat-card">
+                  <h3>Total Properties</h3>
+                  <div className="stat-number">{dashboardData.totalProperties}</div>
+                  <div className="stat-change positive">System-wide</div>
+                </div>
+                <div className="stat-card">
+                  <h3>Total Tenants</h3>
+                  <div className="stat-number">{dashboardData.totalTenants}</div>
+                  <div className="stat-change positive">All active</div>
+                </div>
+                <div className="stat-card">
+                  <h3>Monthly Revenue</h3>
+                  <div className="stat-number">${dashboardData.monthlyRevenue?.toLocaleString()}</div>
+                  <div className="stat-change positive">Current month</div>
+                </div>
+                <div className="stat-card">
+                  <h3>Occupancy Rate</h3>
+                  <div className="stat-number">{dashboardData.occupancyRate}%</div>
+                  <div className="stat-change positive">Overall system</div>
+                </div>
               </div>
-              <div className="stat-card">
-                <h3>Total Tenants</h3>
-                <div className="stat-number">{dashboardData.totalTenants}</div>
-                <div className="stat-change positive">All active</div>
-              </div>
-              <div className="stat-card">
-                <h3>Monthly Revenue</h3>
-                <div className="stat-number">${dashboardData.monthlyRevenue?.toLocaleString()}</div>
-                <div className="stat-change positive">Current month</div>
-              </div>
-              <div className="stat-card">
-                <h3>Occupancy Rate</h3>
-                <div className="stat-number">{dashboardData.occupancyRate}%</div>
-                <div className="stat-change positive">Overall system</div>
-              </div>
-            </div>
-          )}
-
-        </div>
-      )}
-
-      {activeTab === 'users' && <UserManagement />}
-
-      {activeTab === 'system' && (
-        <div style={{ padding: '20px' }}>
-          <h2>System Settings</h2>
-          <div style={{
-            backgroundColor: 'var(--bg-secondary)',
-            padding: '20px',
-            borderRadius: '8px',
-            border: '1px solid var(--border-color)'
-          }}>
-            <h3>Database Management</h3>
-            <p style={{ color: 'var(--text-secondary)', marginBottom: '20px' }}>
-              Load sample data for testing and demonstration purposes. This feature is available only in the System Settings section of the Admin Dashboard.
-            </p>
-            <DemoDataSeeder
-              disabled={showSuccessModal}
-              onDataSeeded={(success) => {
-                if (success !== false) {
-                  setShowSuccessModal(true);
-                }
-                loadDashboardData(false);
-              }}
-            />
+            )}
           </div>
-        </div>
-      )}
+        )}
 
-      {/* Success Modal */}
-      {showSuccessModal && (
-        <div style={{
-          position: 'fixed',
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          backgroundColor: 'rgba(0,0,0,0.5)',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          zIndex: 1000
-        }}>
-          <div style={{
-            backgroundColor: 'var(--bg-secondary)',
-            padding: '30px',
-            borderRadius: '12px',
-            width: '90%',
-            maxWidth: '500px',
-            border: '1px solid var(--border-color)',
-            textAlign: 'center'
-          }}>
-            <div style={{
-              fontSize: '48px',
-              marginBottom: '20px'
-            }}>
-              ✅
+        {activeTab === 'users' && <UserManagement />}
+
+        {activeTab === 'system' && (
+          <div>
+            <h2 style={{ fontSize: '24px', fontWeight: '600', marginBottom: '24px', letterSpacing: '-0.02em' }}>System Settings</h2>
+            <div className="settings-section">
+              <h3>Database Management</h3>
+              <p>
+                Load sample data for testing and demonstration purposes. This feature is available only in the System Settings section of the Admin Dashboard.
+              </p>
+              <DemoDataSeeder
+                disabled={showSuccessModal}
+                onDataSeeded={(success) => {
+                  if (success !== false) {
+                    setShowSuccessModal(true);
+                  }
+                  loadDashboardData(false);
+                }}
+              />
             </div>
-            <h3 style={{
-              color: '#198754',
-              marginBottom: '15px',
-              fontWeight: 'bold'
-            }}>
-              Demo Data Loaded Successfully!
-            </h3>
-            <p style={{
-              color: 'var(--text-primary)',
-              marginBottom: '25px',
-              fontSize: '16px'
-            }}>
-              Sample properties, tenants, and payment records have been created. You can now explore all the features of the Rent Manager application.
-            </p>
-            <button
-              className="btn btn-primary"
-              onClick={() => setShowSuccessModal(false)}
-              style={{
-                fontSize: '16px',
-                padding: '10px 30px'
-              }}
-            >
-              OK
-            </button>
+          </div>
+        )}
+      </div>
+
+      {showSuccessModal && (
+        <div className="modal-overlay">
+          <div className="modal-container">
+            <div className="success-modal-content">
+              <div className="success-icon">
+                ✅
+              </div>
+              <h3 className="success-title">
+                Demo Data Loaded Successfully!
+              </h3>
+              <p className="success-message">
+                Sample properties, tenants, and payment records have been created. You can now explore all the features of the Rent Manager application.
+              </p>
+              <button
+                className="btn-modern"
+                onClick={() => setShowSuccessModal(false)}
+              >
+                OK
+              </button>
+            </div>
           </div>
         </div>
       )}
