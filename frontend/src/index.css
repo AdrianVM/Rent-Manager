@@ -95,6 +95,25 @@ html {
   outline-offset: 2px;
 }
 
+/* Loading Spinner */
+.app-loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background: linear-gradient(135deg, #f5f7fa 0%, #e8ecf1 50%, #f5f7fa 100%);
+}
+
+[data-theme="dark"] .app-loading {
+  background: linear-gradient(135deg, #0a0e14 0%, #121821 50%, #0a0e14 100%);
+}
+
+.app-loading-text {
+  color: var(--text-primary);
+  font-size: 16px;
+  font-weight: 500;
+}
+
 /* Apple-Inspired Typography */
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
 
@@ -428,6 +447,41 @@ label {
 .nav-links a:hover,
 .nav-links a.active {
   background-color: var(--nav-hover);
+}
+
+.nav-user-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.nav-user-name {
+  font-size: 12px;
+  color: var(--nav-text);
+  opacity: 0.9;
+}
+
+.nav-logout-btn {
+  padding: 6px 12px;
+  font-size: 12px;
+  border-radius: 6px;
+}
+
+.nav-user-info-mobile {
+  padding: 8px;
+  font-size: 12px;
+  color: var(--nav-text);
+  opacity: 0.9;
+  text-align: center;
+}
+
+.nav-logout-btn-mobile {
+  background-color: var(--secondary-color);
+  margin-bottom: 10px;
+}
+
+.nav-logout-btn-mobile:hover {
+  background-color: var(--secondary-hover);
 }
 
 .dashboard-grid {

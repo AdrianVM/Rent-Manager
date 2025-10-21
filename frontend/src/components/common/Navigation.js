@@ -27,18 +27,13 @@ function Navigation({ user, onLogout }) {
                   <li><Link to="/payments" className={location.pathname === '/payments' ? 'active' : ''}>Payments</Link></li>
                 </>
               )}
-              <li style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                <span style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>
+              <li className="nav-user-info">
+                <span className="nav-user-name">
                   {user?.name} ({user?.role})
                 </span>
                 <button
                   onClick={onLogout}
-                  className="btn-secondary"
-                  style={{
-                    padding: '6px 12px',
-                    fontSize: '12px',
-                    borderRadius: '6px'
-                  }}
+                  className="btn-secondary nav-logout-btn"
                 >
                   Logout
                 </button>
@@ -73,7 +68,7 @@ function Navigation({ user, onLogout }) {
                 </>
               )}
               <li>
-                <div style={{ padding: '8px', fontSize: '12px', color: 'var(--text-secondary)' }}>
+                <div className="nav-user-info-mobile">
                   {user?.name} ({user?.role})
                 </div>
               </li>
@@ -83,8 +78,7 @@ function Navigation({ user, onLogout }) {
                     onLogout();
                     setMobileMenuOpen(false);
                   }}
-                  className="theme-toggle-mobile"
-                  style={{ backgroundColor: 'var(--secondary-color)', marginBottom: '10px' }}
+                  className="theme-toggle-mobile nav-logout-btn-mobile"
                 >
                   Logout
                 </button>

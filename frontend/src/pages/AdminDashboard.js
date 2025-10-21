@@ -84,12 +84,12 @@ function UserManagement() {
   };
 
   if (loading) {
-    return <div style={{ padding: '20px' }}>Loading users...</div>;
+    return <div className="user-management-loading">Loading users...</div>;
   }
 
   if (error) {
     return (
-      <div style={{ padding: '20px', color: '#dc3545' }}>
+      <div className="user-management-error">
         <p>{error}</p>
         <button className="btn btn-primary" onClick={loadUsers}>
           Retry
@@ -244,7 +244,7 @@ function EditUserModal({ user, onSave, onClose }) {
                 onChange={(e) => setFormData({ ...formData, isActive: e.target.checked })}
                 className="form-checkbox"
               />
-              <span className="form-label" style={{ marginBottom: 0 }}>Active</span>
+              <span className="form-label">Active</span>
             </label>
           </div>
           <div className="modal-actions">
@@ -483,8 +483,8 @@ function AdminDashboard() {
         {activeTab === 'users' && <UserManagement />}
 
         {activeTab === 'system' && (
-          <div>
-            <h2 style={{ fontSize: '24px', fontWeight: '600', marginBottom: '24px', letterSpacing: '-0.02em' }}>System Settings</h2>
+          <div className="settings-container">
+            <h2 className="settings-title">System Settings</h2>
             <div className="settings-section">
               <h3>Database Management</h3>
               <p>

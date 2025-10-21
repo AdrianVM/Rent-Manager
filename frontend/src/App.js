@@ -43,14 +43,8 @@ function App() {
 
   if (loading) {
     return (
-      <div style={{
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        height: '100vh',
-        backgroundColor: 'var(--bg-secondary)'
-      }}>
-        <div style={{ color: 'var(--text-primary)' }}>Loading...</div>
+      <div className="app-loading">
+        <div className="app-loading-text">Loading...</div>
       </div>
     );
   }
