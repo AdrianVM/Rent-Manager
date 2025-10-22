@@ -4,13 +4,16 @@
    =================================== */
 
 /* Design Tokens - Single source of truth for colors, spacing, typography */
-@import './styles/tokens.css';
+@import './assets/styles/variables.css';
 
-/* Global Styles - Resets, base typography, accessibility */
-@import './styles/global.css';
+/* Global Styles - Resets, base styles, accessibility */
+@import './assets/styles/global.css';
+
+/* Typography - Font families, sizes, and text styles */
+@import './assets/styles/typography.css';
 
 /* Utility Classes - Reusable patterns for common use cases */
-@import './styles/utilities.css';
+@import './assets/styles/utilities.css';
 
 /* ===================================
    LEGACY STYLES

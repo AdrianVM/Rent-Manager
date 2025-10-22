@@ -1,10 +1,6 @@
 /* ===================================
    Global Styles
-   Minimal global CSS for:
-   - CSS Reset
-   - Base Typography
-   - Accessibility
-   - Scrollbar
+   CSS Reset, Base Styles, Accessibility
    =================================== */
 
 /* ===== CSS Reset ===== */
@@ -25,65 +21,13 @@ html {
 
 body {
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', 'Inter', 'Segoe UI', 'Roboto', sans-serif;
-  font-weight: var(--font-weight-normal);
-  font-size: var(--font-size-base);
-  line-height: var(--line-height-normal);
   color: var(--text-primary);
   background: linear-gradient(135deg, #f5f7fa 0%, #e8ecf1 50%, #f5f7fa 100%);
-  letter-spacing: var(--letter-spacing-normal);
   transition: background 0.4s cubic-bezier(0.4, 0, 0.2, 1), color 0.3s ease;
 }
 
 [data-theme="dark"] body {
   background: linear-gradient(135deg, #0a0e14 0%, #121821 50%, #0a0e14 100%);
-}
-
-/* ===== Typography ===== */
-h1, h2, h3, h4, h5, h6 {
-  color: var(--text-primary);
-  font-weight: var(--font-weight-semibold);
-  letter-spacing: var(--letter-spacing-tight);
-  line-height: var(--line-height-tight);
-  margin: 0;
-}
-
-h1 {
-  font-size: var(--font-size-3xl);
-  font-weight: var(--font-weight-bold);
-  color: var(--color-primary);
-}
-
-h2 {
-  font-size: var(--font-size-2xl);
-}
-
-h3 {
-  font-size: var(--font-size-xl);
-}
-
-h4 {
-  font-size: var(--font-size-lg);
-}
-
-p {
-  color: var(--text-primary);
-  line-height: var(--line-height-relaxed);
-  margin: 0;
-}
-
-a {
-  color: var(--color-secondary);
-  text-decoration: none;
-  transition: color var(--transition-base);
-}
-
-a:hover {
-  color: var(--color-secondary-hover);
-}
-
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace;
 }
 
 /* ===== Custom Scrollbar ===== */
