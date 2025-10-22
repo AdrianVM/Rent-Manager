@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import './RoleSwitcher.css';
+import styles from './RoleSwitcher.module.css';
 
 function RoleSwitcher({ availableRoles, currentRole, onRoleChange }) {
   const [isOpen, setIsOpen] = useState(false);
@@ -71,31 +71,31 @@ function RoleSwitcher({ availableRoles, currentRole, onRoleChange }) {
   }
 
   return (
-    <div className="role-switcher" ref={dropdownRef}>
+    <div className={styles.roleSwitcher} ref={dropdownRef}>
       <button
-        className="role-switcher-trigger"
+        className={styles.roleSwitcherTrigger}
         onClick={() => setIsOpen(!isOpen)}
         aria-expanded={isOpen}
         aria-haspopup="true"
       >
-        <span className="role-switcher-icon">{getRoleIcon(currentRole)}</span>
-        <span className="role-switcher-label">{getRoleName(currentRole)}</span>
-        <span className={`role-switcher-arrow ${isOpen ? 'open' : ''}`}>▼</span>
+        <span className={styles.roleSwitcherIcon}>{getRoleIcon(currentRole)}</span>
+        <span className={styles.roleSwitcherLabel}>{getRoleName(currentRole)}</span>
+        <span className={`${styles.roleSwitcherArrow} ${isOpen ? styles.open : ''}`}>▼</span>
       </button>
 
       {isOpen && (
-        <div className="role-switcher-dropdown">
-          <div className="role-switcher-header">Switch Role</div>
+        <div className={styles.roleSwitcherDropdown}>
+          <div className={styles.roleSwitcherHeader}>Switch Role</div>
           {availableRoles.map((role) => (
             <button
               key={role}
-              className={`role-switcher-option ${role === currentRole ? 'active' : ''}`}
+              className={`${styles.roleSwitcherOption} ${role === currentRole ? styles.active : ''}`}
               onClick={() => handleRoleSelect(role)}
             >
-              <span className="role-option-icon">{getRoleIcon(role)}</span>
-              <span className="role-option-label">{getRoleName(role)}</span>
+              <span className={styles.roleOptionIcon}>{getRoleIcon(role)}</span>
+              <span className={styles.roleOptionLabel}>{getRoleName(role)}</span>
               {role === currentRole && (
-                <span className="role-option-checkmark">✓</span>
+                <span className={styles.roleOptionCheckmark}>✓</span>
               )}
             </button>
           ))}

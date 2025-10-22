@@ -1,8 +1,8 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useTheme } from '../../contexts/ThemeContext';
-import RoleSwitcher from './RoleSwitcher';
-import './Navigation.css';
+import RoleSwitcher from '../RoleSwitcher/RoleSwitcher';
+import styles from './Navigation.module.css';
 
 function Navigation({ user, availableRoles, currentRole, onRoleChange, onLogout }) {
   const location = useLocation();
@@ -21,25 +21,25 @@ function Navigation({ user, availableRoles, currentRole, onRoleChange, onLogout 
   ];
 
   return (
-    <nav className="apple-nav">
-      <div className="apple-nav-container">
+    <nav className={styles.appleNav}>
+      <div className={styles.appleNavContainer}>
         {/* Brand Section */}
-        <div className="apple-nav-brand">
-          <Link to="/" className="apple-brand-link">
-            <div className="apple-brand-icon">AVM</div>
-            <div className="apple-brand-text">Property Management</div>
+        <div className={styles.appleNavBrand}>
+          <Link to="/" className={styles.appleBrandLink}>
+            <div className={styles.appleBrandIcon}>AVM</div>
+            <div className={styles.appleBrandText}>Property Management</div>
           </Link>
         </div>
 
         {/* Desktop Navigation */}
-        <div className="apple-nav-desktop">
+        <div className={styles.appleNavDesktop}>
           {/* Main Navigation Links */}
-          <div className="apple-nav-links">
+          <div className={styles.appleNavLinks}>
             {navItems.filter(item => item.show).map(item => (
               <Link
                 key={item.path}
                 to={item.path}
-                className={`apple-nav-link ${location.pathname === item.path ? 'active' : ''}`}
+                className={`${styles.appleNavLink} ${location.pathname === item.path ? styles.active : ''}`}
               >
                 {item.label}
               </Link>
@@ -47,10 +47,10 @@ function Navigation({ user, availableRoles, currentRole, onRoleChange, onLogout 
           </div>
 
           {/* Right Side Actions */}
-          <div className="apple-nav-actions">
+          <div className={styles.appleNavActions}>
             {/* Role Switcher */}
             {availableRoles && availableRoles.length > 1 && (
-              <div className="apple-nav-action">
+              <div className={styles.appleNavAction}>
                 <RoleSwitcher
                   availableRoles={availableRoles}
                   currentRole={activeRole}
@@ -62,21 +62,21 @@ function Navigation({ user, availableRoles, currentRole, onRoleChange, onLogout 
             {/* Theme Toggle */}
             <button
               onClick={toggleTheme}
-              className="apple-nav-icon-btn"
+              className={styles.appleNavIconBtn}
               aria-label={`Switch to ${theme === 'light' ? 'dark' : 'light'} mode`}
               title={`Switch to ${theme === 'light' ? 'dark' : 'light'} mode`}
             >
-              <span className="apple-icon">{theme === 'light' ? '🌙' : '☀️'}</span>
+              <span className={styles.appleIcon}>{theme === 'light' ? '🌙' : '☀️'}</span>
             </button>
 
             {/* User Menu */}
-            <div className="apple-nav-user">
-              <div className="apple-user-avatar">
+            <div className={styles.appleNavUser}>
+              <div className={styles.appleUserAvatar}>
                 {user?.name?.charAt(0).toUpperCase()}
               </div>
-              <div className="apple-user-info">
-                <div className="apple-user-name">{user?.name}</div>
-                <button onClick={onLogout} className="apple-logout-btn">
+              <div className={styles.appleUserInfo}>
+                <div className={styles.appleUserName}>{user?.name}</div>
+                <button onClick={onLogout} className={styles.appleLogoutBtn}>
                   Sign Out
                 </button>
               </div>
@@ -86,50 +86,50 @@ function Navigation({ user, availableRoles, currentRole, onRoleChange, onLogout 
 
         {/* Mobile Menu Toggle */}
         <button
-          className={`apple-mobile-toggle ${mobileMenuOpen ? 'open' : ''}`}
+          className={`${styles.appleMobileToggle} ${mobileMenuOpen ? styles.open : ''}`}
           onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
           aria-label="Toggle menu"
           aria-expanded={mobileMenuOpen}
         >
-          <span className="hamburger-line"></span>
-          <span className="hamburger-line"></span>
-          <span className="hamburger-line"></span>
+          <span className={styles.hamburgerLine}></span>
+          <span className={styles.hamburgerLine}></span>
+          <span className={styles.hamburgerLine}></span>
         </button>
       </div>
 
       {/* Mobile Navigation Menu */}
-      <div className={`apple-nav-mobile ${mobileMenuOpen ? 'open' : ''}`}>
-        <div className="apple-mobile-content">
+      <div className={`${styles.appleNavMobile} ${mobileMenuOpen ? styles.open : ''}`}>
+        <div className={styles.appleMobileContent}>
           {/* User Info on Mobile */}
-          <div className="apple-mobile-user">
-            <div className="apple-user-avatar large">
+          <div className={styles.appleMobileUser}>
+            <div className={`${styles.appleUserAvatar} ${styles.large}`}>
               {user?.name?.charAt(0).toUpperCase()}
             </div>
-            <div className="apple-mobile-user-name">{user?.name}</div>
-            <div className="apple-mobile-user-role">{activeRole}</div>
+            <div className={styles.appleMobileUserName}>{user?.name}</div>
+            <div className={styles.appleMobileUserRole}>{activeRole}</div>
           </div>
 
           {/* Mobile Navigation Links */}
-          <div className="apple-mobile-links">
+          <div className={styles.appleMobileLinks}>
             {navItems.filter(item => item.show).map(item => (
               <Link
                 key={item.path}
                 to={item.path}
-                className={`apple-mobile-link ${location.pathname === item.path ? 'active' : ''}`}
+                className={`${styles.appleMobileLink} ${location.pathname === item.path ? styles.active : ''}`}
                 onClick={() => setMobileMenuOpen(false)}
               >
-                <span className="mobile-link-icon">{item.icon}</span>
-                <span className="mobile-link-text">{item.label}</span>
-                <span className="mobile-link-arrow">›</span>
+                <span className={styles.mobileLinkIcon}>{item.icon}</span>
+                <span className={styles.mobileLinkText}>{item.label}</span>
+                <span className={styles.mobileLinkArrow}>›</span>
               </Link>
             ))}
           </div>
 
           {/* Mobile Actions */}
-          <div className="apple-mobile-actions">
+          <div className={styles.appleMobileActions}>
             {/* Role Switcher on Mobile */}
             {availableRoles && availableRoles.length > 1 && (
-              <div className="apple-mobile-action">
+              <div className={styles.appleMobileAction}>
                 <RoleSwitcher
                   availableRoles={availableRoles}
                   currentRole={activeRole}
@@ -144,9 +144,9 @@ function Navigation({ user, availableRoles, currentRole, onRoleChange, onLogout 
             {/* Theme Toggle on Mobile */}
             <button
               onClick={toggleTheme}
-              className="apple-mobile-btn"
+              className={styles.appleMobileBtn}
             >
-              <span className="apple-icon">{theme === 'light' ? '🌙' : '☀️'}</span>
+              <span className={styles.appleIcon}>{theme === 'light' ? '🌙' : '☀️'}</span>
               <span>{theme === 'light' ? 'Dark Mode' : 'Light Mode'}</span>
             </button>
 
@@ -156,7 +156,7 @@ function Navigation({ user, availableRoles, currentRole, onRoleChange, onLogout 
                 onLogout();
                 setMobileMenuOpen(false);
               }}
-              className="apple-mobile-btn logout"
+              className={`${styles.appleMobileBtn} ${styles.logout}`}
             >
               Sign Out
             </button>
@@ -167,7 +167,7 @@ function Navigation({ user, availableRoles, currentRole, onRoleChange, onLogout 
       {/* Mobile Menu Backdrop */}
       {mobileMenuOpen && (
         <div
-          className="apple-mobile-backdrop"
+          className={styles.appleMobileBackdrop}
           onClick={() => setMobileMenuOpen(false)}
           aria-hidden="true"
         />

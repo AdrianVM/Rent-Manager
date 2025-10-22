@@ -1,3 +1,20 @@
+/* ===================================
+   Main Entry Point for Global Styles
+   Imports design tokens, resets, and utilities
+   =================================== */
+
+/* Design Tokens - Single source of truth for colors, spacing, typography */
+@import './styles/tokens.css';
+
+/* Global Styles - Resets, base typography, accessibility */
+@import './styles/global.css';
+
+/* Utility Classes - Reusable patterns for common use cases */
+@import './styles/utilities.css';
+
+/* ===== Legacy Styles - TO BE REFACTORED INTO COMPONENTS ===== */
+/* These will be moved to component-specific CSS modules */
+
 /* AVM Professional Color Palette */
 :root {
   /* AVM Primary Colors */

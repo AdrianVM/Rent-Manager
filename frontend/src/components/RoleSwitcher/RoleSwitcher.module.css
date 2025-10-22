@@ -2,13 +2,13 @@
    Apple-Inspired Role Switcher
    =================================== */
 
-.role-switcher {
+.roleSwitcher {
   position: relative;
   display: inline-block;
 }
 
 /* Trigger Button - Apple Style */
-.role-switcher-trigger {
+.roleSwitcherTrigger {
   display: flex;
   align-items: center;
   gap: 6px;
@@ -25,47 +25,47 @@
   white-space: nowrap;
 }
 
-[data-theme="dark"] .role-switcher-trigger {
+[data-theme="dark"] .roleSwitcherTrigger {
   background: rgba(255, 255, 255, 0.06);
 }
 
-.role-switcher-trigger:hover {
+.roleSwitcherTrigger:hover {
   background: rgba(0, 0, 0, 0.06);
   transform: scale(1.02);
 }
 
-[data-theme="dark"] .role-switcher-trigger:hover {
+[data-theme="dark"] .roleSwitcherTrigger:hover {
   background: rgba(255, 255, 255, 0.08);
 }
 
-.role-switcher-trigger:active {
+.roleSwitcherTrigger:active {
   transform: scale(0.98);
 }
 
-.role-switcher-icon {
+.roleSwitcherIcon {
   font-size: 16px;
   line-height: 1;
   filter: grayscale(20%);
 }
 
-.role-switcher-label {
+.roleSwitcherLabel {
   white-space: nowrap;
   letter-spacing: -0.2px;
 }
 
-.role-switcher-arrow {
+.roleSwitcherArrow {
   font-size: 9px;
   transition: transform 0.3s cubic-bezier(0.28, 0.11, 0.32, 1);
   opacity: 0.5;
   margin-left: 2px;
 }
 
-.role-switcher-arrow.open {
+.roleSwitcherArrow.open {
   transform: rotate(180deg);
 }
 
 /* Dropdown Menu - Apple Style */
-.role-switcher-dropdown {
+.roleSwitcherDropdown {
   position: absolute;
   top: calc(100% + 8px);
   right: 0;
@@ -85,7 +85,7 @@
   animation: appleDropdownIn 0.3s cubic-bezier(0.28, 0.11, 0.32, 1) forwards;
 }
 
-[data-theme="dark"] .role-switcher-dropdown {
+[data-theme="dark"] .roleSwitcherDropdown {
   background: rgba(44, 44, 46, 0.95);
   box-shadow:
     0 0 0 0.5px rgba(255, 255, 255, 0.12),
@@ -101,7 +101,7 @@
 }
 
 /* Dropdown Header - Apple Style */
-.role-switcher-header {
+.roleSwitcherHeader {
   padding: 8px 12px 6px;
   font-size: 11px;
   font-weight: 600;
@@ -112,12 +112,12 @@
   margin-bottom: 4px;
 }
 
-[data-theme="dark"] .role-switcher-header {
+[data-theme="dark"] .roleSwitcherHeader {
   border-bottom: 0.5px solid rgba(255, 255, 255, 0.12);
 }
 
 /* Role Options - Apple Style */
-.role-switcher-option {
+.roleSwitcherOption {
   display: flex;
   align-items: center;
   gap: 10px;
@@ -136,44 +136,44 @@
   letter-spacing: -0.2px;
 }
 
-.role-switcher-option:hover {
+.roleSwitcherOption:hover {
   background: rgba(0, 0, 0, 0.04);
 }
 
-[data-theme="dark"] .role-switcher-option:hover {
+[data-theme="dark"] .roleSwitcherOption:hover {
   background: rgba(255, 255, 255, 0.06);
 }
 
-.role-switcher-option.active {
+.roleSwitcherOption.active {
   background: rgba(28, 169, 163, 0.1);
   color: var(--avm-teal);
   font-weight: 600;
 }
 
-[data-theme="dark"] .role-switcher-option.active {
+[data-theme="dark"] .roleSwitcherOption.active {
   background: rgba(28, 169, 163, 0.15);
 }
 
-.role-switcher-option.active:hover {
+.roleSwitcherOption.active:hover {
   background: rgba(28, 169, 163, 0.15);
 }
 
-[data-theme="dark"] .role-switcher-option.active:hover {
+[data-theme="dark"] .roleSwitcherOption.active:hover {
   background: rgba(28, 169, 163, 0.2);
 }
 
-.role-option-icon {
+.roleOptionIcon {
   font-size: 18px;
   line-height: 1;
   flex-shrink: 0;
   filter: grayscale(20%);
 }
 
-.role-option-label {
+.roleOptionLabel {
   flex: 1;
 }
 
-.role-option-checkmark {
+.roleOptionCheckmark {
   font-size: 14px;
   color: var(--avm-teal);
   font-weight: 700;
@@ -183,24 +183,24 @@
 
 /* Mobile Responsive - Apple Style */
 @media (max-width: 980px) {
-  .role-switcher-trigger {
+  .roleSwitcherTrigger {
     padding: 6px 10px;
     font-size: 12px;
   }
 
-  .role-switcher-icon {
+  .roleSwitcherIcon {
     font-size: 16px;
   }
 
-  .role-switcher-label {
+  .roleSwitcherLabel {
     display: none;
   }
 
-  .role-switcher-arrow {
+  .roleSwitcherArrow {
     display: none;
   }
 
-  .role-switcher-dropdown {
+  .roleSwitcherDropdown {
     right: auto;
     left: 50%;
     transform: translateX(-50%) translateY(-8px) scale(0.95);
@@ -209,7 +209,7 @@
 }
 
 @media (max-width: 480px) {
-  .role-switcher-dropdown {
+  .roleSwitcherDropdown {
     position: fixed;
     top: auto;
     bottom: max(80px, env(safe-area-inset-bottom));
@@ -231,15 +231,15 @@
 
 /* Accessibility - Reduce motion */
 @media (prefers-reduced-motion: reduce) {
-  .role-switcher-trigger,
-  .role-switcher-option,
-  .role-switcher-arrow,
-  .role-switcher-dropdown {
+  .roleSwitcherTrigger,
+  .roleSwitcherOption,
+  .roleSwitcherArrow,
+  .roleSwitcherDropdown {
     transition: none;
     animation: none;
   }
 
-  .role-switcher-dropdown {
+  .roleSwitcherDropdown {
     opacity: 1;
     transform: translateY(0) scale(1);
   }
@@ -247,15 +247,15 @@
 
 /* High contrast mode support */
 @media (prefers-contrast: high) {
-  .role-switcher-trigger {
+  .roleSwitcherTrigger {
     border: 1px solid currentColor;
   }
 
-  .role-switcher-dropdown {
+  .roleSwitcherDropdown {
     border: 1px solid currentColor;
   }
 
-  .role-switcher-option.active {
+  .roleSwitcherOption.active {
     border: 1px solid currentColor;
   }
 }

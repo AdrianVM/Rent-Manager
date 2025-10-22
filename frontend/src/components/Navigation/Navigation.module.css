@@ -4,7 +4,7 @@
    =================================== */
 
 /* Main Navigation Container */
-.apple-nav {
+.appleNav {
   position: sticky;
   top: 0;
   z-index: 1000;
@@ -17,13 +17,13 @@
   transition: all 0.3s cubic-bezier(0.28, 0.11, 0.32, 1);
 }
 
-[data-theme="dark"] .apple-nav {
+[data-theme="dark"] .appleNav {
   background: rgba(29, 29, 31, 0.72);
   border-bottom: 0.5px solid rgba(255, 255, 255, 0.12);
   box-shadow: 0 1px 0 0 rgba(255, 255, 255, 0.03) inset;
 }
 
-.apple-nav-container {
+.appleNavContainer {
   max-width: 1400px;
   margin: 0 auto;
   padding: 0 max(16px, env(safe-area-inset-right)) 0 max(16px, env(safe-area-inset-left));
@@ -37,13 +37,13 @@
    Brand Section (Apple Style)
    =================================== */
 
-.apple-nav-brand {
+.appleNavBrand {
   display: flex;
   align-items: center;
   flex-shrink: 0;
 }
 
-.apple-brand-link {
+.appleBrandLink {
   display: flex;
   align-items: center;
   gap: 8px;
@@ -53,15 +53,15 @@
   transition: background-color 0.2s ease;
 }
 
-.apple-brand-link:hover {
+.appleBrandLink:hover {
   background-color: rgba(0, 0, 0, 0.04);
 }
 
-[data-theme="dark"] .apple-brand-link:hover {
+[data-theme="dark"] .appleBrandLink:hover {
   background-color: rgba(255, 255, 255, 0.06);
 }
 
-.apple-brand-icon {
+.appleBrandIcon {
   font-size: 20px;
   font-weight: 700;
   letter-spacing: -0.5px;
@@ -71,7 +71,7 @@
   background-clip: text;
 }
 
-.apple-brand-text {
+.appleBrandText {
   font-size: 15px;
   font-weight: 600;
   color: var(--text-primary);
@@ -82,7 +82,7 @@
    Desktop Navigation
    =================================== */
 
-.apple-nav-desktop {
+.appleNavDesktop {
   display: flex;
   align-items: center;
   gap: 24px;
@@ -90,14 +90,14 @@
   margin-left: 32px;
 }
 
-.apple-nav-links {
+.appleNavLinks {
   display: flex;
   align-items: center;
   gap: 4px;
   flex: 1;
 }
 
-.apple-nav-link {
+.appleNavLink {
   position: relative;
   padding: 8px 14px;
   font-size: 14px;
@@ -110,29 +110,29 @@
   white-space: nowrap;
 }
 
-.apple-nav-link:hover {
+.appleNavLink:hover {
   background-color: rgba(0, 0, 0, 0.04);
   color: var(--avm-royal-blue);
 }
 
-[data-theme="dark"] .apple-nav-link:hover {
+[data-theme="dark"] .appleNavLink:hover {
   background-color: rgba(255, 255, 255, 0.06);
   color: var(--avm-teal);
 }
 
-.apple-nav-link.active {
+.appleNavLink.active {
   color: var(--avm-teal);
   background-color: rgba(28, 169, 163, 0.1);
   font-weight: 600;
 }
 
-[data-theme="dark"] .apple-nav-link.active {
+[data-theme="dark"] .appleNavLink.active {
   color: var(--avm-teal);
   background-color: rgba(28, 169, 163, 0.15);
 }
 
 /* Active indicator (Apple-style subtle underline) */
-.apple-nav-link.active::after {
+.appleNavLink.active::after {
   content: '';
   position: absolute;
   bottom: 2px;
@@ -147,20 +147,20 @@
    Navigation Actions (Right Side)
    =================================== */
 
-.apple-nav-actions {
+.appleNavActions {
   display: flex;
   align-items: center;
   gap: 12px;
   flex-shrink: 0;
 }
 
-.apple-nav-action {
+.appleNavAction {
   display: flex;
   align-items: center;
 }
 
 /* Icon Button (Theme Toggle) */
-.apple-nav-icon-btn {
+.appleNavIconBtn {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -173,20 +173,20 @@
   transition: all 0.2s cubic-bezier(0.28, 0.11, 0.32, 1);
 }
 
-.apple-nav-icon-btn:hover {
+.appleNavIconBtn:hover {
   background-color: rgba(0, 0, 0, 0.04);
   transform: scale(1.05);
 }
 
-[data-theme="dark"] .apple-nav-icon-btn:hover {
+[data-theme="dark"] .appleNavIconBtn:hover {
   background-color: rgba(255, 255, 255, 0.06);
 }
 
-.apple-nav-icon-btn:active {
+.appleNavIconBtn:active {
   transform: scale(0.95);
 }
 
-.apple-icon {
+.appleIcon {
   font-size: 18px;
   filter: grayscale(20%);
 }
@@ -195,7 +195,7 @@
    User Menu (Desktop)
    =================================== */
 
-.apple-nav-user {
+.appleNavUser {
   position: relative;
   display: flex;
   align-items: center;
@@ -207,25 +207,25 @@
   cursor: pointer;
 }
 
-[data-theme="dark"] .apple-nav-user {
+[data-theme="dark"] .appleNavUser {
   background-color: rgba(255, 255, 255, 0.06);
 }
 
-.apple-nav-user:hover {
+.appleNavUser:hover {
   background-color: rgba(0, 0, 0, 0.06);
 }
 
-[data-theme="dark"] .apple-nav-user:hover {
+[data-theme="dark"] .appleNavUser:hover {
   background-color: rgba(255, 255, 255, 0.08);
 }
 
-.apple-nav-user:hover .apple-user-info {
+.appleNavUser:hover .appleUserInfo {
   opacity: 1;
   visibility: visible;
   transform: translateY(0) scale(1);
 }
 
-.apple-user-avatar {
+.appleUserAvatar {
   width: 28px;
   height: 28px;
   border-radius: 50%;
@@ -240,13 +240,13 @@
   letter-spacing: 0.5px;
 }
 
-.apple-user-avatar.large {
+.appleUserAvatar.large {
   width: 64px;
   height: 64px;
   font-size: 28px;
 }
 
-.apple-user-info {
+.appleUserInfo {
   position: absolute;
   top: calc(100% + 8px);
   right: 0;
@@ -267,7 +267,7 @@
   z-index: 100;
 }
 
-[data-theme="dark"] .apple-user-info {
+[data-theme="dark"] .appleUserInfo {
   background: rgba(44, 44, 46, 0.95);
   box-shadow:
     0 0 0 0.5px rgba(255, 255, 255, 0.12),
@@ -275,7 +275,7 @@
     0 20px 40px rgba(0, 0, 0, 0.3);
 }
 
-.apple-user-name {
+.appleUserName {
   font-size: 13px;
   font-weight: 600;
   color: var(--text-primary);
@@ -285,11 +285,11 @@
   letter-spacing: -0.1px;
 }
 
-[data-theme="dark"] .apple-user-name {
+[data-theme="dark"] .appleUserName {
   border-bottom: 0.5px solid rgba(255, 255, 255, 0.12);
 }
 
-.apple-logout-btn {
+.appleLogoutBtn {
   width: 100%;
   padding: 8px 12px;
   background: transparent;
@@ -303,7 +303,7 @@
   transition: all 0.2s ease;
 }
 
-.apple-logout-btn:hover {
+.appleLogoutBtn:hover {
   background-color: rgba(255, 59, 48, 0.08);
 }
 
@@ -311,7 +311,7 @@
    Mobile Menu Toggle (Hamburger)
    =================================== */
 
-.apple-mobile-toggle {
+.appleMobileToggle {
   display: none;
   flex-direction: column;
   justify-content: center;
@@ -326,15 +326,15 @@
   transition: background-color 0.2s ease;
 }
 
-.apple-mobile-toggle:hover {
+.appleMobileToggle:hover {
   background-color: rgba(0, 0, 0, 0.04);
 }
 
-[data-theme="dark"] .apple-mobile-toggle:hover {
+[data-theme="dark"] .appleMobileToggle:hover {
   background-color: rgba(255, 255, 255, 0.06);
 }
 
-.hamburger-line {
+.hamburgerLine {
   width: 18px;
   height: 2px;
   background-color: var(--text-primary);
@@ -343,15 +343,15 @@
   margin: 2px 0;
 }
 
-.apple-mobile-toggle.open .hamburger-line:nth-child(1) {
+.appleMobileToggle.open .hamburgerLine:nth-child(1) {
   transform: translateY(6px) rotate(45deg);
 }
 
-.apple-mobile-toggle.open .hamburger-line:nth-child(2) {
+.appleMobileToggle.open .hamburgerLine:nth-child(2) {
   opacity: 0;
 }
 
-.apple-mobile-toggle.open .hamburger-line:nth-child(3) {
+.appleMobileToggle.open .hamburgerLine:nth-child(3) {
   transform: translateY(-6px) rotate(-45deg);
 }
 
@@ -359,7 +359,7 @@
    Mobile Navigation Menu
    =================================== */
 
-.apple-nav-mobile {
+.appleNavMobile {
   position: fixed;
   top: 44px;
   right: 0;
@@ -376,22 +376,22 @@
   z-index: 999;
 }
 
-[data-theme="dark"] .apple-nav-mobile {
+[data-theme="dark"] .appleNavMobile {
   background: rgba(29, 29, 31, 0.95);
   box-shadow: -2px 0 20px rgba(0, 0, 0, 0.5);
 }
 
-.apple-nav-mobile.open {
+.appleNavMobile.open {
   transform: translateX(0);
 }
 
-.apple-mobile-content {
+.appleMobileContent {
   padding: 24px 20px;
   padding-bottom: max(24px, env(safe-area-inset-bottom));
 }
 
 /* Mobile User Section */
-.apple-mobile-user {
+.appleMobileUser {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -400,11 +400,11 @@
   margin-bottom: 24px;
 }
 
-[data-theme="dark"] .apple-mobile-user {
+[data-theme="dark"] .appleMobileUser {
   border-bottom: 0.5px solid rgba(255, 255, 255, 0.12);
 }
 
-.apple-mobile-user-name {
+.appleMobileUser-name {
   font-size: 20px;
   font-weight: 600;
   color: var(--text-primary);
@@ -412,7 +412,7 @@
   letter-spacing: -0.5px;
 }
 
-.apple-mobile-user-role {
+.appleMobileUser-role {
   font-size: 14px;
   font-weight: 500;
   color: var(--text-secondary);
@@ -421,14 +421,14 @@
 }
 
 /* Mobile Navigation Links */
-.apple-mobile-links {
+.appleMobileLinks {
   display: flex;
   flex-direction: column;
   gap: 4px;
   margin-bottom: 24px;
 }
 
-.apple-mobile-link {
+.appleMobileLink {
   display: flex;
   align-items: center;
   gap: 12px;
@@ -443,47 +443,47 @@
   transition: all 0.2s cubic-bezier(0.28, 0.11, 0.32, 1);
 }
 
-[data-theme="dark"] .apple-mobile-link {
+[data-theme="dark"] .appleMobileLink {
   background: rgba(255, 255, 255, 0.04);
 }
 
-.apple-mobile-link:active {
+.appleMobileLink:active {
   transform: scale(0.98);
   background: rgba(0, 0, 0, 0.06);
 }
 
-[data-theme="dark"] .apple-mobile-link:active {
+[data-theme="dark"] .appleMobileLink:active {
   background: rgba(255, 255, 255, 0.08);
 }
 
-.apple-mobile-link.active {
+.appleMobileLink.active {
   background: rgba(28, 169, 163, 0.1);
   color: var(--avm-teal);
   font-weight: 600;
 }
 
-[data-theme="dark"] .apple-mobile-link.active {
+[data-theme="dark"] .appleMobileLink.active {
   background: rgba(28, 169, 163, 0.15);
 }
 
-.mobile-link-icon {
+.mobileLinkIcon {
   font-size: 20px;
   filter: grayscale(20%);
   opacity: 0.8;
 }
 
-.mobile-link-text {
+.mobileLinkText {
   flex: 1;
 }
 
-.mobile-link-arrow {
+.mobileLinkArrow {
   font-size: 24px;
   color: var(--text-secondary);
   opacity: 0.4;
 }
 
 /* Mobile Actions */
-.apple-mobile-actions {
+.appleMobileActions {
   display: flex;
   flex-direction: column;
   gap: 8px;
@@ -491,15 +491,15 @@
   border-top: 0.5px solid rgba(0, 0, 0, 0.1);
 }
 
-[data-theme="dark"] .apple-mobile-actions {
+[data-theme="dark"] .appleMobileActions {
   border-top: 0.5px solid rgba(255, 255, 255, 0.12);
 }
 
-.apple-mobile-action {
+.appleMobileAction {
   margin-bottom: 8px;
 }
 
-.apple-mobile-btn {
+.appleMobileBtn {
   width: 100%;
   padding: 14px 16px;
   background: rgba(0, 0, 0, 0.04);
@@ -517,31 +517,31 @@
   letter-spacing: -0.2px;
 }
 
-[data-theme="dark"] .apple-mobile-btn {
+[data-theme="dark"] .appleMobileBtn {
   background: rgba(255, 255, 255, 0.06);
 }
 
-.apple-mobile-btn:active {
+.appleMobileBtn:active {
   transform: scale(0.98);
   background: rgba(0, 0, 0, 0.08);
 }
 
-[data-theme="dark"] .apple-mobile-btn:active {
+[data-theme="dark"] .appleMobileBtn:active {
   background: rgba(255, 255, 255, 0.1);
 }
 
-.apple-mobile-btn.logout {
+.appleMobileBtn.logout {
   color: #ff3b30;
   background: rgba(255, 59, 48, 0.08);
   margin-top: 8px;
 }
 
-.apple-mobile-btn.logout:active {
+.appleMobileBtn.logout:active {
   background: rgba(255, 59, 48, 0.15);
 }
 
 /* Mobile Menu Backdrop */
-.apple-mobile-backdrop {
+.appleMobileBackdrop {
   position: fixed;
   top: 44px;
   left: 0;
@@ -568,58 +568,58 @@
    =================================== */
 
 @media (max-width: 980px) {
-  .apple-nav-desktop {
+  .appleNavDesktop {
     display: none;
   }
 
-  .apple-mobile-toggle {
+  .appleMobileToggle {
     display: flex;
   }
 
-  .apple-brand-text {
+  .appleBrandText {
     display: none;
   }
 }
 
 @media (max-width: 480px) {
-  .apple-nav-mobile {
+  .appleNavMobile {
     max-width: 100%;
   }
 }
 
 /* Safari iOS specific fixes */
 @supports (-webkit-touch-callout: none) {
-  .apple-nav {
+  .appleNav {
     position: -webkit-sticky;
   }
 }
 
 /* Reduce motion for accessibility */
 @media (prefers-reduced-motion: reduce) {
-  .apple-nav,
-  .apple-nav-link,
-  .apple-nav-icon-btn,
-  .apple-nav-mobile,
-  .apple-mobile-link,
-  .apple-mobile-btn,
-  .hamburger-line {
+  .appleNav,
+  .appleNavLink,
+  .appleNavIconBtn,
+  .appleNavMobile,
+  .appleMobileLink,
+  .appleMobileBtn,
+  .hamburgerLine {
     transition: none;
   }
 }
 
 /* High contrast mode support */
 @media (prefers-contrast: high) {
-  .apple-nav {
+  .appleNav {
     border-bottom: 1px solid currentColor;
   }
 
-  .apple-nav-link,
-  .apple-mobile-link {
+  .appleNavLink,
+  .appleMobileLink {
     border: 1px solid transparent;
   }
 
-  .apple-nav-link.active,
-  .apple-mobile-link.active {
+  .appleNavLink.active,
+  .appleMobileLink.active {
     border-color: currentColor;
   }
 }
