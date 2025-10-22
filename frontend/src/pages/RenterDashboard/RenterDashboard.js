@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import apiService from '../services/api';
-import PaymentModal from '../components/PaymentModal';
+import apiService from '../../services/api';
+import PaymentModal from '../../components/PaymentModal';
 import './RenterDashboard.css';
 
 function RentPaymentHistory({ payments, currentTenant }) {

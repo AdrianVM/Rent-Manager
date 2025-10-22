@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import apiService from '../services/api';
-import InviteTenantModal from '../components/common/InviteTenantModal';
-import { PrimaryButton, SecondaryButton, DangerButton } from '../components/common';
-import TenantTypeSelector from '../components/tenants/TenantTypeSelector';
-import PersonTenantForm from '../components/tenants/PersonTenantForm';
-import CompanyTenantForm from '../components/tenants/CompanyTenantForm';
+import apiService from '../../services/api';
+import InviteTenantModal from '../../components/common/InviteTenantModal';
+import { PrimaryButton, SecondaryButton, DangerButton } from '../../components/common';
+import TenantTypeSelector from '../../components/tenants/TenantTypeSelector';
+import PersonTenantForm from '../../components/tenants/PersonTenantForm';
+import CompanyTenantForm from '../../components/tenants/CompanyTenantForm';
 import './Tenants.css';
 
 function TenantForm({ tenant, onSave, onCancel, properties }) {

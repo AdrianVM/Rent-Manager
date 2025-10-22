@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
-import apiService from '../services/api';
+import apiService from '../../services/api';
 import { renderAsync } from 'docx-preview';
-import { PrimaryButton, SecondaryButton, DangerButton } from '../components/common';
+import { PrimaryButton, SecondaryButton, DangerButton } from '../../components/common';
 import './Properties.css';
 
 function PropertyForm({ property, onSave, onCancel }) {

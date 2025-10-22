@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import apiService from '../services/api';
-import { PrimaryButton, SecondaryButton, DangerButton } from '../components/common';
+import apiService from '../../services/api';
+import { PrimaryButton, SecondaryButton, DangerButton } from '../../components/common';
 import './Payments.css';
 
 function PaymentForm({ payment, onSave, onCancel, tenants, properties }) {
