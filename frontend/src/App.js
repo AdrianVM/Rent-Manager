@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import authService from './services/authService';
-import { Navigation } from './components/common';
+import { Navigation, MainContent } from './components/common';
 import { Sidebar } from './components/Sidebar';
 import { Footer } from './components/Footer';
 import {
@@ -129,7 +129,7 @@ function App() {
               currentRole={activeRole}
             />
             <div className="app-layout">
-              <div className="container">
+              <MainContent>
                 <Routes>
                   {/* Role-based dashboard routes */}
                   <Route path="/admin/dashboard" element={<AdminDashboard />} />
@@ -156,7 +156,7 @@ function App() {
                     </>
                   )}
                 </Routes>
-              </div>
+              </MainContent>
               <Footer />
             </div>
           </div>

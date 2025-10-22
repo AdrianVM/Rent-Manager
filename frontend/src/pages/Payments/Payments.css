@@ -1,16 +1,5 @@
 /* ===== PAYMENTS PAGE - APPLE-INSPIRED DESIGN ===== */
 
-/* Page Wrapper */
-.payments-page {
-  min-height: 100%;
-  padding: var(--space-2xl);
-  background: var(--bg-secondary);
-}
-
-[data-theme="dark"] .payments-page {
-  background: var(--bg-primary);
-}
-
 /* Page Header */
 .payments-header {
   display: flex;

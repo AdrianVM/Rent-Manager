@@ -1,15 +1,5 @@
 /* ===== PROPERTY OWNER DASHBOARD - APPLE-INSPIRED DESIGN ===== */
 
-/* Main Container */
-.po-dashboard-container {
-  min-height: 100%;
-  background: var(--bg-secondary);
-}
-
-[data-theme="dark"] .po-dashboard-container {
-  background: var(--bg-primary);
-}
-
 /* Loading/Error States */
 .po-dashboard-loading,
 .po-dashboard-error,
@@ -32,7 +22,6 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: var(--space-2xl) var(--space-2xl) 0;
   margin-bottom: var(--space-xl);
   animation: slideDown 0.6s ease-out;
 }

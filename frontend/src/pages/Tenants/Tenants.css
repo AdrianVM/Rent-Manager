@@ -1,16 +1,5 @@
 /* ===== TENANTS PAGE - APPLE-INSPIRED DESIGN ===== */
 
-/* Page Wrapper */
-.tenants-page {
-  min-height: 100%;
-  padding: var(--space-2xl);
-  background: var(--bg-secondary);
-}
-
-[data-theme="dark"] .tenants-page {
-  background: var(--bg-primary);
-}
-
 /* Page Header */
 .tenants-header {
   display: flex;

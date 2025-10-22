@@ -757,7 +757,7 @@ function RenterDashboard() {
   }
 
   return (
-    <div className="renter-dashboard-container">
+    <>
       <div className="renter-dashboard-header">
         <div>
           <h1 className="renter-dashboard-title">
@@ -835,7 +835,7 @@ function RenterDashboard() {
           onClose={() => setViewingContract(null)}
         />
       )}
-    </div>
+    </>
   );
 }
 

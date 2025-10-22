@@ -252,7 +252,7 @@ function Payments() {
     .reduce((sum, payment) => sum + payment.amount, 0);
 
   return (
-    <div className="payments-page">
+    <>
       <div className="payments-header">
         <h1>Rent Payments</h1>
         <PrimaryButton onClick={handleAddPayment}>
@@ -426,7 +426,7 @@ function Payments() {
           properties={properties}
         />
       )}
-    </div>
+    </>
   );
 }
 

@@ -314,7 +314,7 @@ function Tenants() {
   };
 
   return (
-    <div className="tenants-page">
+    <>
       <div className="tenants-header">
         <h1>Tenants</h1>
         <div className="tenants-header-actions">
@@ -466,7 +466,7 @@ function Tenants() {
           properties={properties}
         />
       )}
-    </div>
+    </>
   );
 }
 

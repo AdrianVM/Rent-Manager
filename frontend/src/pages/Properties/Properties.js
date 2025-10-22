@@ -725,7 +725,7 @@ function Properties() {
   };
 
   return (
-    <div className="properties-page">
+    <>
       <div className="properties-header">
         <h1>Properties</h1>
         <PrimaryButton onClick={handleAddProperty}>
@@ -939,7 +939,7 @@ function Properties() {
           onUpdate={handleContractsViewClose}
         />
       )}
-    </div>
+    </>
   );
 }
 

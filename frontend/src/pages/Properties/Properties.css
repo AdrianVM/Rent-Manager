@@ -1,16 +1,5 @@
 /* ===== PROPERTIES PAGE - APPLE-INSPIRED DESIGN ===== */
 
-/* Page Wrapper */
-.properties-page {
-  min-height: 100%;
-  padding: var(--space-2xl);
-  background: var(--bg-secondary);
-}
-
-[data-theme="dark"] .properties-page {
-  background: var(--bg-primary);
-}
-
 /* Page Header */
 .properties-header {
   display: flex;

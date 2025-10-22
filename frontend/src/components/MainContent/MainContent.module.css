@@ -1,0 +1,29 @@
+/* ===== MAIN CONTENT CONTAINER ===== */
+/* Reusable container for all page content */
+/* Provides consistent spacing with navigation, sidebar, and footer */
+
+.mainContent {
+  flex: 1;
+  width: 100%;
+  min-height: calc(100vh - 80px); /* Account for navigation height */
+  padding: var(--space-2xl);
+  background: var(--bg-secondary);
+}
+
+[data-theme="dark"] .mainContent {
+  background: var(--bg-primary);
+}
+
+/* Responsive padding adjustments */
+@media (max-width: 1023px) {
+  .mainContent {
+    padding: var(--space-xl);
+  }
+}
+
+@media (max-width: 767px) {
+  .mainContent {
+    padding: var(--space-lg);
+    min-height: calc(100vh - 70px); /* Account for mobile navigation height */
+  }
+}

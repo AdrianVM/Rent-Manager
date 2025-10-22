@@ -391,31 +391,27 @@ function AdminDashboard() {
 
   if (loading) {
     return (
-      <div className="admin-dashboard-container">
-        <div className="loading-container">
-          <h1>Admin Dashboard</h1>
-          <p>Loading dashboard data...</p>
-        </div>
+      <div className="loading-container">
+        <h1>Admin Dashboard</h1>
+        <p>Loading dashboard data...</p>
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="admin-dashboard-container">
-        <div className="error-container">
-          <h1>Admin Dashboard</h1>
-          <p>{error}</p>
-          <button className="btn-modern" onClick={() => loadDashboardData(false)}>
-            Try Again
-          </button>
-        </div>
+      <div className="error-container">
+        <h1>Admin Dashboard</h1>
+        <p>{error}</p>
+        <button className="btn-modern" onClick={() => loadDashboardData(false)}>
+          Try Again
+        </button>
       </div>
     );
   }
 
   return (
-    <div className="admin-dashboard-container">
+    <>
       <div className="admin-header">
         <div className="admin-header-content">
           <h1 className="admin-title">
@@ -527,7 +523,7 @@ function AdminDashboard() {
           </div>
         </div>
       )}
-    </div>
+    </>
   );
 }
 

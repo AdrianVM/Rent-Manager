@@ -1,20 +1,7 @@
 /* ===== ADMIN DASHBOARD - APPLE-INSPIRED DESIGN ===== */
 
-/* Main Container */
-.admin-dashboard-container {
-  min-height: 100%;
-  background: var(--bg-secondary);
-  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', 'Inter', sans-serif;
-  animation: fadeIn 0.6s ease-out;
-}
-
-[data-theme="dark"] .admin-dashboard-container {
-  background: var(--bg-primary);
-}
-
 /* Header Section */
 .admin-header {
-  padding: var(--space-2xl) var(--space-2xl) 0;
   animation: slideDown 0.6s ease-out;
 }
 
@@ -65,7 +52,6 @@
 .admin-tabs-container {
   display: flex;
   gap: var(--space-sm);
-  padding: 0 var(--space-2xl);
 }
 
 .admin-tab {
@@ -105,7 +91,7 @@
 
 /* Content Area */
 .admin-content {
-  padding: 0 var(--space-2xl) var(--space-2xl);
+  padding: 0;
 }
 
 /* Stats Grid */
