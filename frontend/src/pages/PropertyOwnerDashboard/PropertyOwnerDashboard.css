@@ -37,13 +37,29 @@
 }
 
 .po-dashboard-title {
-  color: var(--primary-color);
-  margin-bottom: 10px;
+  font-size: 42px;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  background: linear-gradient(135deg, var(--avm-royal-blue) 0%, var(--avm-teal) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin: 0 0 8px 0;
+}
+
+[data-theme="dark"] .po-dashboard-title {
+  background: linear-gradient(135deg, var(--color-primary) 0%, var(--avm-teal) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
 .po-dashboard-subtitle {
   color: var(--text-secondary);
+  font-size: 16px;
+  font-weight: 400;
   margin: 0;
+  letter-spacing: -0.01em;
 }
 
 /* Stat Numbers with Dynamic Colors */
@@ -235,6 +251,14 @@
 
 /* Responsive Design */
 @media (max-width: 768px) {
+  .po-dashboard-title {
+    font-size: 32px;
+  }
+
+  .po-dashboard-subtitle {
+    font-size: 15px;
+  }
+
   .po-dashboard-header {
     flex-direction: column;
     align-items: flex-start;
@@ -253,6 +277,10 @@
 }
 
 @media (max-width: 480px) {
+  .po-dashboard-title {
+    font-size: 28px;
+  }
+
   .po-dashboard-loading,
   .po-dashboard-error,
   .po-dashboard-no-data {
