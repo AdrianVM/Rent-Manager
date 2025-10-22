@@ -20,6 +20,15 @@ function Sidebar({ user, currentRole }) {
     }
   }, []);
 
+  // Update body attribute when sidebar collapse state changes
+  useEffect(() => {
+    if (isCollapsed) {
+      document.body.setAttribute('data-sidebar-collapsed', 'true');
+    } else {
+      document.body.removeAttribute('data-sidebar-collapsed');
+    }
+  }, [isCollapsed]);
+
   // Save sidebar state to localStorage
   const toggleCollapse = () => {
     const newState = !isCollapsed;

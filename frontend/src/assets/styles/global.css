@@ -110,15 +110,24 @@ body {
   display: flex;
   flex-direction: column;
   margin-left: 280px; /* Sidebar width when expanded */
-  padding-top: 80px; /* Top navigation height */
-  min-height: 100vh;
+  margin-top: 80px; /* Top navigation height */
+  min-height: calc(100vh - 80px);
   transition: margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* Adjust when sidebar is collapsed (tracked via localStorage and CSS) */
+/* When sidebar is collapsed */
+[data-sidebar-collapsed="true"] .app-layout {
+  margin-left: 72px; /* Collapsed sidebar width */
+}
+
+/* Desktop adjustments */
 @media (min-width: 1024px) {
   .app-layout {
     margin-left: 280px;
+  }
+
+  [data-sidebar-collapsed="true"] .app-layout {
+    margin-left: 72px;
   }
 }
 
@@ -127,13 +136,21 @@ body {
   .app-layout {
     margin-left: 240px;
   }
+
+  [data-sidebar-collapsed="true"] .app-layout {
+    margin-left: 72px;
+  }
 }
 
 /* Mobile - no sidebar margin */
 @media (max-width: 767px) {
   .app-layout {
     margin-left: 0;
-    padding-top: 70px; /* Adjust for mobile header */
+    margin-top: 70px; /* Adjust for mobile header */
+  }
+
+  [data-sidebar-collapsed="true"] .app-layout {
+    margin-left: 0;
   }
 }
 

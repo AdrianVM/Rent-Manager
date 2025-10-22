@@ -2,7 +2,7 @@
 
 /* Main Container */
 .po-dashboard-container {
-  min-height: calc(100vh - 80px);
+  min-height: 100%;
   padding-top: var(--space-lg);
   background: var(--bg-secondary);
 }

@@ -2,7 +2,7 @@
 
 /* Page Wrapper */
 .tenants-page {
-  min-height: calc(100vh - 80px);
+  min-height: 100%;
   padding: var(--space-2xl);
   background: var(--bg-secondary);
 }
