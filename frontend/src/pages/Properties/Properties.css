@@ -1,11 +1,40 @@
 /* ===== PROPERTIES PAGE - APPLE-INSPIRED DESIGN ===== */
 
+/* Page Wrapper */
+.properties-page {
+  min-height: 100vh;
+  padding: var(--space-2xl);
+  background: var(--bg-secondary);
+}
+
+[data-theme="dark"] .properties-page {
+  background: var(--bg-primary);
+}
+
 /* Page Header */
 .properties-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 20px;
+  margin-bottom: var(--space-xl);
+}
+
+.properties-header h1 {
+  font-size: 42px;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  background: linear-gradient(135deg, var(--avm-royal-blue) 0%, var(--avm-teal) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin: 0;
+}
+
+[data-theme="dark"] .properties-header h1 {
+  background: linear-gradient(135deg, var(--color-primary) 0%, var(--avm-teal) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
 /* Form Actions */
@@ -287,6 +316,14 @@
 
 /* Responsive Design */
 @media (max-width: 768px) {
+  .properties-page {
+    padding: var(--space-lg);
+  }
+
+  .properties-header h1 {
+    font-size: 32px;
+  }
+
   .properties-header {
     flex-direction: column;
     align-items: flex-start;
@@ -324,6 +361,14 @@
 }
 
 @media (max-width: 480px) {
+  .properties-page {
+    padding: var(--space-md);
+  }
+
+  .properties-header h1 {
+    font-size: 28px;
+  }
+
   .properties-loading,
   .properties-error,
   .properties-empty {

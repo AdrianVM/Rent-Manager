@@ -1,11 +1,40 @@
 /* ===== TENANTS PAGE - APPLE-INSPIRED DESIGN ===== */
 
+/* Page Wrapper */
+.tenants-page {
+  min-height: 100vh;
+  padding: var(--space-2xl);
+  background: var(--bg-secondary);
+}
+
+[data-theme="dark"] .tenants-page {
+  background: var(--bg-primary);
+}
+
 /* Page Header */
 .tenants-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 20px;
+  margin-bottom: var(--space-xl);
+}
+
+.tenants-header h1 {
+  font-size: 42px;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  background: linear-gradient(135deg, var(--avm-royal-blue) 0%, var(--avm-teal) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin: 0;
+}
+
+[data-theme="dark"] .tenants-header h1 {
+  background: linear-gradient(135deg, var(--color-primary) 0%, var(--avm-teal) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
 .tenants-header-actions {
@@ -135,6 +164,14 @@
 
 /* Responsive Design */
 @media (max-width: 768px) {
+  .tenants-page {
+    padding: var(--space-lg);
+  }
+
+  .tenants-header h1 {
+    font-size: 32px;
+  }
+
   .tenants-header {
     flex-direction: column;
     align-items: flex-start;
@@ -152,6 +189,14 @@
 }
 
 @media (max-width: 480px) {
+  .tenants-page {
+    padding: var(--space-md);
+  }
+
+  .tenants-header h1 {
+    font-size: 28px;
+  }
+
   .tenants-loading,
   .tenants-error,
   .tenants-empty {
