@@ -11,7 +11,9 @@ import {
   RenterDashboard,
   Properties,
   Tenants,
-  Payments
+  Payments,
+  UserManagement,
+  SystemSettings
 } from './pages';
 import TenantOnboarding from './pages/TenantOnboarding';
 import AuthCallback from './pages/AuthCallback';
@@ -153,6 +155,14 @@ function App() {
                       <Route path="/properties" element={<Properties />} />
                       <Route path="/tenants" element={<Tenants />} />
                       <Route path="/payments" element={<Payments />} />
+                    </>
+                  )}
+
+                  {/* Admin-only routes */}
+                  {isAdmin && (
+                    <>
+                      <Route path="/user-management" element={<UserManagement />} />
+                      <Route path="/system-settings" element={<SystemSettings />} />
                     </>
                   )}
                 </Routes>

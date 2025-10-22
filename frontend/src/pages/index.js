@@ -5,3 +5,5 @@ export { default as RenterDashboard } from './RenterDashboard';
 export { default as Properties } from './Properties';
 export { default as Tenants } from './Tenants';
 export { default as Payments } from './Payments';
+export { default as UserManagement } from './UserManagement';
+export { default as SystemSettings } from './SystemSettings';

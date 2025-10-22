@@ -69,8 +69,8 @@ function Sidebar({ user, currentRole }) {
         { path: '/tenants', label: 'Tenants', icon: '👥', description: 'Manage tenants' },
         { path: '/payments', label: 'Payments', icon: '💳', description: 'Track payments' },
         { path: '/reports', label: 'Reports', icon: '📈', description: 'Analytics & reports' },
-        { path: '/users', label: 'Users', icon: '👤', description: 'User management' },
-        { path: '/system', label: 'System', icon: '🖥️', description: 'System settings' },
+        { path: '/user-management', label: 'Users', icon: '👤', description: 'User management' },
+        { path: '/system-settings', label: 'System', icon: '🖥️', description: 'System settings' },
         { path: '/settings', label: 'Settings', icon: '⚙️', description: 'Account settings' }
       ];
     }
