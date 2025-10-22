@@ -404,7 +404,7 @@
   border-bottom: 0.5px solid rgba(255, 255, 255, 0.12);
 }
 
-.appleMobileUser-name {
+.appleMobileUserName {
   font-size: 20px;
   font-weight: 600;
   color: var(--text-primary);
@@ -412,7 +412,7 @@
   letter-spacing: -0.5px;
 }
 
-.appleMobileUser-role {
+.appleMobileUserRole {
   font-size: 14px;
   font-weight: 500;
   color: var(--text-secondary);
