@@ -10,11 +10,11 @@
 }
 
 .po-dashboard-error {
-  color: #EF4444;
+  color: var(--color-danger);
 }
 
 [data-theme="dark"] .po-dashboard-error {
-  color: #ff6b6b;
+  color: var(--color-danger);
 }
 
 /* Header */
@@ -37,15 +37,15 @@
 
 /* Stat Numbers with Dynamic Colors */
 .stat-number-warning {
-  color: #D97706 !important;
+  color: var(--color-warning) !important;
 }
 
 .stat-number-success {
-  color: #16A34A !important;
+  color: var(--color-success) !important;
 }
 
 .stat-number-danger {
-  color: #DC2626 !important;
+  color: var(--color-danger) !important;
 }
 
 .stat-number-large {
@@ -54,44 +54,44 @@
 
 /* Getting Started Card */
 .po-getting-started-card {
-  background: rgba(227, 242, 253, 0.8);
-  border: 1px solid #2196f3;
+  background: var(--glass-bg);
+  border: 1px solid var(--color-info);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
 }
 
 [data-theme="dark"] .po-getting-started-card {
-  background: rgba(25, 46, 74, 0.6);
-  border: 1px solid rgba(33, 150, 243, 0.3);
+  background: var(--glass-bg);
+  border: 1px solid var(--border-light);
 }
 
 .po-getting-started-title {
-  color: #1976d2;
+  color: var(--color-info);
   margin-bottom: 15px;
   font-size: 20px;
   font-weight: 600;
 }
 
 [data-theme="dark"] .po-getting-started-title {
-  color: #64b5f6;
+  color: var(--color-info);
 }
 
 .po-getting-started-text {
   margin-bottom: 15px;
-  color: #1565c0;
+  color: var(--text-secondary);
 }
 
 [data-theme="dark"] .po-getting-started-text {
-  color: #90caf9;
+  color: var(--text-secondary);
 }
 
 .po-getting-started-list {
   margin-left: 20px;
-  color: #1565c0;
+  color: var(--text-secondary);
 }
 
 [data-theme="dark"] .po-getting-started-list {
-  color: #90caf9;
+  color: var(--text-secondary);
 }
 
 .po-getting-started-list-item {
@@ -115,13 +115,13 @@
 
 /* Outstanding Rent Section */
 .po-outstanding-all-paid {
-  color: #16A34A;
+  color: var(--color-success);
   text-align: center;
   padding: 20px;
 }
 
 [data-theme="dark"] .po-outstanding-all-paid {
-  color: #4ade80;
+  color: var(--color-success);
 }
 
 .po-outstanding-item {
@@ -129,15 +129,15 @@
   justify-content: space-between;
   align-items: center;
   padding: 12px 0;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+  border-bottom: 1px solid var(--border-light);
 }
 
 [data-theme="dark"] .po-outstanding-item {
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  border-bottom: 1px solid var(--border-light);
 }
 
 .po-outstanding-item.overdue {
-  background: rgba(255, 245, 245, 0.8);
+  background: rgba(239, 68, 68, 0.1);
   margin-left: -20px;
   margin-right: -20px;
   padding-left: 20px;
@@ -146,7 +146,7 @@
 }
 
 [data-theme="dark"] .po-outstanding-item.overdue {
-  background: rgba(127, 29, 29, 0.2);
+  background: rgba(239, 68, 68, 0.15);
 }
 
 .po-outstanding-tenant-name {
@@ -155,7 +155,7 @@
 }
 
 .po-outstanding-overdue-badge {
-  color: #DC2626;
+  color: var(--color-danger);
   margin-left: 8px;
   font-weight: 600;
   font-size: 12px;
@@ -171,11 +171,11 @@
 }
 
 .po-outstanding-amount.overdue {
-  color: #DC2626;
+  color: var(--color-danger);
 }
 
 .po-outstanding-amount.pending {
-  color: #D97706;
+  color: var(--color-warning);
 }
 
 /* Recent Payments Section */
@@ -190,11 +190,11 @@
   justify-content: space-between;
   align-items: center;
   padding: 12px 0;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+  border-bottom: 1px solid var(--border-light);
 }
 
 [data-theme="dark"] .po-recent-payment-item {
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  border-bottom: 1px solid var(--border-light);
 }
 
 .po-payment-tenant-name {
@@ -209,11 +209,11 @@
 
 .po-payment-amount {
   font-weight: 500;
-  color: #16A34A;
+  color: var(--color-success);
 }
 
 [data-theme="dark"] .po-payment-amount {
-  color: #4ade80;
+  color: var(--color-success);
 }
 
 .po-payment-status {
