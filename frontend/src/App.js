@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import authService from './services/authService';
 import { Navigation } from './components/common';
+import { Footer } from './components/Footer';
 import {
   Login,
   AdminDashboard,
@@ -78,12 +79,15 @@ function App() {
   // Public routes that don't require authentication
   const publicRoutes = (
     <Router>
-      <Routes>
-        <Route path="/auth/callback" element={<AuthCallback onAuthSuccess={handleLoginSuccess} />} />
-        <Route path="/logout" element={<Logout />} />
-        <Route path="/onboard" element={<TenantOnboarding />} />
-        <Route path="*" element={<Login onLoginSuccess={handleLoginSuccess} />} />
-      </Routes>
+      <div className="App">
+        <Routes>
+          <Route path="/auth/callback" element={<AuthCallback onAuthSuccess={handleLoginSuccess} />} />
+          <Route path="/logout" element={<Logout />} />
+          <Route path="/onboard" element={<TenantOnboarding />} />
+          <Route path="*" element={<Login onLoginSuccess={handleLoginSuccess} />} />
+        </Routes>
+        <Footer />
+      </div>
     </Router>
   );
 
@@ -147,6 +151,7 @@ function App() {
                 )}
               </Routes>
             </div>
+            <Footer />
           </div>
         } />
       </Routes>
