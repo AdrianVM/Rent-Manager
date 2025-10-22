@@ -3,7 +3,6 @@
 /* Main Container */
 .admin-dashboard-container {
   min-height: 100%;
-  padding-top: var(--space-lg);
   background: var(--bg-secondary);
   font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', 'Inter', sans-serif;
   animation: fadeIn 0.6s ease-out;
