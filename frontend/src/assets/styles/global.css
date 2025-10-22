@@ -110,7 +110,8 @@ body {
   display: flex;
   flex-direction: column;
   margin-left: 280px; /* Sidebar width when expanded */
-  margin-top: 80px; /* Top navigation height */
+  padding-top: 80px; /* Top navigation height */
+  min-height: 100vh;
   transition: margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
@@ -132,7 +133,7 @@ body {
 @media (max-width: 767px) {
   .app-layout {
     margin-left: 0;
-    margin-top: 70px; /* Adjust for mobile header */
+    padding-top: 70px; /* Adjust for mobile header */
   }
 }
 

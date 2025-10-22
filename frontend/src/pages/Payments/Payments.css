@@ -2,7 +2,7 @@
 
 /* Page Wrapper */
 .payments-page {
-  min-height: 100vh;
+  min-height: calc(100vh - 80px);
   padding: var(--space-2xl);
   background: var(--bg-secondary);
 }

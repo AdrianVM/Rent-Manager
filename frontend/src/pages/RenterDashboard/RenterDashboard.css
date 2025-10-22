@@ -2,7 +2,7 @@
 
 /* Main Container */
 .renter-dashboard-container {
-  min-height: 100vh;
+  min-height: calc(100vh - 80px);
   padding-top: var(--space-lg);
   background: var(--bg-secondary);
 }
