@@ -69,7 +69,7 @@ function PropertyOwnerDashboard() {
   };
 
   return (
-    <div>
+    <div className="po-dashboard-container">
       <div className="po-dashboard-header">
         <div>
           <h1 className="po-dashboard-title">

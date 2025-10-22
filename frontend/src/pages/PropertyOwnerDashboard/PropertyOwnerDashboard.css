@@ -1,5 +1,16 @@
 /* ===== PROPERTY OWNER DASHBOARD - APPLE-INSPIRED DESIGN ===== */
 
+/* Main Container */
+.po-dashboard-container {
+  min-height: 100vh;
+  padding: var(--space-lg) var(--space-2xl);
+  background: var(--bg-secondary);
+}
+
+[data-theme="dark"] .po-dashboard-container {
+  background: var(--bg-primary);
+}
+
 /* Loading/Error States */
 .po-dashboard-loading,
 .po-dashboard-error,
