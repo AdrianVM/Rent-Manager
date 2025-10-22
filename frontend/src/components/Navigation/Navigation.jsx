@@ -1,24 +1,14 @@
 import React from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { useTheme } from '../../contexts/ThemeContext';
 import RoleSwitcher from '../RoleSwitcher/RoleSwitcher';
 import styles from './Navigation.module.css';
 
 function Navigation({ user, availableRoles, currentRole, onRoleChange, onLogout }) {
-  const location = useLocation();
   const { theme, toggleTheme } = useTheme();
   const [mobileMenuOpen, setMobileMenuOpen] = React.useState(false);
 
   const activeRole = currentRole || user?.role;
-  const canAccessPropertyOwnerFeatures = activeRole?.toLowerCase() === 'admin' || activeRole?.toLowerCase() === 'propertyowner';
-
-  // Navigation items configuration
-  const navItems = [
-    { path: '/', label: 'Dashboard', icon: '■', show: true },
-    { path: '/properties', label: 'Properties', icon: '⌂', show: canAccessPropertyOwnerFeatures },
-    { path: '/tenants', label: 'Tenants', icon: '👥', show: canAccessPropertyOwnerFeatures },
-    { path: '/payments', label: 'Payments', icon: '💳', show: canAccessPropertyOwnerFeatures }
-  ];
 
   return (
     <nav className={styles.appleNav}>
@@ -33,19 +23,6 @@ function Navigation({ user, availableRoles, currentRole, onRoleChange, onLogout 
 
         {/* Desktop Navigation */}
         <div className={styles.appleNavDesktop}>
-          {/* Main Navigation Links */}
-          <div className={styles.appleNavLinks}>
-            {navItems.filter(item => item.show).map(item => (
-              <Link
-                key={item.path}
-                to={item.path}
-                className={`${styles.appleNavLink} ${location.pathname === item.path ? styles.active : ''}`}
-              >
-                {item.label}
-              </Link>
-            ))}
-          </div>
-
           {/* Right Side Actions */}
           <div className={styles.appleNavActions}>
             {/* Role Switcher */}
@@ -107,22 +84,6 @@ function Navigation({ user, availableRoles, currentRole, onRoleChange, onLogout 
             </div>
             <div className={styles.appleMobileUserName}>{user?.name}</div>
             <div className={styles.appleMobileUserRole}>{activeRole}</div>
-          </div>
-
-          {/* Mobile Navigation Links */}
-          <div className={styles.appleMobileLinks}>
-            {navItems.filter(item => item.show).map(item => (
-              <Link
-                key={item.path}
-                to={item.path}
-                className={`${styles.appleMobileLink} ${location.pathname === item.path ? styles.active : ''}`}
-                onClick={() => setMobileMenuOpen(false)}
-              >
-                <span className={styles.mobileLinkIcon}>{item.icon}</span>
-                <span className={styles.mobileLinkText}>{item.label}</span>
-                <span className={styles.mobileLinkArrow}>›</span>
-              </Link>
-            ))}
           </div>
 
           {/* Mobile Actions */}

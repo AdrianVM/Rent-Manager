@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import authService from './services/authService';
 import { Navigation } from './components/common';
+import { Sidebar } from './components/Sidebar';
 import { Footer } from './components/Footer';
 import {
   Login,
@@ -123,35 +124,41 @@ function App() {
               onRoleChange={handleRoleChange}
               onLogout={handleLogout}
             />
-            <div className="container">
-              <Routes>
-                {/* Role-based dashboard routes */}
-                <Route path="/admin/dashboard" element={<AdminDashboard />} />
-                <Route path="/owner/dashboard" element={<PropertyOwnerDashboard />} />
-                <Route path="/tenant/dashboard" element={<RenterDashboard />} />
+            <Sidebar
+              user={user}
+              currentRole={activeRole}
+            />
+            <div className="app-layout">
+              <div className="container">
+                <Routes>
+                  {/* Role-based dashboard routes */}
+                  <Route path="/admin/dashboard" element={<AdminDashboard />} />
+                  <Route path="/owner/dashboard" element={<PropertyOwnerDashboard />} />
+                  <Route path="/tenant/dashboard" element={<RenterDashboard />} />
 
-                {/* Default route - redirect to appropriate dashboard based on active role */}
-                <Route
-                  path="/"
-                  element={
-                    isRenter ? <RenterDashboard /> :
-                    isAdmin ? <AdminDashboard /> :
-                    isPropertyOwner ? <PropertyOwnerDashboard /> :
-                    <RenterDashboard />
-                  }
-                />
+                  {/* Default route - redirect to appropriate dashboard based on active role */}
+                  <Route
+                    path="/"
+                    element={
+                      isRenter ? <RenterDashboard /> :
+                      isAdmin ? <AdminDashboard /> :
+                      isPropertyOwner ? <PropertyOwnerDashboard /> :
+                      <RenterDashboard />
+                    }
+                  />
 
-                {/* Feature routes - only accessible by property owners and admins */}
-                {canAccessPropertyOwnerFeatures && (
-                  <>
-                    <Route path="/properties" element={<Properties />} />
-                    <Route path="/tenants" element={<Tenants />} />
-                    <Route path="/payments" element={<Payments />} />
-                  </>
-                )}
-              </Routes>
+                  {/* Feature routes - only accessible by property owners and admins */}
+                  {canAccessPropertyOwnerFeatures && (
+                    <>
+                      <Route path="/properties" element={<Properties />} />
+                      <Route path="/tenants" element={<Tenants />} />
+                      <Route path="/payments" element={<Payments />} />
+                    </>
+                  )}
+                </Routes>
+              </div>
+              <Footer />
             </div>
-            <Footer />
           </div>
         } />
       </Routes>
