@@ -1,0 +1,625 @@
+/* ===================================
+   Apple-Inspired Navigation Styles
+   Following Apple Human Interface Guidelines
+   =================================== */
+
+/* Main Navigation Container */
+.apple-nav {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  width: 100%;
+  background: rgba(255, 255, 255, 0.72);
+  backdrop-filter: saturate(180%) blur(20px);
+  -webkit-backdrop-filter: saturate(180%) blur(20px);
+  border-bottom: 0.5px solid rgba(0, 0, 0, 0.08);
+  box-shadow: 0 1px 0 0 rgba(255, 255, 255, 0.44) inset;
+  transition: all 0.3s cubic-bezier(0.28, 0.11, 0.32, 1);
+}
+
+[data-theme="dark"] .apple-nav {
+  background: rgba(29, 29, 31, 0.72);
+  border-bottom: 0.5px solid rgba(255, 255, 255, 0.12);
+  box-shadow: 0 1px 0 0 rgba(255, 255, 255, 0.03) inset;
+}
+
+.apple-nav-container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 max(16px, env(safe-area-inset-right)) 0 max(16px, env(safe-area-inset-left));
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+/* ===================================
+   Brand Section (Apple Style)
+   =================================== */
+
+.apple-nav-brand {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.apple-brand-link {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  text-decoration: none;
+  padding: 6px 12px;
+  border-radius: 8px;
+  transition: background-color 0.2s ease;
+}
+
+.apple-brand-link:hover {
+  background-color: rgba(0, 0, 0, 0.04);
+}
+
+[data-theme="dark"] .apple-brand-link:hover {
+  background-color: rgba(255, 255, 255, 0.06);
+}
+
+.apple-brand-icon {
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+  background: linear-gradient(135deg, var(--avm-royal-blue), var(--avm-teal));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.apple-brand-text {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text-primary);
+  letter-spacing: -0.3px;
+}
+
+/* ===================================
+   Desktop Navigation
+   =================================== */
+
+.apple-nav-desktop {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  flex: 1;
+  margin-left: 32px;
+}
+
+.apple-nav-links {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex: 1;
+}
+
+.apple-nav-link {
+  position: relative;
+  padding: 8px 14px;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-primary);
+  text-decoration: none;
+  border-radius: 6px;
+  transition: all 0.2s cubic-bezier(0.28, 0.11, 0.32, 1);
+  letter-spacing: -0.2px;
+  white-space: nowrap;
+}
+
+.apple-nav-link:hover {
+  background-color: rgba(0, 0, 0, 0.04);
+  color: var(--avm-royal-blue);
+}
+
+[data-theme="dark"] .apple-nav-link:hover {
+  background-color: rgba(255, 255, 255, 0.06);
+  color: var(--avm-teal);
+}
+
+.apple-nav-link.active {
+  color: var(--avm-teal);
+  background-color: rgba(28, 169, 163, 0.1);
+  font-weight: 600;
+}
+
+[data-theme="dark"] .apple-nav-link.active {
+  color: var(--avm-teal);
+  background-color: rgba(28, 169, 163, 0.15);
+}
+
+/* Active indicator (Apple-style subtle underline) */
+.apple-nav-link.active::after {
+  content: '';
+  position: absolute;
+  bottom: 2px;
+  left: 14px;
+  right: 14px;
+  height: 2px;
+  background: var(--avm-teal);
+  border-radius: 1px;
+}
+
+/* ===================================
+   Navigation Actions (Right Side)
+   =================================== */
+
+.apple-nav-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-shrink: 0;
+}
+
+.apple-nav-action {
+  display: flex;
+  align-items: center;
+}
+
+/* Icon Button (Theme Toggle) */
+.apple-nav-icon-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border: none;
+  background: transparent;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.28, 0.11, 0.32, 1);
+}
+
+.apple-nav-icon-btn:hover {
+  background-color: rgba(0, 0, 0, 0.04);
+  transform: scale(1.05);
+}
+
+[data-theme="dark"] .apple-nav-icon-btn:hover {
+  background-color: rgba(255, 255, 255, 0.06);
+}
+
+.apple-nav-icon-btn:active {
+  transform: scale(0.95);
+}
+
+.apple-icon {
+  font-size: 18px;
+  filter: grayscale(20%);
+}
+
+/* ===================================
+   User Menu (Desktop)
+   =================================== */
+
+.apple-nav-user {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 4px 4px 4px 10px;
+  border-radius: 20px;
+  background-color: rgba(0, 0, 0, 0.04);
+  transition: all 0.2s cubic-bezier(0.28, 0.11, 0.32, 1);
+  cursor: pointer;
+}
+
+[data-theme="dark"] .apple-nav-user {
+  background-color: rgba(255, 255, 255, 0.06);
+}
+
+.apple-nav-user:hover {
+  background-color: rgba(0, 0, 0, 0.06);
+}
+
+[data-theme="dark"] .apple-nav-user:hover {
+  background-color: rgba(255, 255, 255, 0.08);
+}
+
+.apple-nav-user:hover .apple-user-info {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0) scale(1);
+}
+
+.apple-user-avatar {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--avm-royal-blue), var(--avm-teal));
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 600;
+  flex-shrink: 0;
+  letter-spacing: 0.5px;
+}
+
+.apple-user-avatar.large {
+  width: 64px;
+  height: 64px;
+  font-size: 28px;
+}
+
+.apple-user-info {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  min-width: 200px;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: saturate(180%) blur(20px);
+  -webkit-backdrop-filter: saturate(180%) blur(20px);
+  border-radius: 12px;
+  padding: 12px;
+  box-shadow:
+    0 0 0 0.5px rgba(0, 0, 0, 0.08),
+    0 8px 20px rgba(0, 0, 0, 0.12),
+    0 20px 40px rgba(0, 0, 0, 0.08);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-8px) scale(0.95);
+  transition: all 0.2s cubic-bezier(0.28, 0.11, 0.32, 1);
+  z-index: 100;
+}
+
+[data-theme="dark"] .apple-user-info {
+  background: rgba(44, 44, 46, 0.95);
+  box-shadow:
+    0 0 0 0.5px rgba(255, 255, 255, 0.12),
+    0 8px 20px rgba(0, 0, 0, 0.4),
+    0 20px 40px rgba(0, 0, 0, 0.3);
+}
+
+.apple-user-name {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-primary);
+  padding: 8px 12px;
+  border-bottom: 0.5px solid rgba(0, 0, 0, 0.1);
+  margin-bottom: 8px;
+  letter-spacing: -0.1px;
+}
+
+[data-theme="dark"] .apple-user-name {
+  border-bottom: 0.5px solid rgba(255, 255, 255, 0.12);
+}
+
+.apple-logout-btn {
+  width: 100%;
+  padding: 8px 12px;
+  background: transparent;
+  border: none;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 500;
+  color: #ff3b30;
+  cursor: pointer;
+  text-align: left;
+  transition: all 0.2s ease;
+}
+
+.apple-logout-btn:hover {
+  background-color: rgba(255, 59, 48, 0.08);
+}
+
+/* ===================================
+   Mobile Menu Toggle (Hamburger)
+   =================================== */
+
+.apple-mobile-toggle {
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 36px;
+  height: 36px;
+  border: none;
+  background: transparent;
+  border-radius: 6px;
+  cursor: pointer;
+  padding: 8px;
+  transition: background-color 0.2s ease;
+}
+
+.apple-mobile-toggle:hover {
+  background-color: rgba(0, 0, 0, 0.04);
+}
+
+[data-theme="dark"] .apple-mobile-toggle:hover {
+  background-color: rgba(255, 255, 255, 0.06);
+}
+
+.hamburger-line {
+  width: 18px;
+  height: 2px;
+  background-color: var(--text-primary);
+  border-radius: 1px;
+  transition: all 0.3s cubic-bezier(0.28, 0.11, 0.32, 1);
+  margin: 2px 0;
+}
+
+.apple-mobile-toggle.open .hamburger-line:nth-child(1) {
+  transform: translateY(6px) rotate(45deg);
+}
+
+.apple-mobile-toggle.open .hamburger-line:nth-child(2) {
+  opacity: 0;
+}
+
+.apple-mobile-toggle.open .hamburger-line:nth-child(3) {
+  transform: translateY(-6px) rotate(-45deg);
+}
+
+/* ===================================
+   Mobile Navigation Menu
+   =================================== */
+
+.apple-nav-mobile {
+  position: fixed;
+  top: 44px;
+  right: 0;
+  bottom: 0;
+  width: 100%;
+  max-width: 375px;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: saturate(180%) blur(20px);
+  -webkit-backdrop-filter: saturate(180%) blur(20px);
+  box-shadow: -2px 0 20px rgba(0, 0, 0, 0.1);
+  transform: translateX(100%);
+  transition: transform 0.4s cubic-bezier(0.28, 0.11, 0.32, 1);
+  overflow-y: auto;
+  z-index: 999;
+}
+
+[data-theme="dark"] .apple-nav-mobile {
+  background: rgba(29, 29, 31, 0.95);
+  box-shadow: -2px 0 20px rgba(0, 0, 0, 0.5);
+}
+
+.apple-nav-mobile.open {
+  transform: translateX(0);
+}
+
+.apple-mobile-content {
+  padding: 24px 20px;
+  padding-bottom: max(24px, env(safe-area-inset-bottom));
+}
+
+/* Mobile User Section */
+.apple-mobile-user {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 24px 0;
+  border-bottom: 0.5px solid rgba(0, 0, 0, 0.1);
+  margin-bottom: 24px;
+}
+
+[data-theme="dark"] .apple-mobile-user {
+  border-bottom: 0.5px solid rgba(255, 255, 255, 0.12);
+}
+
+.apple-mobile-user-name {
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-top: 12px;
+  letter-spacing: -0.5px;
+}
+
+.apple-mobile-user-role {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-secondary);
+  margin-top: 4px;
+  letter-spacing: -0.2px;
+}
+
+/* Mobile Navigation Links */
+.apple-mobile-links {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-bottom: 24px;
+}
+
+.apple-mobile-link {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  background: rgba(0, 0, 0, 0.02);
+  border-radius: 12px;
+  text-decoration: none;
+  color: var(--text-primary);
+  font-size: 16px;
+  font-weight: 500;
+  letter-spacing: -0.3px;
+  transition: all 0.2s cubic-bezier(0.28, 0.11, 0.32, 1);
+}
+
+[data-theme="dark"] .apple-mobile-link {
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.apple-mobile-link:active {
+  transform: scale(0.98);
+  background: rgba(0, 0, 0, 0.06);
+}
+
+[data-theme="dark"] .apple-mobile-link:active {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.apple-mobile-link.active {
+  background: rgba(28, 169, 163, 0.1);
+  color: var(--avm-teal);
+  font-weight: 600;
+}
+
+[data-theme="dark"] .apple-mobile-link.active {
+  background: rgba(28, 169, 163, 0.15);
+}
+
+.mobile-link-icon {
+  font-size: 20px;
+  filter: grayscale(20%);
+  opacity: 0.8;
+}
+
+.mobile-link-text {
+  flex: 1;
+}
+
+.mobile-link-arrow {
+  font-size: 24px;
+  color: var(--text-secondary);
+  opacity: 0.4;
+}
+
+/* Mobile Actions */
+.apple-mobile-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding-top: 24px;
+  border-top: 0.5px solid rgba(0, 0, 0, 0.1);
+}
+
+[data-theme="dark"] .apple-mobile-actions {
+  border-top: 0.5px solid rgba(255, 255, 255, 0.12);
+}
+
+.apple-mobile-action {
+  margin-bottom: 8px;
+}
+
+.apple-mobile-btn {
+  width: 100%;
+  padding: 14px 16px;
+  background: rgba(0, 0, 0, 0.04);
+  border: none;
+  border-radius: 12px;
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--text-primary);
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.28, 0.11, 0.32, 1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  letter-spacing: -0.2px;
+}
+
+[data-theme="dark"] .apple-mobile-btn {
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.apple-mobile-btn:active {
+  transform: scale(0.98);
+  background: rgba(0, 0, 0, 0.08);
+}
+
+[data-theme="dark"] .apple-mobile-btn:active {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.apple-mobile-btn.logout {
+  color: #ff3b30;
+  background: rgba(255, 59, 48, 0.08);
+  margin-top: 8px;
+}
+
+.apple-mobile-btn.logout:active {
+  background: rgba(255, 59, 48, 0.15);
+}
+
+/* Mobile Menu Backdrop */
+.apple-mobile-backdrop {
+  position: fixed;
+  top: 44px;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  z-index: 998;
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* ===================================
+   Responsive Design (Apple Style)
+   =================================== */
+
+@media (max-width: 980px) {
+  .apple-nav-desktop {
+    display: none;
+  }
+
+  .apple-mobile-toggle {
+    display: flex;
+  }
+
+  .apple-brand-text {
+    display: none;
+  }
+}
+
+@media (max-width: 480px) {
+  .apple-nav-mobile {
+    max-width: 100%;
+  }
+}
+
+/* Safari iOS specific fixes */
+@supports (-webkit-touch-callout: none) {
+  .apple-nav {
+    position: -webkit-sticky;
+  }
+}
+
+/* Reduce motion for accessibility */
+@media (prefers-reduced-motion: reduce) {
+  .apple-nav,
+  .apple-nav-link,
+  .apple-nav-icon-btn,
+  .apple-nav-mobile,
+  .apple-mobile-link,
+  .apple-mobile-btn,
+  .hamburger-line {
+    transition: none;
+  }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .apple-nav {
+    border-bottom: 1px solid currentColor;
+  }
+
+  .apple-nav-link,
+  .apple-mobile-link {
+    border: 1px solid transparent;
+  }
+
+  .apple-nav-link.active,
+  .apple-mobile-link.active {
+    border-color: currentColor;
+  }
+}

@@ -1,144 +1,172 @@
-/* ===== ROLE SWITCHER - APPLE-INSPIRED DESIGN ===== */
+/* ===================================
+   Apple-Inspired Role Switcher
+   =================================== */
 
 .role-switcher {
   position: relative;
   display: inline-block;
 }
 
-/* Trigger Button */
+/* Trigger Button - Apple Style */
 .role-switcher-trigger {
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 8px 16px;
-  background: var(--bg-secondary);
-  border: 1px solid var(--border-color);
-  border-radius: 12px;
+  gap: 6px;
+  padding: 6px 12px;
+  background: rgba(0, 0, 0, 0.04);
+  border: none;
+  border-radius: 8px;
   color: var(--text-primary);
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 500;
   cursor: pointer;
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
+  transition: all 0.2s cubic-bezier(0.28, 0.11, 0.32, 1);
+  letter-spacing: -0.2px;
+  white-space: nowrap;
+}
+
+[data-theme="dark"] .role-switcher-trigger {
+  background: rgba(255, 255, 255, 0.06);
 }
 
 .role-switcher-trigger:hover {
-  background: var(--bg-tertiary);
-  border-color: var(--primary-color);
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  background: rgba(0, 0, 0, 0.06);
+  transform: scale(1.02);
 }
 
 [data-theme="dark"] .role-switcher-trigger:hover {
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  background: rgba(255, 255, 255, 0.08);
 }
 
 .role-switcher-trigger:active {
-  transform: translateY(0);
+  transform: scale(0.98);
 }
 
 .role-switcher-icon {
-  font-size: 18px;
+  font-size: 16px;
   line-height: 1;
+  filter: grayscale(20%);
 }
 
 .role-switcher-label {
   white-space: nowrap;
+  letter-spacing: -0.2px;
 }
 
 .role-switcher-arrow {
-  font-size: 10px;
-  transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-  opacity: 0.6;
+  font-size: 9px;
+  transition: transform 0.3s cubic-bezier(0.28, 0.11, 0.32, 1);
+  opacity: 0.5;
+  margin-left: 2px;
 }
 
 .role-switcher-arrow.open {
   transform: rotate(180deg);
 }
 
-/* Dropdown Menu */
+/* Dropdown Menu - Apple Style */
 .role-switcher-dropdown {
   position: absolute;
   top: calc(100% + 8px);
   right: 0;
-  min-width: 200px;
-  background: var(--bg-primary);
-  border: 1px solid var(--border-color);
+  min-width: 220px;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: saturate(180%) blur(20px);
+  -webkit-backdrop-filter: saturate(180%) blur(20px);
   border-radius: 12px;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+  box-shadow:
+    0 0 0 0.5px rgba(0, 0, 0, 0.08),
+    0 8px 20px rgba(0, 0, 0, 0.12),
+    0 20px 40px rgba(0, 0, 0, 0.08);
   padding: 8px;
   z-index: 1000;
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  animation: dropdownSlideIn 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  opacity: 0;
+  transform: translateY(-8px) scale(0.95);
+  animation: appleDropdownIn 0.3s cubic-bezier(0.28, 0.11, 0.32, 1) forwards;
 }
 
 [data-theme="dark"] .role-switcher-dropdown {
-  background: rgba(30, 30, 30, 0.95);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+  background: rgba(44, 44, 46, 0.95);
+  box-shadow:
+    0 0 0 0.5px rgba(255, 255, 255, 0.12),
+    0 8px 20px rgba(0, 0, 0, 0.4),
+    0 20px 40px rgba(0, 0, 0, 0.3);
 }
 
-@keyframes dropdownSlideIn {
-  from {
-    opacity: 0;
-    transform: translateY(-8px);
-  }
+@keyframes appleDropdownIn {
   to {
     opacity: 1;
-    transform: translateY(0);
+    transform: translateY(0) scale(1);
   }
 }
 
-/* Dropdown Header */
+/* Dropdown Header - Apple Style */
 .role-switcher-header {
-  padding: 8px 12px;
-  font-size: 12px;
+  padding: 8px 12px 6px;
+  font-size: 11px;
   font-weight: 600;
   color: var(--text-secondary);
   text-transform: uppercase;
   letter-spacing: 0.5px;
-  border-bottom: 1px solid var(--border-color);
+  border-bottom: 0.5px solid rgba(0, 0, 0, 0.1);
   margin-bottom: 4px;
 }
 
-/* Role Options */
+[data-theme="dark"] .role-switcher-header {
+  border-bottom: 0.5px solid rgba(255, 255, 255, 0.12);
+}
+
+/* Role Options - Apple Style */
 .role-switcher-option {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
   width: 100%;
   padding: 10px 12px;
   background: transparent;
   border: none;
-  border-radius: 8px;
+  border-radius: 6px;
   color: var(--text-primary);
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 500;
   text-align: left;
   cursor: pointer;
-  transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all 0.15s cubic-bezier(0.28, 0.11, 0.32, 1);
   position: relative;
+  letter-spacing: -0.2px;
 }
 
 .role-switcher-option:hover {
-  background: var(--bg-secondary);
-  transform: translateX(2px);
+  background: rgba(0, 0, 0, 0.04);
+}
+
+[data-theme="dark"] .role-switcher-option:hover {
+  background: rgba(255, 255, 255, 0.06);
 }
 
 .role-switcher-option.active {
-  background: rgba(var(--primary-color-rgb, 0, 122, 255), 0.1);
-  color: var(--primary-color);
+  background: rgba(28, 169, 163, 0.1);
+  color: var(--avm-teal);
+  font-weight: 600;
+}
+
+[data-theme="dark"] .role-switcher-option.active {
+  background: rgba(28, 169, 163, 0.15);
 }
 
 .role-switcher-option.active:hover {
-  background: rgba(var(--primary-color-rgb, 0, 122, 255), 0.15);
+  background: rgba(28, 169, 163, 0.15);
+}
+
+[data-theme="dark"] .role-switcher-option.active:hover {
+  background: rgba(28, 169, 163, 0.2);
 }
 
 .role-option-icon {
-  font-size: 20px;
+  font-size: 18px;
   line-height: 1;
   flex-shrink: 0;
+  filter: grayscale(20%);
 }
 
 .role-option-label {
@@ -146,17 +174,18 @@
 }
 
 .role-option-checkmark {
-  font-size: 16px;
-  color: var(--primary-color);
-  font-weight: 600;
+  font-size: 14px;
+  color: var(--avm-teal);
+  font-weight: 700;
   flex-shrink: 0;
+  opacity: 0.9;
 }
 
-/* Mobile Responsive */
-@media (max-width: 768px) {
+/* Mobile Responsive - Apple Style */
+@media (max-width: 980px) {
   .role-switcher-trigger {
-    padding: 6px 12px;
-    font-size: 13px;
+    padding: 6px 10px;
+    font-size: 12px;
   }
 
   .role-switcher-icon {
@@ -167,11 +196,15 @@
     display: none;
   }
 
+  .role-switcher-arrow {
+    display: none;
+  }
+
   .role-switcher-dropdown {
     right: auto;
     left: 50%;
-    transform: translateX(-50%);
-    min-width: 180px;
+    transform: translateX(-50%) translateY(-8px) scale(0.95);
+    min-width: 200px;
   }
 }
 
@@ -179,10 +212,50 @@
   .role-switcher-dropdown {
     position: fixed;
     top: auto;
-    bottom: 80px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: calc(100vw - 32px);
-    max-width: 320px;
+    bottom: max(80px, env(safe-area-inset-bottom));
+    left: 16px;
+    right: 16px;
+    transform: translateY(8px) scale(0.95);
+    width: auto;
+    min-width: auto;
+    max-width: none;
+  }
+
+  @keyframes appleDropdownIn {
+    to {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+  }
+}
+
+/* Accessibility - Reduce motion */
+@media (prefers-reduced-motion: reduce) {
+  .role-switcher-trigger,
+  .role-switcher-option,
+  .role-switcher-arrow,
+  .role-switcher-dropdown {
+    transition: none;
+    animation: none;
+  }
+
+  .role-switcher-dropdown {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .role-switcher-trigger {
+    border: 1px solid currentColor;
+  }
+
+  .role-switcher-dropdown {
+    border: 1px solid currentColor;
+  }
+
+  .role-switcher-option.active {
+    border: 1px solid currentColor;
   }
 }
