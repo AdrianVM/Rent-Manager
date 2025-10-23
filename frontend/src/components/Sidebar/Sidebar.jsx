@@ -98,9 +98,31 @@ function Sidebar({ user, currentRole }) {
           aria-label={isCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
           title={isCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
         >
-          <span className={styles.toggleIcon}>
-            {isCollapsed ? '»' : '«'}
-          </span>
+          <svg
+            className={styles.toggleIcon}
+            width="16"
+            height="16"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2.5"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
+            {isCollapsed ? (
+              // Right arrow (expand)
+              <>
+                <line x1="5" y1="12" x2="19" y2="12"></line>
+                <polyline points="12 5 19 12 12 19"></polyline>
+              </>
+            ) : (
+              // Left arrow (collapse)
+              <>
+                <line x1="19" y1="12" x2="5" y2="12"></line>
+                <polyline points="12 19 5 12 12 5"></polyline>
+              </>
+            )}
+          </svg>
         </button>
 
         {/* Navigation Items */}
