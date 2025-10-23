@@ -14,12 +14,13 @@
 }
 
 .table thead {
-  background: var(--glass-bg);
+  background: linear-gradient(135deg, rgba(31, 78, 121, 0.08), rgba(28, 169, 163, 0.08));
   backdrop-filter: blur(10px);
+  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
 }
 
-.table thead tr {
-  border-bottom: 2px solid var(--border-color);
+[data-theme="dark"] .table thead {
+  background: linear-gradient(135deg, rgba(71, 140, 249, 0.1), rgba(28, 169, 163, 0.1));
 }
 
 .table th {
@@ -31,15 +32,14 @@
   text-transform: uppercase;
   letter-spacing: 0.5px;
   white-space: nowrap;
-  background: var(--glass-bg);
   border-bottom: 2px solid var(--border-color);
 }
 
-.table thead tr:first-child th:first-child {
+.table th:first-child {
   border-top-left-radius: var(--radius-lg);
 }
 
-.table thead tr:first-child th:last-child {
+.table th:last-child {
   border-top-right-radius: var(--radius-lg);
 }
 
