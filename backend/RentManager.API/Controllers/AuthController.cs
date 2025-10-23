@@ -7,6 +7,7 @@ namespace RentManager.API.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
+    [Authorize]
     public class AuthController : ControllerBase
     {
         private readonly IAuthService _authService;
@@ -17,7 +18,6 @@ namespace RentManager.API.Controllers
         }
 
         [HttpGet("me")]
-        [Authorize]
         public async Task<ActionResult<User>> GetCurrentUser()
         {
             var userId = GetCurrentUserId();
@@ -38,7 +38,6 @@ namespace RentManager.API.Controllers
         }
 
         [HttpPut("me")]
-        [Authorize]
         public async Task<ActionResult<User>> UpdateCurrentUser([FromBody] UserUpdateRequest request)
         {
             var userId = GetCurrentUserId();
@@ -59,7 +58,6 @@ namespace RentManager.API.Controllers
         }
 
         [HttpGet("users")]
-        [Authorize(Roles = "Admin")]
         public async Task<ActionResult<List<User>>> GetUsers()
         {
             var users = await _authService.GetUsersAsync();
@@ -74,7 +72,6 @@ namespace RentManager.API.Controllers
         }
 
         [HttpPut("users/{userId}")]
-        [Authorize(Roles = "Admin")]
         public async Task<ActionResult<User>> UpdateUser(string userId, [FromBody] UserUpdateRequest request)
         {
             var user = await _authService.UpdateUserAsync(userId, request);
@@ -89,7 +86,6 @@ namespace RentManager.API.Controllers
         }
 
         [HttpDelete("users/{userId}")]
-        [Authorize(Roles = "Admin")]
         public async Task<ActionResult> DeleteUser(string userId)
         {
             var success = await _authService.DeleteUserAsync(userId);

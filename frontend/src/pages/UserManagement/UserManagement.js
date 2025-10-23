@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import './UserManagement.css';
-
-const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:5057/api';
+import apiService from '../../services/api';
 
 function EditUserModal({ user, onSave, onClose }) {
   const [formData, setFormData] = useState({
@@ -94,21 +93,9 @@ function CreateUserModal({ onClose, onUserCreated }) {
     setLoading(true);
 
     try {
-      const response = await fetch(`${API_BASE_URL}/auth/register`, {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${localStorage.getItem('authToken')}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(formData),
-      });
-
-      if (response.ok) {
-        onUserCreated();
-        onClose();
-      } else {
-        alert('Failed to create user');
-      }
+      await apiService.createUser(formData);
+      onUserCreated();
+      onClose();
     } catch (err) {
       alert('Error creating user: ' + err.message);
     } finally {
@@ -193,18 +180,9 @@ function UserManagement() {
   const loadUsers = async () => {
     try {
       setLoading(true);
-      const response = await fetch(`${API_BASE_URL}/auth/users`, {
-        headers: {
-          'Authorization': `Bearer ${localStorage.getItem('authToken')}`,
-          'Content-Type': 'application/json',
-        },
-      });
-      if (response.ok) {
-        const userData = await response.json();
-        setUsers(userData);
-      } else {
-        setError('Failed to load users');
-      }
+      const userData = await apiService.getUsers();
+      setUsers(userData);
+      setError(null);
     } catch (err) {
       setError('Error loading users: ' + err.message);
       console.error('Error loading users:', err);
@@ -217,18 +195,8 @@ function UserManagement() {
     if (!window.confirm('Are you sure you want to delete this user?')) return;
 
     try {
-      const response = await fetch(`${API_BASE_URL}/auth/users/${userId}`, {
-        method: 'DELETE',
-        headers: {
-          'Authorization': `Bearer ${localStorage.getItem('authToken')}`,
-        },
-      });
-
-      if (response.ok) {
-        setUsers(users.filter(user => user.id !== userId));
-      } else {
-        alert('Failed to delete user');
-      }
+      await apiService.deleteUser(userId);
+      setUsers(users.filter(user => user.id !== userId));
     } catch (err) {
       alert('Error deleting user: ' + err.message);
     }
@@ -236,22 +204,9 @@ function UserManagement() {
 
   const handleUpdateUser = async (userId, updates) => {
     try {
-      const response = await fetch(`${API_BASE_URL}/auth/users/${userId}`, {
-        method: 'PUT',
-        headers: {
-          'Authorization': `Bearer ${localStorage.getItem('authToken')}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(updates),
-      });
-
-      if (response.ok) {
-        const updatedUser = await response.json();
-        setUsers(users.map(user => user.id === userId ? updatedUser : user));
-        setEditingUser(null);
-      } else {
-        alert('Failed to update user');
-      }
+      const updatedUser = await apiService.updateUser(userId, updates);
+      setUsers(users.map(user => user.id === userId ? updatedUser : user));
+      setEditingUser(null);
     } catch (err) {
       alert('Error updating user: ' + err.message);
     }

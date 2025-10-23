@@ -223,6 +223,31 @@ class ApiService {
       method: 'POST',
     });
   }
+
+  // User Management API
+  async getUsers() {
+    return this.request('/auth/users');
+  }
+
+  async createUser(userData) {
+    return this.request('/auth/register', {
+      method: 'POST',
+      body: userData,
+    });
+  }
+
+  async updateUser(id, userData) {
+    return this.request(`/auth/users/${id}`, {
+      method: 'PUT',
+      body: userData,
+    });
+  }
+
+  async deleteUser(id) {
+    return this.request(`/auth/users/${id}`, {
+      method: 'DELETE',
+    });
+  }
 }
 
 const apiService = new ApiService();
