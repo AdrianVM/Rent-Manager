@@ -49,8 +49,7 @@ function Sidebar({ user, currentRole }) {
         { path: '/my-rental', label: 'My Rental', icon: '🏠', description: 'Property details' },
         { path: '/payment-history', label: 'Payments', icon: '💳', description: 'Payment history' },
         { path: '/maintenance', label: 'Maintenance', icon: '🔧', description: 'Service requests' },
-        { path: '/documents', label: 'Documents', icon: '📄', description: 'Lease documents' },
-        { path: '/settings', label: 'Settings', icon: '⚙️', description: 'Account settings' }
+        { path: '/documents', label: 'Documents', icon: '📄', description: 'Lease documents' }
       ];
     } else if (isPropertyOwner) {
       return [
@@ -59,8 +58,7 @@ function Sidebar({ user, currentRole }) {
         { path: '/tenants', label: 'Tenants', icon: '👥', description: 'Manage tenants' },
         { path: '/payments', label: 'Payments', icon: '💳', description: 'Track payments' },
         { path: '/reports', label: 'Reports', icon: '📈', description: 'Financial reports' },
-        { path: '/maintenance', label: 'Maintenance', icon: '🔧', description: 'Service requests' },
-        { path: '/settings', label: 'Settings', icon: '⚙️', description: 'Account settings' }
+        { path: '/maintenance', label: 'Maintenance', icon: '🔧', description: 'Service requests' }
       ];
     } else if (isAdmin) {
       return [
@@ -70,8 +68,7 @@ function Sidebar({ user, currentRole }) {
         { path: '/payments', label: 'Payments', icon: '💳', description: 'Track payments' },
         { path: '/reports', label: 'Reports', icon: '📈', description: 'Analytics & reports' },
         { path: '/user-management', label: 'Users', icon: '👤', description: 'User management' },
-        { path: '/system-settings', label: 'System', icon: '🖥️', description: 'System settings' },
-        { path: '/settings', label: 'Settings', icon: '⚙️', description: 'Account settings' }
+        { path: '/system-settings', label: 'System', icon: '🖥️', description: 'System settings' }
       ];
     }
 
