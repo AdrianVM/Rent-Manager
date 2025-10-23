@@ -40,6 +40,8 @@ services:
       Stripe__SecretKey: ${STRIPE_SECRET_KEY:-}
       Stripe__PublishableKey: ${STRIPE_PUBLISHABLE_KEY:-}
       Stripe__WebhookSecret: ${STRIPE_WEBHOOK_SECRET:-}
+      Zitadel__Authority: ${ZITADEL_AUTHORITY}
+      Zitadel__Audience: ${ZITADEL_AUDIENCE}
     ports:
       - "5000:8080"
     depends_on:
@@ -56,6 +58,10 @@ services:
       dockerfile: Dockerfile
       args:
         REACT_APP_API_URL: http://localhost:5000/api
+        REACT_APP_BASE_URL: ${REACT_APP_BASE_URL:-http://localhost:3000}
+        REACT_APP_ZITADEL_AUTHORITY: ${REACT_APP_ZITADEL_AUTHORITY}
+        REACT_APP_ZITADEL_CLIENT_ID: ${REACT_APP_ZITADEL_CLIENT_ID}
+        REACT_APP_REDIRECT_URI: ${REACT_APP_REDIRECT_URI:-http://localhost:3000/auth/callback}
     container_name: rentmanager-frontend
     ports:
       - "3000:80"
