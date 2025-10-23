@@ -248,6 +248,22 @@ class ApiService {
       method: 'DELETE',
     });
   }
+
+  // Tenant Invitations API
+  async createTenantInvitation(invitationData) {
+    return this.request('/tenantinvitations', {
+      method: 'POST',
+      body: invitationData,
+    });
+  }
+
+  async getTenantInvitations() {
+    return this.request('/tenantinvitations');
+  }
+
+  async getTenantInvitation(token) {
+    return this.request(`/tenantinvitations/${token}`);
+  }
 }
 
 const apiService = new ApiService();

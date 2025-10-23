@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { PrimaryButton, SecondaryButton } from './';
-
-const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:5057/api';
+import apiService from '../../services/api';
 
 function InviteTenantModal({ onClose, properties = [] }) {
   const [formData, setFormData] = useState({
@@ -32,32 +31,20 @@ function InviteTenantModal({ onClose, properties = [] }) {
 
     try {
       setLoading(true);
-      const token = localStorage.getItem('authToken');
 
-      const response = await fetch(`${API_BASE_URL}/tenantinvitations`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        },
-        body: JSON.stringify({
-          propertyId: formData.propertyId,
-          email: formData.email,
-          rentAmount: formData.rentAmount ? parseFloat(formData.rentAmount) : null,
-          leaseStart: formData.leaseStart || null,
-          leaseEnd: formData.leaseEnd || null,
-          deposit: formData.deposit ? parseFloat(formData.deposit) : null
-        })
+      const result = await apiService.createTenantInvitation({
+        propertyId: formData.propertyId,
+        email: formData.email,
+        rentAmount: formData.rentAmount ? parseFloat(formData.rentAmount) : null,
+        leaseStart: formData.leaseStart || null,
+        leaseEnd: formData.leaseEnd || null,
+        deposit: formData.deposit ? parseFloat(formData.deposit) : null
       });
 
-      if (!response.ok) {
-        throw new Error('Failed to create invitation');
-      }
-
-      const result = await response.json();
       setInvitationLink(result.invitationLink);
     } catch (err) {
       alert('Error creating invitation: ' + err.message);
+      console.error('Error creating invitation:', err);
     } finally {
       setLoading(false);
     }
