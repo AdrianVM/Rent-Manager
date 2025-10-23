@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import apiService from '../../services/api';
 import InviteTenantModal from '../../components/common/InviteTenantModal';
-import { PrimaryButton, SecondaryButton, DangerButton } from '../../components/common';
+import { PrimaryButton, SecondaryButton, DangerButton, Table } from '../../components/common';
 import TenantTypeSelector from '../../components/tenants/TenantTypeSelector';
 import PersonTenantForm from '../../components/tenants/PersonTenantForm';
 import CompanyTenantForm from '../../components/tenants/CompanyTenantForm';
@@ -350,101 +350,100 @@ function Tenants() {
             )}
           </div>
         ) : (
-          <>
-            {/* Desktop Table View */}
-            <div className="table-responsive">
-              <table className="table">
-                <thead>
-                  <tr>
-                    <th>Name</th>
-                    <th>Email</th>
-                    <th>Phone</th>
-                    <th>Property</th>
-                    <th>Monthly Rent</th>
-                    <th>Status</th>
-                    <th>Actions</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {tenants.map(tenant => (
-                    <tr key={tenant.id}>
-                      <td>{tenant.name}</td>
-                      <td>{tenant.email}</td>
-                      <td>{tenant.phone || 'N/A'}</td>
-                      <td>{getPropertyName(tenant.propertyId)}</td>
-                      <td>${tenant.rentAmount.toLocaleString()}</td>
-                      <td>{getStatusBadge(tenant.status)}</td>
-                      <td>
-                        <div className="tenants-action-buttons">
-                          <PrimaryButton
-                            onClick={() => handleEditTenant(tenant)}
-                            title="Edit Tenant"
-                            className="tenant-action-btn"
-                          >
-                            ✏️
-                          </PrimaryButton>
-                          <DangerButton
-                            onClick={() => handleDeleteTenant(tenant.id)}
-                            title="Delete Tenant"
-                            className="tenant-action-btn"
-                          >
-                            🗑️
-                          </DangerButton>
-                        </div>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-            
-            {/* Mobile Card View */}
-            <div className="card-list">
-              {tenants.map(tenant => (
-                <div key={tenant.id} className="card-item">
-                  <div className="card-item-header">{tenant.name}</div>
-                  <div className="card-item-details">
-                    <div className="card-item-detail">
-                      <span className="card-item-label">Email:</span>
-                      <span className="card-item-value">{tenant.email}</span>
-                    </div>
-                    <div className="card-item-detail">
-                      <span className="card-item-label">Phone:</span>
-                      <span className="card-item-value">{tenant.phone || 'N/A'}</span>
-                    </div>
-                    <div className="card-item-detail">
-                      <span className="card-item-label">Property:</span>
-                      <span className="card-item-value">{getPropertyName(tenant.propertyId)}</span>
-                    </div>
-                    <div className="card-item-detail">
-                      <span className="card-item-label">Monthly Rent:</span>
-                      <span className="card-item-value">${tenant.rentAmount.toLocaleString()}</span>
-                    </div>
-                    <div className="card-item-detail">
-                      <span className="card-item-label">Status:</span>
-                      <span className="card-item-value">{getStatusBadge(tenant.status)}</span>
-                    </div>
-                  </div>
-                  <div className="card-item-actions tenants-mobile-actions">
+          <Table
+            columns={[
+              {
+                header: 'Name',
+                accessor: 'name'
+              },
+              {
+                header: 'Email',
+                accessor: 'email'
+              },
+              {
+                header: 'Phone',
+                render: (tenant) => tenant.phone || 'N/A'
+              },
+              {
+                header: 'Property',
+                render: (tenant) => getPropertyName(tenant.propertyId)
+              },
+              {
+                header: 'Monthly Rent',
+                render: (tenant) => `$${tenant.rentAmount.toLocaleString()}`
+              },
+              {
+                header: 'Status',
+                render: (tenant) => getStatusBadge(tenant.status)
+              },
+              {
+                header: 'Actions',
+                render: (tenant) => (
+                  <div className="tenants-action-buttons">
                     <PrimaryButton
                       onClick={() => handleEditTenant(tenant)}
                       title="Edit Tenant"
-                      className="tenants-mobile-action-btn"
+                      className="tenant-action-btn"
                     >
                       ✏️
                     </PrimaryButton>
                     <DangerButton
                       onClick={() => handleDeleteTenant(tenant.id)}
                       title="Delete Tenant"
-                      className="tenants-mobile-action-btn"
+                      className="tenant-action-btn"
                     >
                       🗑️
                     </DangerButton>
                   </div>
+                )
+              }
+            ]}
+            data={tenants}
+            emptyMessage="No tenants yet"
+            renderMobileCard={(tenant) => (
+              <>
+                <div className="card-item-header">{tenant.name}</div>
+                <div className="card-item-details">
+                  <div className="card-item-detail">
+                    <span className="card-item-label">Email:</span>
+                    <span className="card-item-value">{tenant.email}</span>
+                  </div>
+                  <div className="card-item-detail">
+                    <span className="card-item-label">Phone:</span>
+                    <span className="card-item-value">{tenant.phone || 'N/A'}</span>
+                  </div>
+                  <div className="card-item-detail">
+                    <span className="card-item-label">Property:</span>
+                    <span className="card-item-value">{getPropertyName(tenant.propertyId)}</span>
+                  </div>
+                  <div className="card-item-detail">
+                    <span className="card-item-label">Monthly Rent:</span>
+                    <span className="card-item-value">${tenant.rentAmount.toLocaleString()}</span>
+                  </div>
+                  <div className="card-item-detail">
+                    <span className="card-item-label">Status:</span>
+                    <span className="card-item-value">{getStatusBadge(tenant.status)}</span>
+                  </div>
                 </div>
-              ))}
-            </div>
-          </>
+                <div className="card-item-actions tenants-mobile-actions">
+                  <PrimaryButton
+                    onClick={() => handleEditTenant(tenant)}
+                    title="Edit Tenant"
+                    className="tenants-mobile-action-btn"
+                  >
+                    ✏️
+                  </PrimaryButton>
+                  <DangerButton
+                    onClick={() => handleDeleteTenant(tenant.id)}
+                    title="Delete Tenant"
+                    className="tenants-mobile-action-btn"
+                  >
+                    🗑️
+                  </DangerButton>
+                </div>
+              </>
+            )}
+          />
         )}
       </div>
 

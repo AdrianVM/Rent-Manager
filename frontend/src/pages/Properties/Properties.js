@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import apiService from '../../services/api';
 import { renderAsync } from 'docx-preview';
-import { PrimaryButton, SecondaryButton, DangerButton } from '../../components/common';
+import { PrimaryButton, SecondaryButton, DangerButton, Table } from '../../components/common';
 import './Properties.css';
 
 function PropertyForm({ property, onSave, onCancel }) {
@@ -751,167 +751,157 @@ function Properties() {
             <p>Add your first property to get started managing rentals</p>
           </div>
         ) : (
-          <>
-            {/* Desktop Table View */}
-            <div className="table-responsive">
-              <table className="table">
-                <thead>
-                  <tr>
-                    <th>Name</th>
-                    <th>Address</th>
-                    <th>Type</th>
-                    <th>Details</th>
-                    <th>Monthly Rent</th>
-                    <th>Actions</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {properties.map(property => {
-                    const getPropertyDetails = (prop) => {
-                      switch (prop.type) {
-                        case 'apartment':
-                        case 'house':
-                        case 'condo':
-                          return `${prop.bedrooms || 0}/${prop.bathrooms || 0} bed/bath`;
-                        case 'parkingSpace':
-                          const details = [];
-                          if (prop.parkingType) details.push(prop.parkingType.replace('_', ' '));
-                          if (prop.spaceNumber) details.push(`#${prop.spaceNumber}`);
-                          return details.join(' • ') || 'Parking';
-                        case 'commercial':
-                          return prop.squareFootage ? `${prop.squareFootage.toLocaleString()} sq ft` : 'Commercial';
-                        default:
-                          return 'N/A';
-                      }
-                    };
-                    
-                    return (
-                      <tr key={property.id}>
-                        <td>{property.name}</td>
-                        <td>{property.address}</td>
-                        <td className="property-type-text">
-                          {property.type.replace('_', ' ')}
-                        </td>
-                        <td>{getPropertyDetails(property)}</td>
-                        <td>${property.rentAmount.toLocaleString()}</td>
-                        <td>
-                          <div className="properties-action-buttons">
-                            <PrimaryButton
-                              onClick={() => handleEditProperty(property)}
-                              title="Edit Property"
-                              className="property-action-btn"
-                            >
-                              ✏️
-                            </PrimaryButton>
-                            <SecondaryButton
-                              onClick={() => handleUploadContract(property)}
-                              title="Upload Contract"
-                              className="property-action-btn"
-                            >
-                              📤
-                            </SecondaryButton>
-                            <SecondaryButton
-                              onClick={() => handleViewContracts(property)}
-                              title="View Contracts"
-                              className="property-action-btn"
-                            >
-                              👁️
-                            </SecondaryButton>
-                            <DangerButton
-                              onClick={() => handleDeleteProperty(property.id)}
-                              title="Delete Property"
-                              className="property-action-btn"
-                            >
-                              🗑️
-                            </DangerButton>
-                          </div>
-                        </td>
-                      </tr>
-                    );
-                  })}
-                </tbody>
-              </table>
-            </div>
-            
-            {/* Mobile Card View */}
-            <div className="card-list">
-              {properties.map(property => {
-                const getPropertyDetails = (prop) => {
-                  switch (prop.type) {
+          <Table
+            columns={[
+              {
+                header: 'Name',
+                accessor: 'name'
+              },
+              {
+                header: 'Address',
+                accessor: 'address'
+              },
+              {
+                header: 'Type',
+                cellClassName: 'property-type-text',
+                render: (property) => property.type.replace('_', ' ')
+              },
+              {
+                header: 'Details',
+                render: (property) => {
+                  switch (property.type) {
                     case 'apartment':
                     case 'house':
                     case 'condo':
-                      return `${prop.bedrooms || 0}/${prop.bathrooms || 0} bed/bath`;
+                      return `${property.bedrooms || 0}/${property.bathrooms || 0} bed/bath`;
                     case 'parkingSpace':
                       const details = [];
-                      if (prop.parkingType) details.push(prop.parkingType.replace('_', ' '));
-                      if (prop.spaceNumber) details.push(`#${prop.spaceNumber}`);
+                      if (property.parkingType) details.push(property.parkingType.replace('_', ' '));
+                      if (property.spaceNumber) details.push(`#${property.spaceNumber}`);
                       return details.join(' • ') || 'Parking';
                     case 'commercial':
-                      return prop.squareFootage ? `${prop.squareFootage.toLocaleString()} sq ft` : 'Commercial';
+                      return property.squareFootage ? `${property.squareFootage.toLocaleString()} sq ft` : 'Commercial';
                     default:
                       return 'N/A';
                   }
-                };
-                
-                return (
-                  <div key={property.id} className="card-item">
-                    <div className="card-item-header">{property.name}</div>
-                    <div className="card-item-details">
-                      <div className="card-item-detail">
-                        <span className="card-item-label">Address:</span>
-                        <span className="card-item-value">{property.address}</span>
-                      </div>
-                      <div className="card-item-detail">
-                        <span className="card-item-label">Type:</span>
-                        <span className="card-item-value property-type-text">
-                          {property.type.replace('_', ' ')}
-                        </span>
-                      </div>
-                      <div className="card-item-detail">
-                        <span className="card-item-label">Details:</span>
-                        <span className="card-item-value">{getPropertyDetails(property)}</span>
-                      </div>
-                      <div className="card-item-detail">
-                        <span className="card-item-label">Monthly Rent:</span>
-                        <span className="card-item-value">${property.rentAmount.toLocaleString()}</span>
-                      </div>
-                    </div>
-                    <div className="card-item-actions properties-mobile-actions">
-                      <PrimaryButton
-                        onClick={() => handleEditProperty(property)}
-                        title="Edit Property"
-                        className="properties-mobile-action-btn"
-                      >
-                        ✏️
-                      </PrimaryButton>
-                      <SecondaryButton
-                        onClick={() => handleUploadContract(property)}
-                        title="Upload Contract"
-                        className="properties-mobile-action-btn"
-                      >
-                        📤
-                      </SecondaryButton>
-                      <SecondaryButton
-                        onClick={() => handleViewContracts(property)}
-                        title="View Contracts"
-                        className="properties-mobile-action-btn"
-                      >
-                        👁️
-                      </SecondaryButton>
-                      <DangerButton
-                        onClick={() => handleDeleteProperty(property.id)}
-                        title="Delete Property"
-                        className="properties-mobile-action-btn"
-                      >
-                        🗑️
-                      </DangerButton>
-                    </div>
+                }
+              },
+              {
+                header: 'Monthly Rent',
+                render: (property) => `$${property.rentAmount.toLocaleString()}`
+              },
+              {
+                header: 'Actions',
+                render: (property) => (
+                  <div className="properties-action-buttons">
+                    <PrimaryButton
+                      onClick={() => handleEditProperty(property)}
+                      title="Edit Property"
+                      className="property-action-btn"
+                    >
+                      ✏️
+                    </PrimaryButton>
+                    <SecondaryButton
+                      onClick={() => handleUploadContract(property)}
+                      title="Upload Contract"
+                      className="property-action-btn"
+                    >
+                      📤
+                    </SecondaryButton>
+                    <SecondaryButton
+                      onClick={() => handleViewContracts(property)}
+                      title="View Contracts"
+                      className="property-action-btn"
+                    >
+                      👁️
+                    </SecondaryButton>
+                    <DangerButton
+                      onClick={() => handleDeleteProperty(property.id)}
+                      title="Delete Property"
+                      className="property-action-btn"
+                    >
+                      🗑️
+                    </DangerButton>
                   </div>
-                );
-              })}
-            </div>
-          </>
+                )
+              }
+            ]}
+            data={properties}
+            emptyMessage="No properties yet"
+            renderMobileCard={(property) => (
+              <>
+                <div className="card-item-header">{property.name}</div>
+                <div className="card-item-details">
+                  <div className="card-item-detail">
+                    <span className="card-item-label">Address:</span>
+                    <span className="card-item-value">{property.address}</span>
+                  </div>
+                  <div className="card-item-detail">
+                    <span className="card-item-label">Type:</span>
+                    <span className="card-item-value property-type-text">
+                      {property.type.replace('_', ' ')}
+                    </span>
+                  </div>
+                  <div className="card-item-detail">
+                    <span className="card-item-label">Details:</span>
+                    <span className="card-item-value">
+                      {(() => {
+                        switch (property.type) {
+                          case 'apartment':
+                          case 'house':
+                          case 'condo':
+                            return `${property.bedrooms || 0}/${property.bathrooms || 0} bed/bath`;
+                          case 'parkingSpace':
+                            const details = [];
+                            if (property.parkingType) details.push(property.parkingType.replace('_', ' '));
+                            if (property.spaceNumber) details.push(`#${property.spaceNumber}`);
+                            return details.join(' • ') || 'Parking';
+                          case 'commercial':
+                            return property.squareFootage ? `${property.squareFootage.toLocaleString()} sq ft` : 'Commercial';
+                          default:
+                            return 'N/A';
+                        }
+                      })()}
+                    </span>
+                  </div>
+                  <div className="card-item-detail">
+                    <span className="card-item-label">Monthly Rent:</span>
+                    <span className="card-item-value">${property.rentAmount.toLocaleString()}</span>
+                  </div>
+                </div>
+                <div className="card-item-actions properties-mobile-actions">
+                  <PrimaryButton
+                    onClick={() => handleEditProperty(property)}
+                    title="Edit Property"
+                    className="properties-mobile-action-btn"
+                  >
+                    ✏️
+                  </PrimaryButton>
+                  <SecondaryButton
+                    onClick={() => handleUploadContract(property)}
+                    title="Upload Contract"
+                    className="properties-mobile-action-btn"
+                  >
+                    📤
+                  </SecondaryButton>
+                  <SecondaryButton
+                    onClick={() => handleViewContracts(property)}
+                    title="View Contracts"
+                    className="properties-mobile-action-btn"
+                  >
+                    👁️
+                  </SecondaryButton>
+                  <DangerButton
+                    onClick={() => handleDeleteProperty(property.id)}
+                    title="Delete Property"
+                    className="properties-mobile-action-btn"
+                  >
+                    🗑️
+                  </DangerButton>
+                </div>
+              </>
+            )}
+          />
         )}
       </div>
 

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import './UserManagement.css';
 import apiService from '../../services/api';
+import { Table } from '../../components/common';
 
 function EditUserModal({ user, onSave, onClose }) {
   const [formData, setFormData] = useState({
@@ -250,57 +251,106 @@ function UserManagement() {
       </div>
 
       <div className="card">
-        <div className="table-container">
-          <table className="modern-table">
-            <thead>
-              <tr>
-                <th>Name</th>
-                <th>Email</th>
-                <th>Role</th>
-                <th>Status</th>
-                <th>Last Login</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {users.map(user => (
-                <tr key={user.id}>
-                  <td>{user.name}</td>
-                  <td>{user.email}</td>
-                  <td>
+        <Table
+          columns={[
+            {
+              header: 'Name',
+              accessor: 'name'
+            },
+            {
+              header: 'Email',
+              accessor: 'email'
+            },
+            {
+              header: 'Role',
+              render: (user) => (
+                <span className={`role-badge ${user.role?.toLowerCase()}`}>
+                  {user.role}
+                </span>
+              )
+            },
+            {
+              header: 'Status',
+              render: (user) => (
+                <span className={`status-badge ${user.isActive ? 'active' : 'inactive'}`}>
+                  {user.isActive ? 'Active' : 'Inactive'}
+                </span>
+              )
+            },
+            {
+              header: 'Last Login',
+              render: (user) => user.lastLoginAt ? new Date(user.lastLoginAt).toLocaleDateString() : 'Never'
+            },
+            {
+              header: 'Actions',
+              render: (user) => (
+                <div className="action-buttons">
+                  <button
+                    className="btn-modern btn-modern-secondary btn-modern-small"
+                    onClick={() => setEditingUser(user)}
+                  >
+                    Edit
+                  </button>
+                  <button
+                    className="btn-modern btn-modern-danger btn-modern-small"
+                    onClick={() => handleDeleteUser(user.id)}
+                  >
+                    Delete
+                  </button>
+                </div>
+              )
+            }
+          ]}
+          data={users}
+          emptyMessage="No users found"
+          renderMobileCard={(user) => (
+            <>
+              <div className="card-item-header">{user.name}</div>
+              <div className="card-item-details">
+                <div className="card-item-detail">
+                  <span className="card-item-label">Email:</span>
+                  <span className="card-item-value">{user.email}</span>
+                </div>
+                <div className="card-item-detail">
+                  <span className="card-item-label">Role:</span>
+                  <span className="card-item-value">
                     <span className={`role-badge ${user.role?.toLowerCase()}`}>
                       {user.role}
                     </span>
-                  </td>
-                  <td>
+                  </span>
+                </div>
+                <div className="card-item-detail">
+                  <span className="card-item-label">Status:</span>
+                  <span className="card-item-value">
                     <span className={`status-badge ${user.isActive ? 'active' : 'inactive'}`}>
                       {user.isActive ? 'Active' : 'Inactive'}
                     </span>
-                  </td>
-                  <td>
+                  </span>
+                </div>
+                <div className="card-item-detail">
+                  <span className="card-item-label">Last Login:</span>
+                  <span className="card-item-value">
                     {user.lastLoginAt ? new Date(user.lastLoginAt).toLocaleDateString() : 'Never'}
-                  </td>
-                  <td>
-                    <div className="action-buttons">
-                      <button
-                        className="btn-modern btn-modern-secondary btn-modern-small"
-                        onClick={() => setEditingUser(user)}
-                      >
-                        Edit
-                      </button>
-                      <button
-                        className="btn-modern btn-modern-danger btn-modern-small"
-                        onClick={() => handleDeleteUser(user.id)}
-                      >
-                        Delete
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+                  </span>
+                </div>
+              </div>
+              <div className="card-item-actions">
+                <button
+                  className="btn-modern btn-modern-secondary btn-modern-small"
+                  onClick={() => setEditingUser(user)}
+                >
+                  Edit
+                </button>
+                <button
+                  className="btn-modern btn-modern-danger btn-modern-small"
+                  onClick={() => handleDeleteUser(user.id)}
+                >
+                  Delete
+                </button>
+              </div>
+            </>
+          )}
+        />
       </div>
 
       {editingUser && (

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import apiService from '../../services/api';
-import { PrimaryButton, SecondaryButton, DangerButton } from '../../components/common';
+import { PrimaryButton, SecondaryButton, DangerButton, Table } from '../../components/common';
 import './Payments.css';
 
 function PaymentForm({ payment, onSave, onCancel, tenants, properties }) {
@@ -317,103 +317,101 @@ function Payments() {
             )}
           </div>
         ) : (
-          <>
-            {/* Desktop Table View */}
-            <div className="table-responsive">
-              <table className="table">
-                <thead>
-                  <tr>
-                    <th>Date</th>
-                    <th>Tenant</th>
-                    <th>Property</th>
-                    <th>Amount</th>
-                    <th>Method</th>
-                    <th>Status</th>
-                    <th>Actions</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {filteredPayments.map(payment => (
-                    <tr key={payment.id}>
-                      <td>{new Date(payment.date).toLocaleDateString()}</td>
-                      <td>{getTenantName(payment.tenantId)}</td>
-                      <td>{getPropertyName(payment.tenantId)}</td>
-                      <td>${payment.amount.toLocaleString()}</td>
-                      <td className="payment-method-text">
-                        {payment.method.replace(/([A-Z])/g, ' $1').replace('_', ' ').replace(/^\w/, c => c.toUpperCase())}
-                      </td>
-                      <td>{getStatusBadge(payment.status)}</td>
-                      <td>
-                        <div className="payments-action-buttons">
-                          <PrimaryButton
-                            onClick={() => handleEditPayment(payment)}
-                            title="Edit Payment"
-                            className="payment-action-btn"
-                          >
-                            ✏️
-                          </PrimaryButton>
-                          <DangerButton
-                            onClick={() => handleDeletePayment(payment.id)}
-                            title="Delete Payment"
-                            className="payment-action-btn"
-                          >
-                            🗑️
-                          </DangerButton>
-                        </div>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-            
-            {/* Mobile Card View */}
-            <div className="card-list">
-              {filteredPayments.map(payment => (
-                <div key={payment.id} className="card-item">
-                  <div className="card-item-header">
-                    ${payment.amount.toLocaleString()} - {new Date(payment.date).toLocaleDateString()}
-                  </div>
-                  <div className="card-item-details">
-                    <div className="card-item-detail">
-                      <span className="card-item-label">Tenant:</span>
-                      <span className="card-item-value">{getTenantName(payment.tenantId)}</span>
-                    </div>
-                    <div className="card-item-detail">
-                      <span className="card-item-label">Property:</span>
-                      <span className="card-item-value">{getPropertyName(payment.tenantId)}</span>
-                    </div>
-                    <div className="card-item-detail">
-                      <span className="card-item-label">Method:</span>
-                      <span className="card-item-value payment-method-text">
-                        {payment.method.replace(/([A-Z])/g, ' $1').replace('_', ' ').replace(/^\w/, c => c.toUpperCase())}
-                      </span>
-                    </div>
-                    <div className="card-item-detail">
-                      <span className="card-item-label">Status:</span>
-                      <span className="card-item-value">{getStatusBadge(payment.status)}</span>
-                    </div>
-                  </div>
-                  <div className="card-item-actions payments-mobile-actions">
+          <Table
+            columns={[
+              {
+                header: 'Date',
+                render: (payment) => new Date(payment.date).toLocaleDateString()
+              },
+              {
+                header: 'Tenant',
+                render: (payment) => getTenantName(payment.tenantId)
+              },
+              {
+                header: 'Property',
+                render: (payment) => getPropertyName(payment.tenantId)
+              },
+              {
+                header: 'Amount',
+                render: (payment) => `$${payment.amount.toLocaleString()}`
+              },
+              {
+                header: 'Method',
+                cellClassName: 'payment-method-text',
+                render: (payment) => payment.method.replace(/([A-Z])/g, ' $1').replace('_', ' ').replace(/^\w/, c => c.toUpperCase())
+              },
+              {
+                header: 'Status',
+                render: (payment) => getStatusBadge(payment.status)
+              },
+              {
+                header: 'Actions',
+                render: (payment) => (
+                  <div className="payments-action-buttons">
                     <PrimaryButton
                       onClick={() => handleEditPayment(payment)}
                       title="Edit Payment"
-                      className="payments-mobile-action-btn"
+                      className="payment-action-btn"
                     >
                       ✏️
                     </PrimaryButton>
                     <DangerButton
                       onClick={() => handleDeletePayment(payment.id)}
                       title="Delete Payment"
-                      className="payments-mobile-action-btn"
+                      className="payment-action-btn"
                     >
                       🗑️
                     </DangerButton>
                   </div>
+                )
+              }
+            ]}
+            data={filteredPayments}
+            emptyMessage={filter === 'all' ? 'No payments found' : `No ${filter} payments found`}
+            renderMobileCard={(payment) => (
+              <>
+                <div className="card-item-header">
+                  ${payment.amount.toLocaleString()} - {new Date(payment.date).toLocaleDateString()}
                 </div>
-              ))}
-            </div>
-          </>
+                <div className="card-item-details">
+                  <div className="card-item-detail">
+                    <span className="card-item-label">Tenant:</span>
+                    <span className="card-item-value">{getTenantName(payment.tenantId)}</span>
+                  </div>
+                  <div className="card-item-detail">
+                    <span className="card-item-label">Property:</span>
+                    <span className="card-item-value">{getPropertyName(payment.tenantId)}</span>
+                  </div>
+                  <div className="card-item-detail">
+                    <span className="card-item-label">Method:</span>
+                    <span className="card-item-value payment-method-text">
+                      {payment.method.replace(/([A-Z])/g, ' $1').replace('_', ' ').replace(/^\w/, c => c.toUpperCase())}
+                    </span>
+                  </div>
+                  <div className="card-item-detail">
+                    <span className="card-item-label">Status:</span>
+                    <span className="card-item-value">{getStatusBadge(payment.status)}</span>
+                  </div>
+                </div>
+                <div className="card-item-actions payments-mobile-actions">
+                  <PrimaryButton
+                    onClick={() => handleEditPayment(payment)}
+                    title="Edit Payment"
+                    className="payments-mobile-action-btn"
+                  >
+                    ✏️
+                  </PrimaryButton>
+                  <DangerButton
+                    onClick={() => handleDeletePayment(payment.id)}
+                    title="Delete Payment"
+                    className="payments-mobile-action-btn"
+                  >
+                    🗑️
+                  </DangerButton>
+                </div>
+              </>
+            )}
+          />
         )}
       </div>
 
