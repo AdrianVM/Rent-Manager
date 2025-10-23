@@ -53,6 +53,9 @@ function Navigation({ user, availableRoles, currentRole, onRoleChange, onLogout 
               </div>
               <div className={styles.appleUserInfo}>
                 <div className={styles.appleUserName}>{user?.name}</div>
+                <Link to="/settings" className={styles.appleSettingsLink}>
+                  Account Settings
+                </Link>
                 <button onClick={onLogout} className={styles.appleLogoutBtn}>
                   Sign Out
                 </button>
@@ -110,6 +113,16 @@ function Navigation({ user, availableRoles, currentRole, onRoleChange, onLogout 
               <span className={styles.appleIcon}>{theme === 'light' ? '🌙' : '☀️'}</span>
               <span>{theme === 'light' ? 'Dark Mode' : 'Light Mode'}</span>
             </button>
+
+            {/* Account Settings on Mobile */}
+            <Link
+              to="/settings"
+              onClick={() => setMobileMenuOpen(false)}
+              className={styles.appleMobileBtn}
+            >
+              <span className={styles.appleIcon}>⚙️</span>
+              <span>Account Settings</span>
+            </Link>
 
             {/* Logout on Mobile */}
             <button
