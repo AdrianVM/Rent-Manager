@@ -8,7 +8,8 @@
 /* Table Styles */
 .table {
   width: 100%;
-  border-collapse: collapse;
+  border-collapse: separate;
+  border-spacing: 0;
   background: var(--surface-color);
 }
 
@@ -16,6 +17,14 @@
   background: var(--glass-bg);
   backdrop-filter: blur(10px);
   border-bottom: 2px solid var(--border-color);
+}
+
+.table thead tr:first-child th:first-child {
+  border-top-left-radius: var(--radius-lg);
+}
+
+.table thead tr:first-child th:last-child {
+  border-top-right-radius: var(--radius-lg);
 }
 
 .table th {
@@ -27,6 +36,7 @@
   text-transform: uppercase;
   letter-spacing: 0.5px;
   white-space: nowrap;
+  background: var(--glass-bg);
 }
 
 .table tbody tr {
