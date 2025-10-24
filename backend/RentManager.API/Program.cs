@@ -81,6 +81,9 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 
 builder.Services.AddAuthorization();
 
+// Add claims transformation to map Zitadel roles to standard .NET role claims
+builder.Services.AddTransient<Microsoft.AspNetCore.Authentication.IClaimsTransformation, ZitadelClaimsTransformation>();
+
 // Add CORS for frontend
 builder.Services.AddCors(options =>
 {
