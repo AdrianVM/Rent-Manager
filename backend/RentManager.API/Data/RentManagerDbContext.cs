@@ -18,6 +18,8 @@ namespace RentManager.API.Data
         public DbSet<Payment> Payments { get; set; } = null!;
         public DbSet<Contract> Contracts { get; set; } = null!;
         public DbSet<TenantInvitation> TenantInvitations { get; set; } = null!;
+        public DbSet<Company> Companies { get; set; } = null!;
+        public DbSet<Person> Persons { get; set; } = null!;
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -212,6 +214,42 @@ namespace RentManager.API.Data
                 entity.Property(e => e.UpdatedAt).IsRequired();
                 entity.Property(e => e.RentAmount).HasPrecision(18, 2);
                 entity.Property(e => e.Deposit).HasPrecision(18, 2);
+            });
+
+            // Configure Person entity
+            modelBuilder.Entity<Person>(entity =>
+            {
+                entity.ToTable("Persons");
+                entity.HasKey(e => e.Id);
+
+                entity.Property(e => e.Id).IsRequired();
+                entity.Property(e => e.FirstName).IsRequired().HasMaxLength(255);
+                entity.Property(e => e.MiddleName).HasMaxLength(255);
+                entity.Property(e => e.LastName).IsRequired().HasMaxLength(255);
+                entity.Property(e => e.DateOfBirth);
+                entity.Property(e => e.IdNumber);
+                entity.Property(e => e.Nationality).HasMaxLength(100);
+                entity.Property(e => e.Occupation).HasMaxLength(100);
+                entity.Property(e => e.CreatedAt).IsRequired();
+                entity.Property(e => e.UpdatedAt).IsRequired();
+            });
+
+            // Configure Company entity
+            modelBuilder.Entity<Company>(entity =>
+            {
+                entity.ToTable("Companies");
+                entity.HasKey(e => e.Id);
+                entity.Property(e => e.BillingAddress).IsRequired();
+                entity.Property(e => e.CompanyName).IsRequired();
+                entity.Property(e => e.ContactPersonEmail).IsRequired();
+                entity.Property(e => e.ContactPersonPhone).IsRequired();
+                entity.Property(e => e.ContactPersonTitle).IsRequired();
+                entity.Property(e => e.LegalForm);
+                entity.Property(e => e.Industry);
+                entity.Property(e => e.RegistrationNumber).IsRequired();
+                entity.Property(e => e.TaxId);
+                entity.Property(e => e.CreatedAt).IsRequired();
+                entity.Property(e => e.UpdatedAt).IsRequired();
             });
         }
     }

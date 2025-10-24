@@ -24,6 +24,11 @@ namespace RentManager.API.Models
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
         public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
 
+                // Emergency contact information
+        public string? EmergencyContactName { get; set; }
+        public string? EmergencyContactPhone { get; set; }
+        public string? EmergencyContactRelation { get; set; }
+
         // Computed property for display name (backward compatibility)
         public string Name => TenantType == TenantType.Person
             ? (PersonDetails == null || (string.IsNullOrWhiteSpace(PersonDetails.FirstName) && string.IsNullOrWhiteSpace(PersonDetails.LastName)))
