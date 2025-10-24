@@ -39,8 +39,11 @@ namespace RentManager.API.Services
             if (!string.IsNullOrEmpty(request.Email))
                 user.Email = request.Email;
 
-            if (request.Role.HasValue)
-                user.Role = request.Role.Value;
+            // Role updates should be handled separately through UserRoles relationship
+            if (request.Roles != null && request.Roles.Any())
+            {
+                // TODO: Implement role updates in in-memory service if needed
+            }
 
             if (request.IsActive.HasValue)
                 user.IsActive = request.IsActive.Value;

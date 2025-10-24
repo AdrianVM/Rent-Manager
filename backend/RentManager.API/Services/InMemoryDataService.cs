@@ -12,18 +12,18 @@ namespace RentManager.API.Services
         // Properties
         public Task<List<Property>> GetPropertiesAsync(User? user = null)
         {
-            if (user == null || user.Role == UserRole.Admin)
+            if (user == null || user.HasRole(Role.Admin))
             {
                 return Task.FromResult(_properties);
             }
             
-            if (user.Role == UserRole.PropertyOwner)
+            if (user.HasRole(Role.PropertyOwner))
             {
                 var ownerProperties = _properties.Where(p => user.PropertyIds.Contains(p.Id)).ToList();
                 return Task.FromResult(ownerProperties);
             }
             
-            if (user.Role == UserRole.Renter && !string.IsNullOrEmpty(user.TenantId))
+            if (user.HasRole(Role.Renter) && !string.IsNullOrEmpty(user.TenantId))
             {
                 var tenant = _tenants.FirstOrDefault(t => t.Id == user.TenantId);
                 if (tenant != null)
@@ -41,17 +41,17 @@ namespace RentManager.API.Services
             var property = _properties.FirstOrDefault(p => p.Id == id);
             if (property == null) return Task.FromResult<Property?>(null);
             
-            if (user == null || user.Role == UserRole.Admin)
+            if (user == null || user.HasRole(Role.Admin))
             {
                 return Task.FromResult<Property?>(property);
             }
             
-            if (user.Role == UserRole.PropertyOwner && user.PropertyIds.Contains(id))
+            if (user.HasRole(Role.PropertyOwner) && user.PropertyIds.Contains(id))
             {
                 return Task.FromResult<Property?>(property);
             }
             
-            if (user.Role == UserRole.Renter && !string.IsNullOrEmpty(user.TenantId))
+            if (user.HasRole(Role.Renter) && !string.IsNullOrEmpty(user.TenantId))
             {
                 var tenant = _tenants.FirstOrDefault(t => t.Id == user.TenantId);
                 if (tenant != null && tenant.PropertyId == id)
@@ -104,18 +104,18 @@ namespace RentManager.API.Services
         // Tenants
         public Task<List<Tenant>> GetTenantsAsync(User? user = null)
         {
-            if (user == null || user.Role == UserRole.Admin)
+            if (user == null || user.HasRole(Role.Admin))
             {
                 return Task.FromResult(_tenants);
             }
             
-            if (user.Role == UserRole.PropertyOwner)
+            if (user.HasRole(Role.PropertyOwner))
             {
                 var ownerTenants = _tenants.Where(t => user.PropertyIds.Contains(t.PropertyId)).ToList();
                 return Task.FromResult(ownerTenants);
             }
             
-            if (user.Role == UserRole.Renter && !string.IsNullOrEmpty(user.TenantId))
+            if (user.HasRole(Role.Renter) && !string.IsNullOrEmpty(user.TenantId))
             {
                 var renterTenant = _tenants.Where(t => t.Id == user.TenantId).ToList();
                 return Task.FromResult(renterTenant);
@@ -174,19 +174,19 @@ namespace RentManager.API.Services
         {
             var payments = _payments.OrderByDescending(p => p.Date).ToList();
             
-            if (user == null || user.Role == UserRole.Admin)
+            if (user == null || user.HasRole(Role.Admin))
             {
                 return Task.FromResult(payments);
             }
             
-            if (user.Role == UserRole.PropertyOwner)
+            if (user.HasRole(Role.PropertyOwner))
             {
                 var ownerTenantIds = _tenants.Where(t => user.PropertyIds.Contains(t.PropertyId)).Select(t => t.Id).ToList();
                 var ownerPayments = payments.Where(p => ownerTenantIds.Contains(p.TenantId)).ToList();
                 return Task.FromResult(ownerPayments);
             }
             
-            if (user.Role == UserRole.Renter && !string.IsNullOrEmpty(user.TenantId))
+            if (user.HasRole(Role.Renter) && !string.IsNullOrEmpty(user.TenantId))
             {
                 var renterPayments = payments.Where(p => p.TenantId == user.TenantId).ToList();
                 return Task.FromResult(renterPayments);
@@ -240,18 +240,18 @@ namespace RentManager.API.Services
         {
             var contracts = _contracts.OrderByDescending(c => c.UploadedAt).ToList();
             
-            if (user == null || user.Role == UserRole.Admin)
+            if (user == null || user.HasRole(Role.Admin))
             {
                 return Task.FromResult(contracts);
             }
             
-            if (user.Role == UserRole.PropertyOwner)
+            if (user.HasRole(Role.PropertyOwner))
             {
                 var ownerContracts = contracts.Where(c => user.PropertyIds.Contains(c.PropertyId)).ToList();
                 return Task.FromResult(ownerContracts);
             }
             
-            if (user.Role == UserRole.Renter && !string.IsNullOrEmpty(user.TenantId))
+            if (user.HasRole(Role.Renter) && !string.IsNullOrEmpty(user.TenantId))
             {
                 var renterContracts = contracts.Where(c => c.TenantId == user.TenantId).ToList();
                 return Task.FromResult(renterContracts);

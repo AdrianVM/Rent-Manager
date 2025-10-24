@@ -33,7 +33,7 @@ public class PaymentService : IPaymentService
 
         if (user != null)
         {
-            if (user.Role == UserRole.PropertyOwner && user.PropertyIds.Count > 0)
+            if (user.HasRole(Role.PropertyOwner) && user.PropertyIds.Count > 0)
             {
                 var tenantIds = await _context.Tenants
                     .Where(t => user.PropertyIds.Contains(t.PropertyId))
@@ -42,7 +42,7 @@ public class PaymentService : IPaymentService
 
                 query = query.Where(p => tenantIds.Contains(p.TenantId));
             }
-            else if (user.Role == UserRole.Renter && user.TenantId != null)
+            else if (user.HasRole(Role.Renter) && user.TenantId != null)
             {
                 query = query.Where(p => p.TenantId == user.TenantId);
             }
@@ -461,7 +461,7 @@ public class PaymentService : IPaymentService
 
         if (user != null)
         {
-            if (user.Role == UserRole.PropertyOwner && user.PropertyIds.Count > 0)
+            if (user.HasRole(Role.PropertyOwner) && user.PropertyIds.Count > 0)
             {
                 var tenantIds = await _context.Tenants
                     .Where(t => user.PropertyIds.Contains(t.PropertyId))
@@ -470,7 +470,7 @@ public class PaymentService : IPaymentService
 
                 query = query.Where(p => tenantIds.Contains(p.TenantId));
             }
-            else if (user.Role == UserRole.Renter && user.TenantId != null)
+            else if (user.HasRole(Role.Renter) && user.TenantId != null)
             {
                 query = query.Where(p => p.TenantId == user.TenantId);
             }
@@ -512,7 +512,7 @@ public class PaymentService : IPaymentService
 
         if (user != null)
         {
-            if (user.Role == UserRole.PropertyOwner && user.PropertyIds.Count > 0)
+            if (user.HasRole(Role.PropertyOwner) && user.PropertyIds.Count > 0)
             {
                 var tenantIds = await _context.Tenants
                     .Where(t => user.PropertyIds.Contains(t.PropertyId))
@@ -521,7 +521,7 @@ public class PaymentService : IPaymentService
 
                 query = query.Where(p => tenantIds.Contains(p.TenantId));
             }
-            else if (user.Role == UserRole.Renter && user.TenantId != null)
+            else if (user.HasRole(Role.Renter) && user.TenantId != null)
             {
                 query = query.Where(p => p.TenantId == user.TenantId);
             }
@@ -673,7 +673,7 @@ public class PaymentService : IPaymentService
 
         if (user != null)
         {
-            if (user.Role == UserRole.PropertyOwner && user.PropertyIds.Count > 0)
+            if (user.HasRole(Role.PropertyOwner) && user.PropertyIds.Count > 0)
             {
                 var tenantIds = await _context.Tenants
                     .Where(t => user.PropertyIds.Contains(t.PropertyId))
@@ -682,7 +682,7 @@ public class PaymentService : IPaymentService
 
                 query = query.Where(p => tenantIds.Contains(p.TenantId));
             }
-            else if (user.Role == UserRole.Renter && user.TenantId != null)
+            else if (user.HasRole(Role.Renter) && user.TenantId != null)
             {
                 query = query.Where(p => p.TenantId == user.TenantId);
             }
@@ -700,7 +700,7 @@ public class PaymentService : IPaymentService
 
         if (user != null)
         {
-            if (user.Role == UserRole.PropertyOwner && user.PropertyIds.Count > 0)
+            if (user.HasRole(Role.PropertyOwner) && user.PropertyIds.Count > 0)
             {
                 var tenantIds = await _context.Tenants
                     .Where(t => user.PropertyIds.Contains(t.PropertyId))
@@ -709,7 +709,7 @@ public class PaymentService : IPaymentService
 
                 query = query.Where(p => tenantIds.Contains(p.TenantId));
             }
-            else if (user.Role == UserRole.Renter && user.TenantId != null)
+            else if (user.HasRole(Role.Renter) && user.TenantId != null)
             {
                 query = query.Where(p => p.TenantId == user.TenantId);
             }
@@ -733,7 +733,7 @@ public class PaymentService : IPaymentService
             return false;
         }
 
-        if (user != null && user.Role != UserRole.Admin)
+        if (user != null && !user.HasRole(Role.Admin))
         {
             _logger.LogWarning("Non-admin user attempted to delete payment: {PaymentId}", id);
             return false;
@@ -753,13 +753,13 @@ public class PaymentService : IPaymentService
 
     private async Task<bool> CanAccessPayment(Payment payment, User user)
     {
-        if (user.Role == UserRole.Admin)
+        if (user.HasRole(Role.Admin))
             return true;
 
-        if (user.Role == UserRole.Renter && user.TenantId == payment.TenantId)
+        if (user.HasRole(Role.Renter) && user.TenantId == payment.TenantId)
             return true;
 
-        if (user.Role == UserRole.PropertyOwner)
+        if (user.HasRole(Role.PropertyOwner))
         {
             var tenant = await _context.Tenants.FindAsync(payment.TenantId);
             if (tenant != null && user.PropertyIds.Contains(tenant.PropertyId))
@@ -771,13 +771,13 @@ public class PaymentService : IPaymentService
 
     private async Task<bool> CanAccessTenant(string tenantId, User user)
     {
-        if (user.Role == UserRole.Admin)
+        if (user.HasRole(Role.Admin))
             return true;
 
-        if (user.Role == UserRole.Renter && user.TenantId == tenantId)
+        if (user.HasRole(Role.Renter) && user.TenantId == tenantId)
             return true;
 
-        if (user.Role == UserRole.PropertyOwner)
+        if (user.HasRole(Role.PropertyOwner))
         {
             var tenant = await _context.Tenants.FindAsync(tenantId);
             if (tenant != null && user.PropertyIds.Contains(tenant.PropertyId))
@@ -789,13 +789,13 @@ public class PaymentService : IPaymentService
 
     private async Task<bool> CanAccessProperty(string propertyId, User user)
     {
-        if (user.Role == UserRole.Admin)
+        if (user.HasRole(Role.Admin))
             return true;
 
-        if (user.Role == UserRole.PropertyOwner && user.PropertyIds.Contains(propertyId))
+        if (user.HasRole(Role.PropertyOwner) && user.PropertyIds.Contains(propertyId))
             return true;
 
-        if (user.Role == UserRole.Renter && user.TenantId != null)
+        if (user.HasRole(Role.Renter) && user.TenantId != null)
         {
             var tenant = await _context.Tenants.FindAsync(user.TenantId);
             if (tenant != null && tenant.PropertyId == propertyId)

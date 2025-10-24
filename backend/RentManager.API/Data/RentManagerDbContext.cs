@@ -11,6 +11,8 @@ namespace RentManager.API.Data
         }
 
         public DbSet<User> Users { get; set; } = null!;
+        public DbSet<Role> Roles { get; set; } = null!;
+        public DbSet<UserRole> UserRoles { get; set; } = null!;
         public DbSet<Property> Properties { get; set; } = null!;
         public DbSet<Tenant> Tenants { get; set; } = null!;
         public DbSet<Payment> Payments { get; set; } = null!;
@@ -32,7 +34,6 @@ namespace RentManager.API.Data
                 entity.Property(e => e.Email).IsRequired().HasMaxLength(255);
                 entity.Property(e => e.Name).IsRequired().HasMaxLength(255);
                 entity.Property(e => e.PasswordHash).IsRequired();
-                entity.Property(e => e.Role).HasConversion<string>().IsRequired();
                 entity.Property(e => e.IsActive).IsRequired();
                 entity.Property(e => e.CreatedAt).IsRequired();
                 entity.Property(e => e.UpdatedAt).IsRequired();
@@ -41,6 +42,46 @@ namespace RentManager.API.Data
                 entity.Property(e => e.PropertyIds)
                     .HasColumnType("jsonb")
                     .IsRequired();
+            });
+
+            // Configure Role entity
+            modelBuilder.Entity<Role>(entity =>
+            {
+                entity.ToTable("roles");
+                entity.HasKey(e => e.Id);
+                entity.HasIndex(e => e.Name).IsUnique();
+
+                entity.Property(e => e.Id).IsRequired();
+                entity.Property(e => e.Name).IsRequired().HasMaxLength(100);
+                entity.Property(e => e.Description).HasMaxLength(500);
+                entity.Property(e => e.CreatedAt).IsRequired();
+
+                // Seed initial roles
+                entity.HasData(
+                    new Role { Id = 1, Name = Role.Admin, Description = "Administrator with full system access", CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, DateTimeKind.Utc) },
+                    new Role { Id = 2, Name = Role.PropertyOwner, Description = "Property owner who manages properties and tenants", CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, DateTimeKind.Utc) },
+                    new Role { Id = 3, Name = Role.Renter, Description = "Tenant who rents a property", CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, DateTimeKind.Utc) }
+                );
+            });
+
+            // Configure UserRole entity (junction table)
+            modelBuilder.Entity<UserRole>(entity =>
+            {
+                entity.ToTable("user_roles");
+                entity.HasKey(e => new { e.UserId, e.RoleId });
+
+                entity.Property(e => e.AssignedAt).IsRequired();
+
+                // Configure relationships
+                entity.HasOne(ur => ur.User)
+                    .WithMany(u => u.UserRoles)
+                    .HasForeignKey(ur => ur.UserId)
+                    .OnDelete(DeleteBehavior.Cascade);
+
+                entity.HasOne(ur => ur.Role)
+                    .WithMany(r => r.UserRoles)
+                    .HasForeignKey(ur => ur.RoleId)
+                    .OnDelete(DeleteBehavior.Cascade);
             });
 
             // Configure Property entity

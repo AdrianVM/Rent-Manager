@@ -4,18 +4,40 @@ namespace RentManager.Tests.Helpers
 {
     public static class TestDataHelper
     {
-        public static User CreateTestUser(string id = "test-user-1", UserRole role = UserRole.Renter)
+        public static User CreateTestUser(string id = "test-user-1", string roleName = Role.Renter)
         {
-            return new User
+            var user = new User
             {
                 Id = id,
                 Email = $"test{id}@example.com",
                 Name = $"Test User {id}",
                 PasswordHash = "hashed-password",
-                Role = role,
                 IsActive = true,
                 CreatedAt = DateTime.UtcNow.AddDays(-1),
                 UpdatedAt = DateTime.UtcNow
+            };
+
+            // Add role
+            var role = new API.Models.Role { Id = GetRoleId(roleName), Name = roleName };
+            user.UserRoles.Add(new UserRole
+            {
+                UserId = id,
+                RoleId = role.Id,
+                Role = role,
+                AssignedAt = DateTime.UtcNow
+            });
+
+            return user;
+        }
+
+        private static int GetRoleId(string roleName)
+        {
+            return roleName switch
+            {
+                Role.Admin => 1,
+                Role.PropertyOwner => 2,
+                Role.Renter => 3,
+                _ => 3
             };
         }
 
@@ -54,7 +76,7 @@ namespace RentManager.Tests.Helpers
                 Email = "newuser@example.com",
                 Name = "New Test User",
                 Password = "testpassword123",
-                Role = UserRole.Renter
+                Roles = new List<string> { Role.Renter }
             };
         }
 

@@ -18,17 +18,26 @@ namespace RentManager.API.Services
         // User operations
         public async Task<User?> GetUserByIdAsync(string id)
         {
-            return await _context.Users.FindAsync(id);
+            return await _context.Users
+                .Include(u => u.UserRoles)
+                    .ThenInclude(ur => ur.Role)
+                .FirstOrDefaultAsync(u => u.Id == id);
         }
 
         public async Task<User?> GetUserByEmailAsync(string email)
         {
-            return await _context.Users.FirstOrDefaultAsync(u => u.Email == email);
+            return await _context.Users
+                .Include(u => u.UserRoles)
+                    .ThenInclude(ur => ur.Role)
+                .FirstOrDefaultAsync(u => u.Email == email);
         }
 
         public async Task<List<User>> GetAllUsersAsync()
         {
-            return await _context.Users.ToListAsync();
+            return await _context.Users
+                .Include(u => u.UserRoles)
+                    .ThenInclude(ur => ur.Role)
+                .ToListAsync();
         }
 
         public async Task<User> CreateUserAsync(User user)
@@ -54,11 +63,28 @@ namespace RentManager.API.Services
 
             existingUser.Name = user.Name;
             existingUser.Email = user.Email;
-            existingUser.Role = user.Role;
             existingUser.IsActive = user.IsActive;
             existingUser.TenantId = user.TenantId;
             existingUser.PropertyIds = user.PropertyIds;
             existingUser.UpdatedAt = DateTime.UtcNow;
+
+            // Handle role updates if provided
+            if (user.UserRoles != null && user.UserRoles.Any())
+            {
+                // Remove existing roles
+                var existingRoles = await _context.UserRoles
+                    .Where(ur => ur.UserId == id)
+                    .ToListAsync();
+                _context.UserRoles.RemoveRange(existingRoles);
+
+                // Add new roles
+                foreach (var userRole in user.UserRoles)
+                {
+                    userRole.UserId = id;
+                    userRole.AssignedAt = DateTime.UtcNow;
+                    _context.UserRoles.Add(userRole);
+                }
+            }
 
             await _context.SaveChangesAsync();
             return existingUser;

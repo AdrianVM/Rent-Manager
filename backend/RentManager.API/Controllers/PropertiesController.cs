@@ -53,7 +53,7 @@ namespace RentManager.API.Controllers
             var createdProperty = await _dataService.CreatePropertyAsync(property, user);
             
             // If user is PropertyOwner, add property to their property list
-            if (user?.Role == UserRole.PropertyOwner)
+            if (user != null && user.HasRole(Role.PropertyOwner))
             {
                 user.PropertyIds.Add(createdProperty.Id);
                 await _authService.UpdateUserAsync(user.Id, new UserUpdateRequest { PropertyIds = user.PropertyIds });

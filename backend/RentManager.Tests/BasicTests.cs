@@ -65,7 +65,7 @@ namespace RentManager.Tests
         {
             // Arrange
             var dataService = new InMemoryDataService();
-            var user = TestDataHelper.CreateTestUser("test-user", UserRole.Admin);
+            var user = TestDataHelper.CreateTestUser("test-user", Role.Admin);
             var property = TestDataHelper.CreateTestProperty();
             property.Id = string.Empty; // New property
 
@@ -83,7 +83,7 @@ namespace RentManager.Tests
         {
             // Arrange
             var dataService = new InMemoryDataService();
-            var user = TestDataHelper.CreateTestUser("test-user", UserRole.Admin);
+            var user = TestDataHelper.CreateTestUser("test-user", Role.Admin);
             var tenant = TestDataHelper.CreateTestTenant();
             tenant.Id = string.Empty; // New tenant
 
@@ -101,7 +101,7 @@ namespace RentManager.Tests
         {
             // Arrange
             var dataService = new InMemoryDataService();
-            var user = TestDataHelper.CreateTestUser("test-user", UserRole.Admin);
+            var user = TestDataHelper.CreateTestUser("test-user", Role.Admin);
 
             // Act
             var result = await dataService.GetDashboardStatsAsync(user);
@@ -117,9 +117,9 @@ namespace RentManager.Tests
         public void UserRole_ShouldHaveCorrectValues()
         {
             // Act & Assert
-            UserRole.Admin.Should().Be(UserRole.Admin);
-            UserRole.PropertyOwner.Should().Be(UserRole.PropertyOwner);
-            UserRole.Renter.Should().Be(UserRole.Renter);
+            Role.Admin.Should().Be(Role.Admin);
+            Role.PropertyOwner.Should().Be(Role.PropertyOwner);
+            Role.Renter.Should().Be(Role.Renter);
         }
 
         [Fact]
