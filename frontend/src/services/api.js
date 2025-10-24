@@ -218,9 +218,10 @@ class ApiService {
   }
 
   // Seed API
-  async seedDemoData() {
+  async seedDemoData(userEmail) {
     return this.request('/seed/demo-data', {
       method: 'POST',
+      body: JSON.stringify({ userEmail }),
     });
   }
 

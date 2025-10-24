@@ -14,12 +14,22 @@ namespace RentManager.API.Controllers
             _seedDataService = seedDataService;
         }
 
+        public class SeedDemoDataRequest
+        {
+            public string UserEmail { get; set; } = string.Empty;
+        }
+
         [HttpPost("demo-data")]
-        public async Task<IActionResult> SeedDemoData()
+        public async Task<IActionResult> SeedDemoData([FromBody] SeedDemoDataRequest request)
         {
             try
             {
-                await _seedDataService.SeedAllDataAsync();
+                if (string.IsNullOrWhiteSpace(request?.UserEmail))
+                {
+                    return BadRequest(new { message = "User email is required" });
+                }
+
+                await _seedDataService.SeedAllDataAsync(request.UserEmail);
                 return Ok(new { message = "Demo data seeded successfully" });
             }
             catch (Exception ex)

@@ -1,15 +1,32 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import apiService from '../../services/api';
+import zitadelAuthService from '../../services/zitadelAuth';
 
 function DemoDataSeeder({ onDataSeeded, disabled }) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [userEmail, setUserEmail] = useState('');
+
+  useEffect(() => {
+    // Prepopulate with current user's email
+    const profile = zitadelAuthService.getProfile();
+    if (profile && profile.email) {
+      setUserEmail(profile.email);
+    }
+  }, []);
 
   const handleSeedData = async () => {
     try {
       setLoading(true);
       setError(null);
-      await apiService.seedDemoData();
+
+      if (!userEmail || !userEmail.trim()) {
+        setError('Please enter an email address');
+        setLoading(false);
+        return;
+      }
+
+      await apiService.seedDemoData(userEmail.trim());
 
       // Call onDataSeeded callback to trigger success message in parent
       if (onDataSeeded) {
@@ -42,6 +59,38 @@ function DemoDataSeeder({ onDataSeeded, disabled }) {
         </div>
       )}
 
+      <div style={{ marginBottom: '20px', maxWidth: '400px', margin: '0 auto 20px auto' }}>
+        <label htmlFor="userEmail" style={{
+          display: 'block',
+          textAlign: 'left',
+          marginBottom: '5px',
+          color: '#495057',
+          fontWeight: '500'
+        }}>
+          User Email
+        </label>
+        <input
+          id="userEmail"
+          type="email"
+          className="form-control"
+          value={userEmail}
+          onChange={(e) => setUserEmail(e.target.value)}
+          placeholder="Enter user email"
+          disabled={loading || disabled}
+          style={{
+            textAlign: 'left'
+          }}
+        />
+        <small style={{
+          display: 'block',
+          textAlign: 'left',
+          marginTop: '5px',
+          color: '#6c757d'
+        }}>
+          All properties and data will be assigned to this user
+        </small>
+      </div>
+
       <button
         className="btn btn-primary"
         onClick={handleSeedData}
@@ -53,9 +102,9 @@ function DemoDataSeeder({ onDataSeeded, disabled }) {
       >
         {loading ? 'Loading Demo Data...' : 'Load Demo Data'}
       </button>
-      
+
       <p style={{ color: '#6c757d', fontSize: '14px', marginTop: '10px' }}>
-        This will create sample properties, tenants, and payment records.
+        This will create sample properties, tenants, and payment records for the specified user.
       </p>
     </div>
   );

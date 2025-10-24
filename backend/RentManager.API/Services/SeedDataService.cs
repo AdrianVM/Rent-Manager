@@ -1,3 +1,5 @@
+using Microsoft.EntityFrameworkCore;
+using RentManager.API.Data;
 using RentManager.API.Models;
 
 namespace RentManager.API.Services
@@ -6,25 +8,97 @@ namespace RentManager.API.Services
     {
         private readonly IDataService _dataService;
         private readonly IAuthService _authService;
+        private readonly RentManagerDbContext _context;
 
-        public SeedDataService(IDataService dataService, IAuthService authService)
+        public SeedDataService(IDataService dataService, IAuthService authService, RentManagerDbContext context)
         {
             _dataService = dataService;
             _authService = authService;
+            _context = context;
         }
 
-        public async Task SeedAllDataAsync()
+        public async Task SeedAllDataAsync(string userEmail)
         {
+            // Create the main user with multiple roles
+            var mainUser = await CreateMainUserAsync(userEmail);
+
             // Seed data in order (properties first, then tenants, then payments)
             var properties = await SeedPropertiesAsync();
-            var tenants = await SeedTenantsAsync(properties);
+            var tenants = await SeedTenantsAsync(properties, mainUser);
             await SeedPaymentsAsync(tenants);
 
-            // Update property owner user with property IDs
-            await UpdatePropertyOwnerWithPropertyIds(properties);
+            // Update main user with property IDs
+            await UpdateUserWithPropertyIds(mainUser, properties);
 
-            // Update renter user with tenant ID
-            await UpdateRenterWithTenantId(tenants);
+            // Update main user with tenant ID (for the tenant created for them)
+            await UpdateUserWithTenantId(mainUser, tenants);
+        }
+
+        private async Task<User> CreateMainUserAsync(string userEmail)
+        {
+
+            // Check if user already exists
+            var existingUser = await _context.Users
+                .Include(u => u.UserRoles)
+                    .ThenInclude(ur => ur.Role)
+                .FirstOrDefaultAsync(u => u.Email == userEmail);
+
+            if (existingUser != null)
+            {
+                // Clear existing roles
+                _context.UserRoles.RemoveRange(existingUser.UserRoles);
+                await _context.SaveChangesAsync();
+
+                // Re-query to get fresh instance
+                existingUser = await _context.Users
+                    .Include(u => u.UserRoles)
+                        .ThenInclude(ur => ur.Role)
+                    .FirstAsync(u => u.Email == userEmail);
+            }
+            else
+            {
+                // Create new user
+                // Extract name from email (part before @) and capitalize
+                var emailName = userEmail.Split('@')[0];
+                var displayName = string.Join(" ", emailName.Split('.', '_', '-')
+                    .Select(part => char.ToUpper(part[0]) + part.Substring(1).ToLower()));
+
+                existingUser = new User
+                {
+                    Id = Guid.NewGuid().ToString(),
+                    Email = userEmail,
+                    Name = displayName,
+                    PasswordHash = "not-used-zitadel-auth", // Using Zitadel for authentication
+                    IsActive = true,
+                    CreatedAt = DateTime.UtcNow,
+                    UpdatedAt = DateTime.UtcNow
+                };
+
+                _context.Users.Add(existingUser);
+                await _context.SaveChangesAsync();
+            }
+
+            // Get all roles from database
+            var adminRole = await _context.Roles.FirstAsync(r => r.Name == Role.Admin);
+            var propertyOwnerRole = await _context.Roles.FirstAsync(r => r.Name == Role.PropertyOwner);
+            var renterRole = await _context.Roles.FirstAsync(r => r.Name == Role.Renter);
+
+            // Add all three roles to the user
+            var userRoles = new List<UserRole>
+            {
+                new UserRole { UserId = existingUser.Id, RoleId = adminRole.Id, AssignedAt = DateTime.UtcNow },
+                new UserRole { UserId = existingUser.Id, RoleId = propertyOwnerRole.Id, AssignedAt = DateTime.UtcNow },
+                new UserRole { UserId = existingUser.Id, RoleId = renterRole.Id, AssignedAt = DateTime.UtcNow }
+            };
+
+            _context.UserRoles.AddRange(userRoles);
+            await _context.SaveChangesAsync();
+
+            // Reload user with roles
+            return await _context.Users
+                .Include(u => u.UserRoles)
+                    .ThenInclude(ur => ur.Role)
+                .FirstAsync(u => u.Id == existingUser.Id);
         }
 
         private async Task<List<Property>> SeedPropertiesAsync()
@@ -112,33 +186,34 @@ namespace RentManager.API.Services
             return createdProperties;
         }
 
-        private async Task<List<Tenant>> SeedTenantsAsync(List<Property> properties)
+        private async Task<List<Tenant>> SeedTenantsAsync(List<Property> properties, User mainUser)
         {
             var tenants = new List<Tenant>
             {
+                // Create tenant record for the main user
                 new Tenant
                 {
-                    Id = "tenant-1", // Fixed ID to match renter user
+                    Id = "tenant-main-user", // Fixed ID for main user
                     TenantType = TenantType.Person,
-                    Email = "john.smith@email.com",
-                    Phone = "+1 (555) 123-4567",
-                    PropertyId = properties[0].Id, // Sunset Apartments
-                    LeaseStart = new DateTime(2023, 6, 1, 0, 0, 0, DateTimeKind.Utc),
-                    LeaseEnd = new DateTime(2024, 5, 31, 0, 0, 0, DateTimeKind.Utc),
+                    Email = mainUser.Email,
+                    Phone = "+1 (555) 000-0000",
+                    PropertyId = properties[0].Id, // Sunset Apartments - main user is renting this
+                    LeaseStart = new DateTime(2024, 1, 1, 0, 0, 0, DateTimeKind.Utc),
+                    LeaseEnd = new DateTime(2025, 12, 31, 0, 0, 0, DateTimeKind.Utc),
                     RentAmount = 2500,
                     Deposit = 2500,
                     Status = TenantStatus.Active,
                     PersonDetails = new PersonDetails
                     {
-                        FirstName = "John",
-                        LastName = "Smith",
-                        DateOfBirth = new DateTime(1985, 3, 15, 0, 0, 0, DateTimeKind.Utc),
-                        IdNumber = "XXX-XX-1234",
-                        Nationality = "American",
-                        Occupation = "Software Engineer",
-                        EmergencyContactName = "Jane Smith",
-                        EmergencyContactPhone = "+1 (555) 123-9999",
-                        EmergencyContactRelation = "Spouse"
+                        FirstName = mainUser.Name.Split(' ').FirstOrDefault() ?? "User",
+                        LastName = mainUser.Name.Split(' ').Skip(1).FirstOrDefault() ?? "Name",
+                        DateOfBirth = new DateTime(1990, 1, 1, 0, 0, 0, DateTimeKind.Utc),
+                        IdNumber = "DEMO-ID-001",
+                        Nationality = "Demo",
+                        Occupation = "Demo User",
+                        EmergencyContactName = "Emergency Contact",
+                        EmergencyContactPhone = "+1 (555) 999-9999",
+                        EmergencyContactRelation = "Family"
                     }
                 },
                 new Tenant
@@ -362,23 +437,27 @@ namespace RentManager.API.Services
             }
         }
 
-        private async Task UpdatePropertyOwnerWithPropertyIds(List<Property> properties)
+        private async Task UpdateUserWithPropertyIds(User user, List<Property> properties)
         {
-            // Get the property owner user and assign all property IDs to them
-            var propertyOwner = await _authService.GetUserByEmailAsync("owner@rentmanager.com");
-            if (propertyOwner != null)
+            // Assign all property IDs to the user (as property owner)
+            var dbUser = await _context.Users.FindAsync(user.Id);
+            if (dbUser != null)
             {
-                propertyOwner.PropertyIds = properties.Select(p => p.Id).ToList();
+                dbUser.PropertyIds = properties.Select(p => p.Id).ToList();
+                dbUser.UpdatedAt = DateTime.UtcNow;
+                await _context.SaveChangesAsync();
             }
         }
 
-        private async Task UpdateRenterWithTenantId(List<Tenant> tenants)
+        private async Task UpdateUserWithTenantId(User user, List<Tenant> tenants)
         {
-            // Get the renter user and assign the first tenant ID to them
-            var renter = await _authService.GetUserByEmailAsync("renter@rentmanager.com");
-            if (renter != null && tenants.Count > 0)
+            // Assign the first tenant ID to the user (their tenant record)
+            var dbUser = await _context.Users.FindAsync(user.Id);
+            if (dbUser != null && tenants.Count > 0)
             {
-                renter.TenantId = tenants[0].Id;
+                dbUser.TenantId = tenants[0].Id; // First tenant is the main user's tenant
+                dbUser.UpdatedAt = DateTime.UtcNow;
+                await _context.SaveChangesAsync();
             }
         }
     }
