@@ -177,8 +177,9 @@ namespace RentManager.Tests
                 Id = "test-1",
                 TenantType = TenantType.Company,
                 Email = "contact@techcorp.com",
-                CompanyDetails = new CompanyDetails
+                Company = new Company
                 {
+                    Id = Guid.NewGuid().ToString(),
                     CompanyName = "TechCorp Solutions Inc"
                 }
             };
@@ -191,7 +192,7 @@ namespace RentManager.Tests
         }
 
         [Fact]
-        public void CompanyTenant_WithNullCompanyDetails_ShouldReturnUnknown()
+        public void CompanyTenant_WithNullCompany_ShouldReturnUnknown()
         {
             // Arrange
             var tenant = new Tenant
@@ -199,7 +200,7 @@ namespace RentManager.Tests
                 Id = "test-1",
                 TenantType = TenantType.Company,
                 Email = "contact@company.com",
-                CompanyDetails = null
+                Company = null
             };
 
             // Act
@@ -218,8 +219,9 @@ namespace RentManager.Tests
                 Id = "test-1",
                 TenantType = TenantType.Company,
                 Email = "contact@company.com",
-                CompanyDetails = new CompanyDetails
+                Company = new Company
                 {
+                    Id = Guid.NewGuid().ToString(),
                     CompanyName = ""
                 }
             };
@@ -240,8 +242,9 @@ namespace RentManager.Tests
                 Id = "test-1",
                 TenantType = TenantType.Company,
                 Email = "contact@techcorp.com",
-                CompanyDetails = new CompanyDetails
+                Company = new Company
                 {
+                    Id = Guid.NewGuid().ToString(),
                     CompanyName = "TechCorp Solutions",
                     TaxId = "12-3456789",
                     RegistrationNumber = "REG-2020-12345",
@@ -256,12 +259,12 @@ namespace RentManager.Tests
             };
 
             // Assert
-            tenant.CompanyDetails.Should().NotBeNull();
-            tenant.CompanyDetails.CompanyName.Should().Be("TechCorp Solutions");
-            tenant.CompanyDetails.TaxId.Should().Be("12-3456789");
-            tenant.CompanyDetails.ContactPersonName.Should().Be("John Smith");
-            tenant.CompanyDetails.ContactPersonTitle.Should().Be("CFO");
-            tenant.CompanyDetails.BillingAddress.Should().Be("123 Business St, City, State 12345");
+            tenant.Company.Should().NotBeNull();
+            tenant.Company.CompanyName.Should().Be("TechCorp Solutions");
+            tenant.Company.TaxId.Should().Be("12-3456789");
+            tenant.Company.ContactPersonName.Should().Be("John Smith");
+            tenant.Company.ContactPersonTitle.Should().Be("CFO");
+            tenant.Company.BillingAddress.Should().Be("123 Business St, City, State 12345");
         }
 
         [Fact]
@@ -273,8 +276,9 @@ namespace RentManager.Tests
                 Id = "test-1",
                 TenantType = TenantType.Company,
                 Email = "contact@company.com",
-                CompanyDetails = new CompanyDetails
+                Company = new Company
                 {
+                    Id = Guid.NewGuid().ToString(),
                     CompanyName = "Simple Company",
                     TaxId = null,
                     RegistrationNumber = null,
@@ -284,10 +288,10 @@ namespace RentManager.Tests
             };
 
             // Assert
-            tenant.CompanyDetails.Should().NotBeNull();
-            tenant.CompanyDetails.CompanyName.Should().Be("Simple Company");
-            tenant.CompanyDetails.TaxId.Should().BeNull();
-            tenant.CompanyDetails.RegistrationNumber.Should().BeNull();
+            tenant.Company.Should().NotBeNull();
+            tenant.Company.CompanyName.Should().Be("Simple Company");
+            tenant.Company.TaxId.Should().BeNull();
+            tenant.Company.RegistrationNumber.Should().BeNull();
         }
 
         #endregion
@@ -368,8 +372,9 @@ namespace RentManager.Tests
                 Phone = "+1234567890",
                 PropertyId = "prop-1",
                 RentAmount = 5000,
-                CompanyDetails = new CompanyDetails
+                Company = new Company
                 {
+                    Id = Guid.NewGuid().ToString(),
                     CompanyName = "TechCorp Solutions",
                     TaxId = "12-3456789"
                 }
@@ -382,8 +387,8 @@ namespace RentManager.Tests
             result.Should().NotBeNull();
             result.Id.Should().NotBeNullOrEmpty();
             result.TenantType.Should().Be(TenantType.Company);
-            result.CompanyDetails.Should().NotBeNull();
-            result.CompanyDetails.CompanyName.Should().Be("TechCorp Solutions");
+            result.Company.Should().NotBeNull();
+            result.Company.CompanyName.Should().Be("TechCorp Solutions");
             result.Name.Should().Be("TechCorp Solutions");
         }
 
@@ -431,8 +436,9 @@ namespace RentManager.Tests
                 Email = "contact@techcorp.com",
                 PropertyId = "prop-1",
                 RentAmount = 5000,
-                CompanyDetails = new CompanyDetails
+                Company = new Company
                 {
+                    Id = Guid.NewGuid().ToString(),
                     CompanyName = "TechCorp Solutions",
                     TaxId = "12-3456789"
                 }
@@ -441,16 +447,16 @@ namespace RentManager.Tests
             var created = await dataService.CreateTenantAsync(tenant);
 
             // Act
-            created.CompanyDetails.Should().NotBeNull();
-            created.CompanyDetails!.CompanyName = "TechCorp Industries";
-            created.CompanyDetails.ContactPersonName = "John Smith";
+            created.Company.Should().NotBeNull();
+            created.Company!.CompanyName = "TechCorp Industries";
+            created.Company.ContactPersonName = "John Smith";
             var updated = await dataService.UpdateTenantAsync(created.Id, created);
 
             // Assert
             updated.Should().NotBeNull();
-            updated.CompanyDetails.Should().NotBeNull();
-            updated.CompanyDetails!.CompanyName.Should().Be("TechCorp Industries");
-            updated.CompanyDetails.ContactPersonName.Should().Be("John Smith");
+            updated.Company.Should().NotBeNull();
+            updated.Company!.CompanyName.Should().Be("TechCorp Industries");
+            updated.Company.ContactPersonName.Should().Be("John Smith");
             updated.Name.Should().Be("TechCorp Industries");
         }
 
@@ -475,7 +481,7 @@ namespace RentManager.Tests
                 Email = "company@example.com",
                 PropertyId = "prop-2",
                 RentAmount = 5000,
-                CompanyDetails = new CompanyDetails { CompanyName = "TechCorp" }
+                Company = new Company { Id = Guid.NewGuid().ToString(), CompanyName = "TechCorp" }
             };
 
             // Act
@@ -513,8 +519,9 @@ namespace RentManager.Tests
             // Act
             tenant.TenantType = TenantType.Company;
             tenant.Person = null;
-            tenant.CompanyDetails = new CompanyDetails
+            tenant.Company = new Company
             {
+                Id = Guid.NewGuid().ToString(),
                 CompanyName = "Doe Enterprises"
             };
 
@@ -533,7 +540,7 @@ namespace RentManager.Tests
                 TenantType = TenantType.Person,
                 Email = "test@example.com",
                 Person = new Person { Id = Guid.NewGuid().ToString(), FirstName = "John", LastName = "Doe" },
-                CompanyDetails = new CompanyDetails { CompanyName = "TechCorp" } // This shouldn't be used
+                Company = new Company { Id = Guid.NewGuid().ToString(), CompanyName = "TechCorp" } // This shouldn't be used
             };
 
             // Act
@@ -574,8 +581,9 @@ namespace RentManager.Tests
                 Id = "test-1",
                 TenantType = TenantType.Company,
                 Email = "test@example.com",
-                CompanyDetails = new CompanyDetails
+                Company = new Company
                 {
+                    Id = Guid.NewGuid().ToString(),
                     CompanyName = "Tech & Co., Ltd."
                 }
             };

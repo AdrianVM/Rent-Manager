@@ -26,13 +26,10 @@ namespace RentManager.API.Models
         public decimal? Deposit { get; set; }
         public TenantStatus Status { get; set; } = TenantStatus.Active;
 
-        // Type-specific details (for company tenants)
-        public CompanyDetails? CompanyDetails { get; set; }
-
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
         public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
 
-                // Emergency contact information
+        // Emergency contact information
         public string? EmergencyContactName { get; set; }
         public string? EmergencyContactPhone { get; set; }
         public string? EmergencyContactRelation { get; set; }
@@ -40,31 +37,13 @@ namespace RentManager.API.Models
         // Computed property for display name
         public string Name => TenantType == TenantType.Person
             ? string.IsNullOrWhiteSpace(Person?.FullName) ? "Unknown" : Person.FullName
-            : string.IsNullOrWhiteSpace(CompanyDetails?.CompanyName) ? "Unknown" : CompanyDetails.CompanyName;
+            : string.IsNullOrWhiteSpace(Company?.CompanyName) ? "Unknown" : Company.CompanyName;
     }
 
     public enum TenantType
     {
         Person,
         Company
-    }
-
-    public class CompanyDetails
-    {
-        public string CompanyName { get; set; } = string.Empty;
-        public string? TaxId { get; set; }
-        public string? RegistrationNumber { get; set; }
-        public string? LegalForm { get; set; }  // LLC, Inc, Corp, Partnership, etc.
-        public string? Industry { get; set; }
-
-        // Primary contact person at the company
-        public string? ContactPersonName { get; set; }
-        public string? ContactPersonTitle { get; set; }
-        public string? ContactPersonEmail { get; set; }
-        public string? ContactPersonPhone { get; set; }
-
-        // Billing information (if different from property address)
-        public string? BillingAddress { get; set; }
     }
 
     public enum TenantStatus

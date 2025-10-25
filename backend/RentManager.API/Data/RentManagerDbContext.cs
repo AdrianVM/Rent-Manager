@@ -174,22 +174,6 @@ namespace RentManager.API.Data
                     .HasForeignKey(t => t.CompanyId)
                     .OnDelete(DeleteBehavior.SetNull);
 
-                // Store CompanyDetails as JSON
-                entity.OwnsOne(e => e.CompanyDetails, cd =>
-                {
-                    cd.ToJson("company_details");
-                    cd.Property(c => c.CompanyName).HasMaxLength(255);
-                    cd.Property(c => c.TaxId).HasMaxLength(100);
-                    cd.Property(c => c.RegistrationNumber).HasMaxLength(100);
-                    cd.Property(c => c.LegalForm).HasMaxLength(100);
-                    cd.Property(c => c.Industry).HasMaxLength(200);
-                    cd.Property(c => c.ContactPersonName).HasMaxLength(200);
-                    cd.Property(c => c.ContactPersonTitle).HasMaxLength(100);
-                    cd.Property(c => c.ContactPersonEmail).HasMaxLength(255);
-                    cd.Property(c => c.ContactPersonPhone).HasMaxLength(50);
-                    cd.Property(c => c.BillingAddress).HasMaxLength(500);
-                });
-
                 // Ignore the computed Name property
                 entity.Ignore(e => e.Name);
             });

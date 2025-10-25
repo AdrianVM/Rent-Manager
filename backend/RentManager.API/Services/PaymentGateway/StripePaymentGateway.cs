@@ -392,9 +392,9 @@ public class StripePaymentGateway : IPaymentGateway
         {
             return tenant.Person.FullName;
         }
-        else if (tenant.TenantType == TenantType.Company && tenant.CompanyDetails != null)
+        else if (tenant.TenantType == TenantType.Company && tenant.Company != null)
         {
-            return tenant.CompanyDetails.CompanyName ?? "Company Tenant";
+            return tenant.Company.CompanyName ?? "Company Tenant";
         }
 
         return "Tenant";

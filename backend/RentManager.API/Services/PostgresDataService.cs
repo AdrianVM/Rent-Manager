@@ -231,7 +231,6 @@ namespace RentManager.API.Services
             existingTenant.EmergencyContactName = tenant.EmergencyContactName;
             existingTenant.EmergencyContactPhone = tenant.EmergencyContactPhone;
             existingTenant.EmergencyContactRelation = tenant.EmergencyContactRelation;
-            existingTenant.CompanyDetails = tenant.CompanyDetails;
             existingTenant.UpdatedAt = DateTime.UtcNow;
 
             await _context.SaveChangesAsync();
