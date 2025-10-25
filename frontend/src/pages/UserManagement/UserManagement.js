@@ -4,19 +4,30 @@ import apiService from '../../services/api';
 import { Table } from '../../components/common';
 
 function EditUserModal({ user, onSave, onClose }) {
-  // Get the first role from userRoles array, or default to 'Renter'
-  const userRole = user.userRoles && user.userRoles.length > 0
-    ? user.userRoles[0].role.name
-    : 'Renter';
+  // Get all roles from userRoles array
+  const userRoles = user.userRoles && user.userRoles.length > 0
+    ? user.userRoles.map(ur => ur.role.name)
+    : [];
 
   const [formData, setFormData] = useState({
     firstName: user.person?.firstName || '',
     middleName: user.person?.middleName || '',
     lastName: user.person?.lastName || '',
     email: user.email || '',
-    role: userRole,
+    roles: userRoles,
     isActive: user.isActive !== undefined ? user.isActive : true
   });
+
+  const availableRoles = ['Renter', 'PropertyOwner', 'Admin'];
+
+  const handleRoleToggle = (role) => {
+    setFormData(prev => ({
+      ...prev,
+      roles: prev.roles.includes(role)
+        ? prev.roles.filter(r => r !== role)
+        : [...prev.roles, role]
+    }));
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -70,26 +81,32 @@ function EditUserModal({ user, onSave, onClose }) {
             />
           </div>
           <div className="form-group">
-            <label className="form-label">Role</label>
-            <select
-              value={formData.role}
-              onChange={(e) => setFormData({ ...formData, role: e.target.value })}
-              className="form-select"
-            >
-              <option value="Renter">Renter</option>
-              <option value="PropertyOwner">Property Owner</option>
-              <option value="Admin">Admin</option>
-            </select>
+            <label className="form-label">Roles</label>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+              {availableRoles.map(role => (
+                <label key={role} className="form-checkbox-container" style={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }}>
+                  <input
+                    type="checkbox"
+                    checked={formData.roles.includes(role)}
+                    onChange={() => handleRoleToggle(role)}
+                    className="form-checkbox"
+                    style={{ marginRight: '8px' }}
+                  />
+                  <span className="form-label" style={{ margin: 0 }}>{role === 'PropertyOwner' ? 'Property Owner' : role}</span>
+                </label>
+              ))}
+            </div>
           </div>
           <div className="form-group">
-            <label className="form-checkbox-container">
+            <label className="form-checkbox-container" style={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }}>
               <input
                 type="checkbox"
                 checked={formData.isActive}
                 onChange={(e) => setFormData({ ...formData, isActive: e.target.checked })}
                 className="form-checkbox"
+                style={{ marginRight: '8px' }}
               />
-              <span className="form-label">Active</span>
+              <span className="form-label" style={{ margin: 0 }}>Active</span>
             </label>
           </div>
           <div className="modal-actions">
@@ -112,22 +129,38 @@ function CreateUserModal({ onClose, onUserCreated }) {
     lastName: '',
     email: '',
     password: '',
-    role: 'Renter'
+    roles: ['Renter']
   });
   const [loading, setLoading] = useState(false);
 
+  const availableRoles = ['Renter', 'PropertyOwner', 'Admin'];
+
+  const handleRoleToggle = (role) => {
+    setFormData(prev => ({
+      ...prev,
+      roles: prev.roles.includes(role)
+        ? prev.roles.filter(r => r !== role)
+        : [...prev.roles, role]
+    }));
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (formData.roles.length === 0) {
+      alert('Please select at least one role');
+      return;
+    }
+
     setLoading(true);
 
     try {
-      // Convert role to roles array as expected by backend
       const payload = {
         firstName: formData.firstName,
         lastName: formData.lastName,
         email: formData.email,
         password: formData.password,
-        roles: [formData.role]
+        roles: formData.roles
       };
       await apiService.createUser(payload);
       onUserCreated();
@@ -187,16 +220,21 @@ function CreateUserModal({ onClose, onUserCreated }) {
             />
           </div>
           <div className="form-group">
-            <label className="form-label">Role</label>
-            <select
-              value={formData.role}
-              onChange={(e) => setFormData({ ...formData, role: e.target.value })}
-              className="form-select"
-            >
-              <option value="Renter">Renter</option>
-              <option value="PropertyOwner">Property Owner</option>
-              <option value="Admin">Admin</option>
-            </select>
+            <label className="form-label">Roles</label>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+              {availableRoles.map(role => (
+                <label key={role} className="form-checkbox-container" style={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }}>
+                  <input
+                    type="checkbox"
+                    checked={formData.roles.includes(role)}
+                    onChange={() => handleRoleToggle(role)}
+                    className="form-checkbox"
+                    style={{ marginRight: '8px' }}
+                  />
+                  <span className="form-label" style={{ margin: 0 }}>{role === 'PropertyOwner' ? 'Property Owner' : role}</span>
+                </label>
+              ))}
+            </div>
           </div>
           <div className="modal-actions">
             <button type="button" className="btn-modern btn-modern-secondary" onClick={onClose}>
@@ -250,14 +288,7 @@ function UserManagement() {
 
   const handleUpdateUser = async (userId, updates) => {
     try {
-      // Convert role to roles array as expected by backend
-      const payload = {
-        ...updates,
-        roles: updates.role ? [updates.role] : undefined
-      };
-      delete payload.role;
-
-      const updatedUser = await apiService.updateUser(userId, payload);
+      const updatedUser = await apiService.updateUser(userId, updates);
       setUsers(users.map(user => user.id === userId ? updatedUser : user));
       setEditingUser(null);
     } catch (err) {
@@ -314,15 +345,19 @@ function UserManagement() {
               accessor: 'email'
             },
             {
-              header: 'Role',
+              header: 'Roles',
               render: (user) => {
-                const role = user.userRoles && user.userRoles.length > 0
-                  ? user.userRoles[0].role.name
-                  : 'Unknown';
+                if (!user.userRoles || user.userRoles.length === 0) {
+                  return <span className="role-badge">No Roles</span>;
+                }
                 return (
-                  <span className={`role-badge ${role.toLowerCase()}`}>
-                    {role}
-                  </span>
+                  <div style={{ display: 'flex', gap: '4px', flexWrap: 'wrap' }}>
+                    {user.userRoles.map((ur, index) => (
+                      <span key={index} className={`role-badge ${ur.role.name.toLowerCase()}`}>
+                        {ur.role.name}
+                      </span>
+                    ))}
+                  </div>
                 );
               }
             },
@@ -369,11 +404,17 @@ function UserManagement() {
                   <span className="card-item-value">{user.email}</span>
                 </div>
                 <div className="card-item-detail">
-                  <span className="card-item-label">Role:</span>
-                  <span className="card-item-value">
-                    <span className={`role-badge ${(user.userRoles && user.userRoles.length > 0 ? user.userRoles[0].role.name : 'Unknown').toLowerCase()}`}>
-                      {user.userRoles && user.userRoles.length > 0 ? user.userRoles[0].role.name : 'Unknown'}
-                    </span>
+                  <span className="card-item-label">Roles:</span>
+                  <span className="card-item-value" style={{ display: 'flex', gap: '4px', flexWrap: 'wrap' }}>
+                    {!user.userRoles || user.userRoles.length === 0 ? (
+                      <span className="role-badge">No Roles</span>
+                    ) : (
+                      user.userRoles.map((ur, index) => (
+                        <span key={index} className={`role-badge ${ur.role.name.toLowerCase()}`}>
+                          {ur.role.name}
+                        </span>
+                      ))
+                    )}
                   </span>
                 </div>
                 <div className="card-item-detail">
