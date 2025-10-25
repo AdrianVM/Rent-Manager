@@ -42,9 +42,13 @@ public class PaymentService : IPaymentService
 
                 query = query.Where(p => tenantIds.Contains(p.TenantId));
             }
-            else if (user.HasRole(Role.Renter) && user.TenantId != null)
+            else if (user.HasRole(Role.Renter) && user.PersonId != null)
             {
-                query = query.Where(p => p.TenantId == user.TenantId);
+                var tenant = await _context.Tenants.FirstOrDefaultAsync(t => t.PersonId == user.PersonId);
+                if (tenant != null)
+                {
+                    query = query.Where(p => p.TenantId == tenant.Id);
+                }
             }
         }
 
@@ -470,9 +474,13 @@ public class PaymentService : IPaymentService
 
                 query = query.Where(p => tenantIds.Contains(p.TenantId));
             }
-            else if (user.HasRole(Role.Renter) && user.TenantId != null)
+            else if (user.HasRole(Role.Renter) && user.PersonId != null)
             {
-                query = query.Where(p => p.TenantId == user.TenantId);
+                var tenant = await _context.Tenants.FirstOrDefaultAsync(t => t.PersonId == user.PersonId);
+                if (tenant != null)
+                {
+                    query = query.Where(p => p.TenantId == tenant.Id);
+                }
             }
         }
 
@@ -521,9 +529,13 @@ public class PaymentService : IPaymentService
 
                 query = query.Where(p => tenantIds.Contains(p.TenantId));
             }
-            else if (user.HasRole(Role.Renter) && user.TenantId != null)
+            else if (user.HasRole(Role.Renter) && user.PersonId != null)
             {
-                query = query.Where(p => p.TenantId == user.TenantId);
+                var tenant = await _context.Tenants.FirstOrDefaultAsync(t => t.PersonId == user.PersonId);
+                if (tenant != null)
+                {
+                    query = query.Where(p => p.TenantId == tenant.Id);
+                }
             }
         }
 
@@ -682,9 +694,13 @@ public class PaymentService : IPaymentService
 
                 query = query.Where(p => tenantIds.Contains(p.TenantId));
             }
-            else if (user.HasRole(Role.Renter) && user.TenantId != null)
+            else if (user.HasRole(Role.Renter) && user.PersonId != null)
             {
-                query = query.Where(p => p.TenantId == user.TenantId);
+                var tenant = await _context.Tenants.FirstOrDefaultAsync(t => t.PersonId == user.PersonId);
+                if (tenant != null)
+                {
+                    query = query.Where(p => p.TenantId == tenant.Id);
+                }
             }
         }
 
@@ -709,9 +725,13 @@ public class PaymentService : IPaymentService
 
                 query = query.Where(p => tenantIds.Contains(p.TenantId));
             }
-            else if (user.HasRole(Role.Renter) && user.TenantId != null)
+            else if (user.HasRole(Role.Renter) && user.PersonId != null)
             {
-                query = query.Where(p => p.TenantId == user.TenantId);
+                var tenant = await _context.Tenants.FirstOrDefaultAsync(t => t.PersonId == user.PersonId);
+                if (tenant != null)
+                {
+                    query = query.Where(p => p.TenantId == tenant.Id);
+                }
             }
         }
 
@@ -756,8 +776,12 @@ public class PaymentService : IPaymentService
         if (user.HasRole(Role.Admin))
             return true;
 
-        if (user.HasRole(Role.Renter) && user.TenantId == payment.TenantId)
-            return true;
+        if (user.HasRole(Role.Renter) && user.PersonId != null)
+        {
+            var tenant = await _context.Tenants.FirstOrDefaultAsync(t => t.PersonId == user.PersonId);
+            if (tenant != null && tenant.Id == payment.TenantId)
+                return true;
+        }
 
         if (user.HasRole(Role.PropertyOwner))
         {
@@ -774,8 +798,12 @@ public class PaymentService : IPaymentService
         if (user.HasRole(Role.Admin))
             return true;
 
-        if (user.HasRole(Role.Renter) && user.TenantId == tenantId)
-            return true;
+        if (user.HasRole(Role.Renter) && user.PersonId != null)
+        {
+            var tenant = await _context.Tenants.FirstOrDefaultAsync(t => t.PersonId == user.PersonId);
+            if (tenant != null && tenant.Id == tenantId)
+                return true;
+        }
 
         if (user.HasRole(Role.PropertyOwner))
         {
@@ -795,9 +823,9 @@ public class PaymentService : IPaymentService
         if (user.HasRole(Role.PropertyOwner) && user.PropertyIds.Contains(propertyId))
             return true;
 
-        if (user.HasRole(Role.Renter) && user.TenantId != null)
+        if (user.HasRole(Role.Renter) && user.PersonId != null)
         {
-            var tenant = await _context.Tenants.FindAsync(user.TenantId);
+            var tenant = await _context.Tenants.FirstOrDefaultAsync(t => t.PersonId == user.PersonId);
             if (tenant != null && tenant.PropertyId == propertyId)
                 return true;
         }

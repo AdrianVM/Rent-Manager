@@ -23,9 +23,9 @@ namespace RentManager.API.Services
                 return Task.FromResult(ownerProperties);
             }
             
-            if (user.HasRole(Role.Renter) && !string.IsNullOrEmpty(user.TenantId))
+            if (user.HasRole(Role.Renter) && !string.IsNullOrEmpty(user.PersonId))
             {
-                var tenant = _tenants.FirstOrDefault(t => t.Id == user.TenantId);
+                var tenant = _tenants.FirstOrDefault(t => t.PersonId == user.PersonId);
                 if (tenant != null)
                 {
                     var renterProperty = _properties.Where(p => p.Id == tenant.PropertyId).ToList();
@@ -51,9 +51,9 @@ namespace RentManager.API.Services
                 return Task.FromResult<Property?>(property);
             }
             
-            if (user.HasRole(Role.Renter) && !string.IsNullOrEmpty(user.TenantId))
+            if (user.HasRole(Role.Renter) && !string.IsNullOrEmpty(user.PersonId))
             {
-                var tenant = _tenants.FirstOrDefault(t => t.Id == user.TenantId);
+                var tenant = _tenants.FirstOrDefault(t => t.PersonId == user.PersonId);
                 if (tenant != null && tenant.PropertyId == id)
                 {
                     return Task.FromResult<Property?>(property);
@@ -115,9 +115,9 @@ namespace RentManager.API.Services
                 return Task.FromResult(ownerTenants);
             }
             
-            if (user.HasRole(Role.Renter) && !string.IsNullOrEmpty(user.TenantId))
+            if (user.HasRole(Role.Renter) && !string.IsNullOrEmpty(user.PersonId))
             {
-                var renterTenant = _tenants.Where(t => t.Id == user.TenantId).ToList();
+                var renterTenant = _tenants.Where(t => t.PersonId == user.PersonId).ToList();
                 return Task.FromResult(renterTenant);
             }
             
@@ -186,10 +186,14 @@ namespace RentManager.API.Services
                 return Task.FromResult(ownerPayments);
             }
             
-            if (user.HasRole(Role.Renter) && !string.IsNullOrEmpty(user.TenantId))
+            if (user.HasRole(Role.Renter) && !string.IsNullOrEmpty(user.PersonId))
             {
-                var renterPayments = payments.Where(p => p.TenantId == user.TenantId).ToList();
-                return Task.FromResult(renterPayments);
+                var tenant = _tenants.FirstOrDefault(t => t.PersonId == user.PersonId);
+                if (tenant != null)
+                {
+                    var renterPayments = payments.Where(p => p.TenantId == tenant.Id).ToList();
+                    return Task.FromResult(renterPayments);
+                }
             }
             
             return Task.FromResult(new List<Payment>());
@@ -251,10 +255,14 @@ namespace RentManager.API.Services
                 return Task.FromResult(ownerContracts);
             }
             
-            if (user.HasRole(Role.Renter) && !string.IsNullOrEmpty(user.TenantId))
+            if (user.HasRole(Role.Renter) && !string.IsNullOrEmpty(user.PersonId))
             {
-                var renterContracts = contracts.Where(c => c.TenantId == user.TenantId).ToList();
-                return Task.FromResult(renterContracts);
+                var tenant = _tenants.FirstOrDefault(t => t.PersonId == user.PersonId);
+                if (tenant != null)
+                {
+                    var renterContracts = contracts.Where(c => c.TenantId == tenant.Id).ToList();
+                    return Task.FromResult(renterContracts);
+                }
             }
             
             return Task.FromResult(new List<Contract>());

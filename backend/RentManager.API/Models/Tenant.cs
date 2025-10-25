@@ -10,6 +10,14 @@ namespace RentManager.API.Models
         // Common fields
         public string Email { get; set; } = string.Empty;
         public string? Phone { get; set; }
+
+        // Navigation properties to Person and Company entities
+        public string? PersonId { get; set; }
+        public Person? Person { get; set; }
+
+        public string? CompanyId { get; set; }
+        public Company? Company { get; set; }
+
         public string PropertyId { get; set; } = string.Empty;
         public Property Property { get; set; } = null!;
         public DateTime? LeaseStart { get; set; }

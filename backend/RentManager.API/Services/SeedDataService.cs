@@ -30,9 +30,6 @@ namespace RentManager.API.Services
 
             // Update main user with property IDs
             await UpdateUserWithPropertyIds(mainUser, properties);
-
-            // Update main user with tenant ID (for the tenant created for them)
-            await UpdateUserWithTenantId(mainUser, tenants);
         }
 
         private async Task<User> CreateMainUserAsync(string userEmail)
@@ -281,6 +278,7 @@ namespace RentManager.API.Services
                     TenantType = TenantType.Person,
                     Email = mainUser.Email,
                     Phone = "+1 (555) 000-0000",
+                    PersonId = mainUser.PersonId, // Link to the main user's Person
                     PropertyId = properties[0].Id, // Sunset Apartments - main user is renting this
                     LeaseStart = new DateTime(2024, 1, 1, 0, 0, 0, DateTimeKind.Utc),
                     LeaseEnd = new DateTime(2025, 12, 31, 0, 0, 0, DateTimeKind.Utc),
@@ -533,16 +531,5 @@ namespace RentManager.API.Services
             }
         }
 
-        private async Task UpdateUserWithTenantId(User user, List<Tenant> tenants)
-        {
-            // Assign the first tenant ID to the user (their tenant record)
-            var dbUser = await _context.Users.FindAsync(user.Id);
-            if (dbUser != null && tenants.Count > 0)
-            {
-                dbUser.TenantId = tenants[0].Id; // First tenant is the main user's tenant
-                dbUser.UpdatedAt = DateTime.UtcNow;
-                await _context.SaveChangesAsync();
-            }
-        }
     }
 }

@@ -63,7 +63,6 @@ namespace RentManager.API.Services
 
             existingUser.Email = user.Email;
             existingUser.IsActive = user.IsActive;
-            existingUser.TenantId = user.TenantId;
             existingUser.PropertyIds = user.PropertyIds;
             existingUser.UpdatedAt = DateTime.UtcNow;
 

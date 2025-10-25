@@ -15,7 +15,6 @@ namespace RentManager.API.Models
         public Person? Person { get; set; }
 
         // Navigation properties for role-specific data
-        public string? TenantId { get; set; }  // For Renter role
         public List<string> PropertyIds { get; set; } = new List<string>();  // For PropertyOwner role
 
         // Navigation property for roles
@@ -54,7 +53,6 @@ namespace RentManager.API.Models
         public string LastName { get; set; } = string.Empty;
         public string Password { get; set; } = string.Empty;
         public List<string> Roles { get; set; } = new List<string> { Role.Renter };
-        public string? TenantId { get; set; }  // Optional for Renter role
     }
 
     public class UserLoginRequest
@@ -77,7 +75,6 @@ namespace RentManager.API.Models
         public string? LastName { get; set; }
         public List<string>? Roles { get; set; }
         public bool? IsActive { get; set; }
-        public string? TenantId { get; set; }
         public List<string>? PropertyIds { get; set; }
     }
 }

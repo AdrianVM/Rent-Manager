@@ -147,6 +147,8 @@ namespace RentManager.API.Data
                 entity.ToTable("tenants");
                 entity.HasKey(e => e.Id);
                 entity.HasIndex(e => e.PropertyId);
+                entity.HasIndex(e => e.PersonId);
+                entity.HasIndex(e => e.CompanyId);
 
                 entity.Property(e => e.Id).IsRequired();
                 entity.Property(e => e.TenantType).HasConversion<string>().IsRequired();
@@ -164,6 +166,18 @@ namespace RentManager.API.Data
                     .WithMany(p => p.Tenants)
                     .HasForeignKey(t => t.PropertyId)
                     .OnDelete(DeleteBehavior.Cascade);
+
+                // Configure relationship with Person (optional, for person tenants)
+                entity.HasOne(t => t.Person)
+                    .WithMany()
+                    .HasForeignKey(t => t.PersonId)
+                    .OnDelete(DeleteBehavior.SetNull);
+
+                // Configure relationship with Company (optional, for company tenants)
+                entity.HasOne(t => t.Company)
+                    .WithMany()
+                    .HasForeignKey(t => t.CompanyId)
+                    .OnDelete(DeleteBehavior.SetNull);
 
                 // Store PersonDetails and CompanyDetails as JSON
                 entity.OwnsOne(e => e.PersonDetails, pd =>

@@ -60,9 +60,6 @@ namespace RentManager.API.Services
             if (request.IsActive.HasValue)
                 user.IsActive = request.IsActive.Value;
 
-            if (!string.IsNullOrEmpty(request.TenantId))
-                user.TenantId = request.TenantId;
-
             if (request.PropertyIds != null)
                 user.PropertyIds = request.PropertyIds;
 
