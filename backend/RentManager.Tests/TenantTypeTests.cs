@@ -419,13 +419,15 @@ namespace RentManager.Tests
             var created = await dataService.CreateTenantAsync(tenant);
 
             // Act
-            created.PersonDetails.FirstName = "Jane";
+            created.PersonDetails.Should().NotBeNull();
+            created.PersonDetails!.FirstName = "Jane";
             created.PersonDetails.Occupation = "Doctor";
             var updated = await dataService.UpdateTenantAsync(created.Id, created);
 
             // Assert
             updated.Should().NotBeNull();
-            updated.PersonDetails.FirstName.Should().Be("Jane");
+            updated.PersonDetails.Should().NotBeNull();
+            updated.PersonDetails!.FirstName.Should().Be("Jane");
             updated.PersonDetails.Occupation.Should().Be("Doctor");
             updated.Name.Should().Be("Jane Doe");
         }
@@ -451,13 +453,15 @@ namespace RentManager.Tests
             var created = await dataService.CreateTenantAsync(tenant);
 
             // Act
-            created.CompanyDetails.CompanyName = "TechCorp Industries";
+            created.CompanyDetails.Should().NotBeNull();
+            created.CompanyDetails!.CompanyName = "TechCorp Industries";
             created.CompanyDetails.ContactPersonName = "John Smith";
             var updated = await dataService.UpdateTenantAsync(created.Id, created);
 
             // Assert
             updated.Should().NotBeNull();
-            updated.CompanyDetails.CompanyName.Should().Be("TechCorp Industries");
+            updated.CompanyDetails.Should().NotBeNull();
+            updated.CompanyDetails!.CompanyName.Should().Be("TechCorp Industries");
             updated.CompanyDetails.ContactPersonName.Should().Be("John Smith");
             updated.Name.Should().Be("TechCorp Industries");
         }
