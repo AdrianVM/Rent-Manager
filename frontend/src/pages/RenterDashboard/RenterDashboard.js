@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import apiService from '../../services/api';
 import PaymentModal from '../../components/PaymentModal';
+import { ContractViewer } from '../../components/common';
 import './RenterDashboard.css';
 
 function RentPaymentHistory({ payments, currentTenant }) {
@@ -104,77 +105,6 @@ function PropertyInfo({ property }) {
             {property.description}
           </div>
         )}
-      </div>
-    </div>
-  );
-}
-
-function ContractViewer({ contract, onClose }) {
-  const [loading, setLoading] = useState(true);
-  const [contractData, setContractData] = useState(null);
-
-  useEffect(() => {
-    loadContractData();
-  }, [contract.id]); // eslint-disable-line react-hooks/exhaustive-deps
-
-  const loadContractData = async () => {
-    try {
-      setLoading(true);
-      const data = await apiService.getContract(contract.id);
-      setContractData(data);
-    } catch (err) {
-      console.error('Error loading contract data:', err);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const renderContract = () => {
-    if (!contractData || !contractData.fileContentBase64) {
-      return <div>No contract content available</div>;
-    }
-
-    const mimeType = contractData.mimeType || '';
-
-    if (mimeType.includes('pdf')) {
-      const blob = new Blob([Uint8Array.from(atob(contractData.fileContentBase64), c => c.charCodeAt(0))], { type: 'application/pdf' });
-      const url = URL.createObjectURL(blob);
-
-      return (
-        <iframe
-          src={url}
-          className="renter-contract-viewer-iframe"
-          title="Contract Viewer"
-        />
-      );
-    } else {
-      return (
-        <div className="renter-contract-viewer-unsupported">
-          <div className="renter-contract-viewer-unsupported-icon">📄</div>
-          <p>This file format cannot be previewed in the browser.</p>
-          <p>File type: {mimeType}</p>
-          <p>Please download the file to view its contents.</p>
-        </div>
-      );
-    }
-  };
-
-  return (
-    <div className="modal">
-      <div className="modal-content renter-contract-viewer-modal">
-        <div className="modal-header">
-          <h2>View Contract: {contract.fileName}</h2>
-          <button className="close-btn" onClick={onClose}>&times;</button>
-        </div>
-        <div className="renter-contract-viewer-content">
-          {loading ? (
-            <div className="renter-contract-viewer-loading">
-              Loading contract...
-            </div>
-          ) : (
-            renderContract()
-          )}
-        </div>
       </div>
     </div>
   );

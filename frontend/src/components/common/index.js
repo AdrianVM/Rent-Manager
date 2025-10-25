@@ -6,3 +6,4 @@ export { default as WizardStepper } from './WizardStepper';
 export { default as RoleSwitcher } from '../RoleSwitcher';
 export { PrimaryButton, SecondaryButton, DangerButton } from './Button';
 export { MainContent } from '../MainContent';
+export { default as ContractViewer } from './ContractViewer';

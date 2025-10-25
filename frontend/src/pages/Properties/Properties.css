@@ -230,74 +230,6 @@
   min-width: 32px;
 }
 
-/* Contract Viewer */
-.contract-viewer-modal-content {
-  max-width: 900px;
-  height: 80vh;
-}
-
-.contract-viewer-content {
-  padding: 20px;
-  height: calc(100% - 60px);
-  overflow: auto;
-}
-
-.contract-viewer-loading {
-  text-align: center;
-  padding: 40px;
-  color: var(--text-secondary);
-}
-
-.contract-viewer-iframe {
-  width: 100%;
-  height: 600px;
-  border: none;
-  border-radius: 8px;
-}
-
-.contract-viewer-docx-container {
-  position: relative;
-  width: 100%;
-  height: 600px;
-}
-
-.contract-viewer-docx-loading {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  z-index: 10;
-  color: var(--text-secondary);
-}
-
-.contract-viewer-docx-content {
-  width: 100%;
-  height: 100%;
-  overflow: auto;
-  border: 1px solid var(--border-color);
-  border-radius: 8px;
-  padding: 20px;
-  background: white;
-}
-
-[data-theme="dark"] .contract-viewer-docx-content {
-  background: var(--bg-secondary);
-  border-color: var(--border-color);
-}
-
-.contract-viewer-error,
-.contract-viewer-unsupported {
-  text-align: center;
-  padding: 40px;
-  color: var(--text-secondary);
-}
-
-.contract-viewer-error-icon,
-.contract-viewer-unsupported-icon {
-  font-size: 2rem;
-  margin-bottom: 20px;
-}
-
 /* Contracts View Modal */
 .contracts-view-modal-content {
   max-width: 800px;
@@ -336,16 +268,6 @@
 
   .contract-action-btn {
     flex: 1;
-  }
-
-  .contract-viewer-modal-content {
-    max-width: 100%;
-    height: 90vh;
-  }
-
-  .contract-viewer-iframe,
-  .contract-viewer-docx-container {
-    height: 400px;
   }
 }
 
