@@ -10,7 +10,9 @@ function EditUserModal({ user, onSave, onClose }) {
     : 'Renter';
 
   const [formData, setFormData] = useState({
-    name: user.name || '',
+    firstName: user.person?.firstName || '',
+    middleName: user.person?.middleName || '',
+    lastName: user.person?.lastName || '',
     email: user.email || '',
     role: userRole,
     isActive: user.isActive !== undefined ? user.isActive : true
@@ -29,11 +31,30 @@ function EditUserModal({ user, onSave, onClose }) {
         </div>
         <form onSubmit={handleSubmit}>
           <div className="form-group">
-            <label className="form-label">Name</label>
+            <label className="form-label">First Name</label>
             <input
               type="text"
-              value={formData.name}
-              onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+              value={formData.firstName}
+              onChange={(e) => setFormData({ ...formData, firstName: e.target.value })}
+              className="form-input"
+              required
+            />
+          </div>
+          <div className="form-group">
+            <label className="form-label">Middle Name</label>
+            <input
+              type="text"
+              value={formData.middleName}
+              onChange={(e) => setFormData({ ...formData, middleName: e.target.value })}
+              className="form-input"
+            />
+          </div>
+          <div className="form-group">
+            <label className="form-label">Last Name</label>
+            <input
+              type="text"
+              value={formData.lastName}
+              onChange={(e) => setFormData({ ...formData, lastName: e.target.value })}
               className="form-input"
               required
             />
@@ -87,10 +108,11 @@ function EditUserModal({ user, onSave, onClose }) {
 
 function CreateUserModal({ onClose, onUserCreated }) {
   const [formData, setFormData] = useState({
-    name: '',
+    firstName: '',
+    lastName: '',
     email: '',
     password: '',
-    role: 'renter'
+    role: 'Renter'
   });
   const [loading, setLoading] = useState(false);
 
@@ -99,7 +121,15 @@ function CreateUserModal({ onClose, onUserCreated }) {
     setLoading(true);
 
     try {
-      await apiService.createUser(formData);
+      // Convert role to roles array as expected by backend
+      const payload = {
+        firstName: formData.firstName,
+        lastName: formData.lastName,
+        email: formData.email,
+        password: formData.password,
+        roles: [formData.role]
+      };
+      await apiService.createUser(payload);
       onUserCreated();
       onClose();
     } catch (err) {
@@ -117,11 +147,21 @@ function CreateUserModal({ onClose, onUserCreated }) {
         </div>
         <form onSubmit={handleSubmit}>
           <div className="form-group">
-            <label className="form-label">Name</label>
+            <label className="form-label">First Name</label>
             <input
               type="text"
-              value={formData.name}
-              onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+              value={formData.firstName}
+              onChange={(e) => setFormData({ ...formData, firstName: e.target.value })}
+              className="form-input"
+              required
+            />
+          </div>
+          <div className="form-group">
+            <label className="form-label">Last Name</label>
+            <input
+              type="text"
+              value={formData.lastName}
+              onChange={(e) => setFormData({ ...formData, lastName: e.target.value })}
               className="form-input"
               required
             />
@@ -210,7 +250,14 @@ function UserManagement() {
 
   const handleUpdateUser = async (userId, updates) => {
     try {
-      const updatedUser = await apiService.updateUser(userId, updates);
+      // Convert role to roles array as expected by backend
+      const payload = {
+        ...updates,
+        roles: updates.role ? [updates.role] : undefined
+      };
+      delete payload.role;
+
+      const updatedUser = await apiService.updateUser(userId, payload);
       setUsers(users.map(user => user.id === userId ? updatedUser : user));
       setEditingUser(null);
     } catch (err) {

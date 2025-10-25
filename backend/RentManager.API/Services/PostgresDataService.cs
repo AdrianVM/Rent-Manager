@@ -90,6 +90,79 @@ namespace RentManager.API.Services
             return existingUser;
         }
 
+        public async Task<User?> UpdateUserAsync(string id, UserUpdateRequest request)
+        {
+            var existingUser = await _context.Users
+                .Include(u => u.Person)
+                .Include(u => u.UserRoles)
+                    .ThenInclude(ur => ur.Role)
+                .FirstOrDefaultAsync(u => u.Id == id);
+
+            if (existingUser == null)
+            {
+                return null;
+            }
+
+            // Update email if provided
+            if (!string.IsNullOrEmpty(request.Email))
+            {
+                existingUser.Email = request.Email;
+            }
+
+            // Update Person details if provided
+            if (existingUser.Person != null)
+            {
+                if (!string.IsNullOrEmpty(request.FirstName))
+                    existingUser.Person.FirstName = request.FirstName;
+
+                if (request.MiddleName != null)
+                    existingUser.Person.MiddleName = request.MiddleName;
+
+                if (!string.IsNullOrEmpty(request.LastName))
+                    existingUser.Person.LastName = request.LastName;
+
+                existingUser.Person.UpdatedAt = DateTime.UtcNow;
+            }
+
+            // Update roles if provided
+            if (request.Roles != null && request.Roles.Any())
+            {
+                // Remove existing roles
+                var existingRoles = await _context.UserRoles
+                    .Where(ur => ur.UserId == id)
+                    .ToListAsync();
+                _context.UserRoles.RemoveRange(existingRoles);
+
+                // Add new roles
+                foreach (var roleName in request.Roles)
+                {
+                    var role = await _context.Roles.FirstOrDefaultAsync(r => r.Name == roleName);
+                    if (role != null)
+                    {
+                        _context.UserRoles.Add(new UserRole
+                        {
+                            UserId = id,
+                            RoleId = role.Id,
+                            AssignedAt = DateTime.UtcNow
+                        });
+                    }
+                }
+            }
+
+            // Update active status if provided
+            if (request.IsActive.HasValue)
+            {
+                existingUser.IsActive = request.IsActive.Value;
+            }
+
+            existingUser.UpdatedAt = DateTime.UtcNow;
+
+            await _context.SaveChangesAsync();
+
+            // Reload to get updated relationships
+            return await GetUserByIdAsync(id);
+        }
+
         public async Task<bool> DeleteUserAsync(string id)
         {
             var user = await _context.Users.FindAsync(id);
