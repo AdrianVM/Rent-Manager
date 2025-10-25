@@ -1,3 +1,5 @@
+using System.Text.Json.Serialization;
+
 namespace RentManager.API.Models
 {
     public class UserRole
@@ -7,6 +9,7 @@ namespace RentManager.API.Models
         public DateTime AssignedAt { get; set; } = DateTime.UtcNow;
 
         // Navigation properties
+        [JsonIgnore] // Prevent circular reference during JSON serialization
         public User User { get; set; } = null!;
         public Role Role { get; set; } = null!;
     }
