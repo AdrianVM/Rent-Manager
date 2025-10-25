@@ -22,8 +22,9 @@ namespace RentManager.API.Services
             // Create the main user with multiple roles
             var mainUser = await CreateMainUserAsync(userEmail);
 
-            // Seed data in order (properties first, then tenants, then payments)
+            // Seed data in order (properties first, then property owners, then tenants, then payments)
             var properties = await SeedPropertiesAsync();
+            await SeedPropertyOwnersAsync(properties, mainUser);
             var tenants = await SeedTenantsAsync(properties, mainUser);
             await SeedPaymentsAsync(tenants);
 
@@ -41,10 +42,41 @@ namespace RentManager.API.Services
             var existingUser = await _context.Users
                 .Include(u => u.UserRoles)
                     .ThenInclude(ur => ur.Role)
+                .Include(u => u.Person)
                 .FirstOrDefaultAsync(u => u.Email == userEmail);
 
             if (existingUser != null)
             {
+                // Create Person record if user doesn't have one
+                if (existingUser.Person == null)
+                {
+                    // Extract name from email (part before @) and capitalize
+                    var emailName = existingUser.Email.Split('@')[0];
+                    var displayName = string.Join(" ", emailName.Split('.', '_', '-')
+                        .Select(part => char.ToUpper(part[0]) + part.Substring(1).ToLower()));
+                    var nameParts = displayName.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+
+                    var person = new Person
+                    {
+                        Id = Guid.NewGuid().ToString(),
+                        FirstName = nameParts.Length > 0 ? nameParts[0] : displayName,
+                        MiddleName = nameParts.Length > 2 ? nameParts[1] : string.Empty,
+                        LastName = nameParts.Length > 1 ? nameParts[^1] : string.Empty,
+                        DateOfBirth = new DateTime(1990, 1, 1, 0, 0, 0, DateTimeKind.Utc),
+                        Nationality = "Demo",
+                        Occupation = "Demo User",
+                        CreatedAt = DateTime.UtcNow,
+                        UpdatedAt = DateTime.UtcNow
+                    };
+
+                    _context.Persons.Add(person);
+                    await _context.SaveChangesAsync();
+
+                    existingUser.PersonId = person.Id;
+                    existingUser.UpdatedAt = DateTime.UtcNow;
+                    await _context.SaveChangesAsync();
+                }
+
                 // Clear existing roles
                 _context.UserRoles.RemoveRange(existingUser.UserRoles);
                 await _context.SaveChangesAsync();
@@ -53,6 +85,7 @@ namespace RentManager.API.Services
                 existingUser = await _context.Users
                     .Include(u => u.UserRoles)
                         .ThenInclude(ur => ur.Role)
+                    .Include(u => u.Person)
                     .FirstAsync(u => u.Email == userEmail);
             }
             else
@@ -63,13 +96,31 @@ namespace RentManager.API.Services
                 var displayName = string.Join(" ", emailName.Split('.', '_', '-')
                     .Select(part => char.ToUpper(part[0]) + part.Substring(1).ToLower()));
 
+                // Create a Person record for the user
+                var nameParts = displayName.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+                var person = new Person
+                {
+                    Id = Guid.NewGuid().ToString(),
+                    FirstName = nameParts.Length > 0 ? nameParts[0] : displayName,
+                    MiddleName = nameParts.Length > 2 ? nameParts[1] : string.Empty,
+                    LastName = nameParts.Length > 1 ? nameParts[^1] : string.Empty,
+                    DateOfBirth = new DateTime(1990, 1, 1, 0, 0, 0, DateTimeKind.Utc),
+                    Nationality = "Demo",
+                    Occupation = "Demo User",
+                    CreatedAt = DateTime.UtcNow,
+                    UpdatedAt = DateTime.UtcNow
+                };
+
+                _context.Persons.Add(person);
+                await _context.SaveChangesAsync();
+
                 existingUser = new User
                 {
                     Id = Guid.NewGuid().ToString(),
                     Email = userEmail,
-                    Name = displayName,
                     PasswordHash = "not-used-zitadel-auth", // Using Zitadel for authentication
                     IsActive = true,
+                    PersonId = person.Id,
                     CreatedAt = DateTime.UtcNow,
                     UpdatedAt = DateTime.UtcNow
                 };
@@ -94,10 +145,11 @@ namespace RentManager.API.Services
             _context.UserRoles.AddRange(userRoles);
             await _context.SaveChangesAsync();
 
-            // Reload user with roles
+            // Reload user with roles and person
             return await _context.Users
                 .Include(u => u.UserRoles)
                     .ThenInclude(ur => ur.Role)
+                .Include(u => u.Person)
                 .FirstAsync(u => u.Id == existingUser.Id);
         }
 
@@ -186,6 +238,38 @@ namespace RentManager.API.Services
             return createdProperties;
         }
 
+        private async Task SeedPropertyOwnersAsync(List<Property> properties, User mainUser)
+        {
+            // Create PropertyOwner records for each property with the main user's Person as owner
+            if (mainUser.Person == null)
+            {
+                return; // Skip if user doesn't have a Person record
+            }
+
+            foreach (var property in properties)
+            {
+                var propertyOwner = new PropertyOwner
+                {
+                    Id = Guid.NewGuid().ToString(),
+                    PropertyId = property.Id,
+                    CreatedAt = DateTime.UtcNow,
+                    UpdatedAt = DateTime.UtcNow
+                };
+
+                _context.PropertyOwners.Add(propertyOwner);
+                await _context.SaveChangesAsync();
+
+                // Load the PropertyOwner with navigation properties
+                var loadedPropertyOwner = await _context.PropertyOwners
+                    .Include(po => po.PersonOwners)
+                    .FirstAsync(po => po.Id == propertyOwner.Id);
+
+                // Add the Person to the PropertyOwner
+                loadedPropertyOwner.PersonOwners.Add(mainUser.Person);
+                await _context.SaveChangesAsync();
+            }
+        }
+
         private async Task<List<Tenant>> SeedTenantsAsync(List<Property> properties, User mainUser)
         {
             var tenants = new List<Tenant>
@@ -205,12 +289,12 @@ namespace RentManager.API.Services
                     Status = TenantStatus.Active,
                     PersonDetails = new PersonDetails
                     {
-                        FirstName = mainUser.Name.Split(' ').FirstOrDefault() ?? "User",
-                        LastName = mainUser.Name.Split(' ').Skip(1).FirstOrDefault() ?? "Name",
-                        DateOfBirth = new DateTime(1990, 1, 1, 0, 0, 0, DateTimeKind.Utc),
-                        IdNumber = "DEMO-ID-001",
-                        Nationality = "Demo",
-                        Occupation = "Demo User",
+                        FirstName = mainUser.Person?.FirstName ?? "User",
+                        LastName = mainUser.Person?.LastName ?? "Name",
+                        DateOfBirth = mainUser.Person?.DateOfBirth ?? new DateTime(1990, 1, 1, 0, 0, 0, DateTimeKind.Utc),
+                        IdNumber = mainUser.Person?.IdNumber ?? "DEMO-ID-001",
+                        Nationality = mainUser.Person?.Nationality ?? "Demo",
+                        Occupation = mainUser.Person?.Occupation ?? "Demo User",
                         EmergencyContactName = "Emergency Contact",
                         EmergencyContactPhone = "+1 (555) 999-9999",
                         EmergencyContactRelation = "Family"

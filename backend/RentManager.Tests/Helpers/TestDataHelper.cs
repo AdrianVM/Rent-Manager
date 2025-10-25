@@ -6,13 +6,28 @@ namespace RentManager.Tests.Helpers
     {
         public static User CreateTestUser(string id = "test-user-1", string roleName = Role.Renter)
         {
+            // Create Person for the user
+            var person = new Person
+            {
+                Id = $"person-{id}",
+                FirstName = "Test",
+                MiddleName = "User",
+                LastName = id,
+                DateOfBirth = new DateTime(1990, 1, 1, 0, 0, 0, DateTimeKind.Utc),
+                Nationality = "Test",
+                Occupation = "Tester",
+                CreatedAt = DateTime.UtcNow.AddDays(-1),
+                UpdatedAt = DateTime.UtcNow
+            };
+
             var user = new User
             {
                 Id = id,
                 Email = $"test{id}@example.com",
-                Name = $"Test User {id}",
                 PasswordHash = "hashed-password",
                 IsActive = true,
+                PersonId = person.Id,
+                Person = person,
                 CreatedAt = DateTime.UtcNow.AddDays(-1),
                 UpdatedAt = DateTime.UtcNow
             };
@@ -74,7 +89,9 @@ namespace RentManager.Tests.Helpers
             return new UserRegistrationRequest
             {
                 Email = "newuser@example.com",
-                Name = "New Test User",
+                FirstName = "New",
+                MiddleName = "Test",
+                LastName = "User",
                 Password = "testpassword123",
                 Roles = new List<string> { Role.Renter }
             };

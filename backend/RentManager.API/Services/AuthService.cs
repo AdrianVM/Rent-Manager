@@ -33,8 +33,20 @@ namespace RentManager.API.Services
                 return null;
             }
 
-            if (!string.IsNullOrEmpty(request.Name))
-                user.Name = request.Name;
+            // Update Person details if provided
+            if (user.Person != null)
+            {
+                if (!string.IsNullOrEmpty(request.FirstName))
+                    user.Person.FirstName = request.FirstName;
+
+                if (!string.IsNullOrEmpty(request.MiddleName))
+                    user.Person.MiddleName = request.MiddleName;
+
+                if (!string.IsNullOrEmpty(request.LastName))
+                    user.Person.LastName = request.LastName;
+
+                user.Person.UpdatedAt = DateTime.UtcNow;
+            }
 
             if (!string.IsNullOrEmpty(request.Email))
                 user.Email = request.Email;

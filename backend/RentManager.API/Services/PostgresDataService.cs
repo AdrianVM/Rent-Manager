@@ -61,7 +61,6 @@ namespace RentManager.API.Services
                 return null;
             }
 
-            existingUser.Name = user.Name;
             existingUser.Email = user.Email;
             existingUser.IsActive = user.IsActive;
             existingUser.TenantId = user.TenantId;

@@ -4,7 +4,6 @@ namespace RentManager.API.Models
     {
         public string Id { get; set; } = string.Empty;
         public string Email { get; set; } = string.Empty;
-        public string Name { get; set; } = string.Empty;
         public string PasswordHash { get; set; } = string.Empty;
         public bool IsActive { get; set; } = true;
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
@@ -21,6 +20,11 @@ namespace RentManager.API.Models
 
         // Navigation property for roles
         public ICollection<UserRole> UserRoles { get; set; } = new List<UserRole>();
+
+        // Computed property for display name from Person
+        public string Name => Person != null
+            ? $"{Person.FirstName} {Person.MiddleName} {Person.LastName}".Replace("  ", " ").Trim()
+            : Email.Split('@')[0];
 
         // Helper methods for role management
         public bool HasRole(string roleName)
@@ -45,7 +49,9 @@ namespace RentManager.API.Models
     public class UserRegistrationRequest
     {
         public string Email { get; set; } = string.Empty;
-        public string Name { get; set; } = string.Empty;
+        public string FirstName { get; set; } = string.Empty;
+        public string? MiddleName { get; set; }
+        public string LastName { get; set; } = string.Empty;
         public string Password { get; set; } = string.Empty;
         public List<string> Roles { get; set; } = new List<string> { Role.Renter };
         public string? TenantId { get; set; }  // Optional for Renter role
@@ -65,8 +71,10 @@ namespace RentManager.API.Models
 
     public class UserUpdateRequest
     {
-        public string? Name { get; set; }
         public string? Email { get; set; }
+        public string? FirstName { get; set; }
+        public string? MiddleName { get; set; }
+        public string? LastName { get; set; }
         public List<string>? Roles { get; set; }
         public bool? IsActive { get; set; }
         public string? TenantId { get; set; }
