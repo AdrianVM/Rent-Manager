@@ -11,6 +11,10 @@ namespace RentManager.API.Models
         public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
         public DateTime? LastLoginAt { get; set; }
 
+        // Navigation property to Person
+        public string? PersonId { get; set; }
+        public Person? Person { get; set; }
+
         // Navigation properties for role-specific data
         public string? TenantId { get; set; }  // For Renter role
         public List<string> PropertyIds { get; set; } = new List<string>();  // For PropertyOwner role

@@ -32,6 +32,7 @@ namespace RentManager.API.Data
                 entity.ToTable("users");
                 entity.HasKey(e => e.Id);
                 entity.HasIndex(e => e.Email).IsUnique();
+                entity.HasIndex(e => e.PersonId);
 
                 entity.Property(e => e.Id).IsRequired();
                 entity.Property(e => e.Email).IsRequired().HasMaxLength(255);
@@ -45,6 +46,12 @@ namespace RentManager.API.Data
                 entity.Property(e => e.PropertyIds)
                     .HasColumnType("jsonb")
                     .IsRequired();
+
+                // Configure relationship with Person (optional)
+                entity.HasOne(u => u.Person)
+                    .WithMany()
+                    .HasForeignKey(u => u.PersonId)
+                    .OnDelete(DeleteBehavior.SetNull);
             });
 
             // Configure Role entity
