@@ -14,6 +14,7 @@ namespace RentManager.API.Data
         public DbSet<Role> Roles { get; set; } = null!;
         public DbSet<UserRole> UserRoles { get; set; } = null!;
         public DbSet<Property> Properties { get; set; } = null!;
+        public DbSet<PropertyOwner> PropertyOwners { get; set; } = null!;
         public DbSet<Tenant> Tenants { get; set; } = null!;
         public DbSet<Payment> Payments { get; set; } = null!;
         public DbSet<Contract> Contracts { get; set; } = null!;
@@ -105,6 +106,35 @@ namespace RentManager.API.Data
                 entity.Property(e => e.UpdatedAt).IsRequired();
             });
 
+            // Configure PropertyOwner entity
+            modelBuilder.Entity<PropertyOwner>(entity =>
+            {
+                entity.ToTable("property_owners");
+                entity.HasKey(e => e.Id);
+                entity.HasIndex(e => e.PropertyId);
+
+                entity.Property(e => e.Id).IsRequired();
+                entity.Property(e => e.PropertyId).IsRequired();
+                entity.Property(e => e.CreatedAt).IsRequired();
+                entity.Property(e => e.UpdatedAt).IsRequired();
+
+                // Configure relationship with Property
+                entity.HasOne(po => po.Property)
+                    .WithMany(p => p.PropertyOwners)
+                    .HasForeignKey(po => po.PropertyId)
+                    .OnDelete(DeleteBehavior.Cascade);
+
+                // Configure many-to-many with Person
+                entity.HasMany(po => po.PersonOwners)
+                    .WithMany()
+                    .UsingEntity(j => j.ToTable("property_owner_persons"));
+
+                // Configure many-to-many with Company
+                entity.HasMany(po => po.OwningCompanies)
+                    .WithMany()
+                    .UsingEntity(j => j.ToTable("property_owner_companies"));
+            });
+
             // Configure Tenant entity
             modelBuilder.Entity<Tenant>(entity =>
             {
@@ -122,6 +152,12 @@ namespace RentManager.API.Data
                 entity.Property(e => e.Status).HasConversion<string>().IsRequired();
                 entity.Property(e => e.CreatedAt).IsRequired();
                 entity.Property(e => e.UpdatedAt).IsRequired();
+
+                // Configure relationship with Property
+                entity.HasOne(t => t.Property)
+                    .WithMany(p => p.Tenants)
+                    .HasForeignKey(t => t.PropertyId)
+                    .OnDelete(DeleteBehavior.Cascade);
 
                 // Store PersonDetails and CompanyDetails as JSON
                 entity.OwnsOne(e => e.PersonDetails, pd =>

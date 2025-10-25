@@ -11,6 +11,7 @@ namespace RentManager.API.Models
         public string Email { get; set; } = string.Empty;
         public string? Phone { get; set; }
         public string PropertyId { get; set; } = string.Empty;
+        public Property Property { get; set; } = null!;
         public DateTime? LeaseStart { get; set; }
         public DateTime? LeaseEnd { get; set; }
         public decimal RentAmount { get; set; }

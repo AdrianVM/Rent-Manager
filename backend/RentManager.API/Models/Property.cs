@@ -15,6 +15,10 @@ namespace RentManager.API.Models
         public int? SquareFootage { get; set; }
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
         public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
+
+        // Navigation properties
+        public ICollection<PropertyOwner> PropertyOwners { get; set; } = new List<PropertyOwner>();
+        public ICollection<Tenant> Tenants { get; set; } = new List<Tenant>();
     }
 
     public enum PropertyType

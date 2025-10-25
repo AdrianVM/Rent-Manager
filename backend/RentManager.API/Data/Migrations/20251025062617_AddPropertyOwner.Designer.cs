@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using RentManager.API.Data;
@@ -12,9 +13,11 @@ using RentManager.API.Data;
 namespace RentManager.API.Data.Migrations
 {
     [DbContext(typeof(RentManagerDbContext))]
-    partial class RentManagerDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251025062617_AddPropertyOwner")]
+    partial class AddPropertyOwner
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -652,7 +655,7 @@ namespace RentManager.API.Data.Migrations
             modelBuilder.Entity("RentManager.API.Models.Tenant", b =>
                 {
                     b.HasOne("RentManager.API.Models.Property", "Property")
-                        .WithMany("Tenants")
+                        .WithMany()
                         .HasForeignKey("PropertyId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -705,7 +708,7 @@ namespace RentManager.API.Data.Migrations
 
                             b1.HasKey("TenantId");
 
-                            b1.ToTable("tenants", (string)null);
+                            b1.ToTable("tenants");
 
                             b1.ToJson("company_details");
 
@@ -757,7 +760,7 @@ namespace RentManager.API.Data.Migrations
 
                             b1.HasKey("TenantId");
 
-                            b1.ToTable("tenants", (string)null);
+                            b1.ToTable("tenants");
 
                             b1.ToJson("person_details");
 
@@ -794,8 +797,6 @@ namespace RentManager.API.Data.Migrations
             modelBuilder.Entity("RentManager.API.Models.Property", b =>
                 {
                     b.Navigation("PropertyOwners");
-
-                    b.Navigation("Tenants");
                 });
 
             modelBuilder.Entity("RentManager.API.Models.Role", b =>
