@@ -56,7 +56,7 @@ public class StripePaymentGateway : IPaymentGateway
                 TransactionId = paymentIntent.Id,
                 Status = MapStripeStatus(paymentIntent.Status),
                 ClientSecret = paymentIntent.ClientSecret,
-                ProcessedAt = DateTime.UtcNow,
+                ProcessedAt = DateTimeOffset.UtcNow,
                 Metadata = new Dictionary<string, object>
                 {
                     { "stripe_payment_intent_id", paymentIntent.Id },
@@ -93,7 +93,7 @@ public class StripePaymentGateway : IPaymentGateway
                     Success = paymentIntent.Status == "succeeded",
                     TransactionId = paymentIntent.Id,
                     Status = MapStripeStatus(paymentIntent.Status),
-                    ProcessedAt = DateTime.UtcNow,
+                    ProcessedAt = DateTimeOffset.UtcNow,
                     ProcessingFee = CalculateStripeFee(payment.Amount)
                 };
             }
@@ -134,7 +134,7 @@ public class StripePaymentGateway : IPaymentGateway
                 Success = intent.Status == "succeeded",
                 TransactionId = intent.Id,
                 Status = MapStripeStatus(intent.Status),
-                ProcessedAt = DateTime.UtcNow,
+                ProcessedAt = DateTimeOffset.UtcNow,
                 ProcessingFee = CalculateStripeFee(payment.Amount)
             };
         }
@@ -166,7 +166,7 @@ public class StripePaymentGateway : IPaymentGateway
                 Success = paymentIntent.Status == "succeeded",
                 TransactionId = paymentIntent.Id,
                 Status = MapStripeStatus(paymentIntent.Status),
-                ProcessedAt = DateTime.UtcNow,
+                ProcessedAt = DateTimeOffset.UtcNow,
                 ConfirmationCode = confirmationData
             };
         }
@@ -210,7 +210,7 @@ public class StripePaymentGateway : IPaymentGateway
                 Success = refund.Status == "succeeded",
                 TransactionId = refund.Id,
                 Status = PaymentStatus.Refunded,
-                ProcessedAt = DateTime.UtcNow
+                ProcessedAt = DateTimeOffset.UtcNow
             };
         }
         catch (StripeException ex)
@@ -246,7 +246,7 @@ public class StripePaymentGateway : IPaymentGateway
                 Success = true,
                 TransactionId = paymentIntent.Id,
                 Status = PaymentStatus.Cancelled,
-                ProcessedAt = DateTime.UtcNow
+                ProcessedAt = DateTimeOffset.UtcNow
             };
         }
         catch (StripeException ex)
@@ -325,7 +325,7 @@ public class StripePaymentGateway : IPaymentGateway
                 Success = paymentIntent.Status == "succeeded",
                 TransactionId = paymentIntent.Id,
                 Status = MapStripeStatus(paymentIntent.Status),
-                ProcessedAt = paymentIntent.Created
+                ProcessedAt = new DateTimeOffset(paymentIntent.Created, TimeSpan.Zero)
             };
         }
         catch (StripeException ex)

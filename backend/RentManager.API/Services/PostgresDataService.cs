@@ -49,8 +49,8 @@ namespace RentManager.API.Services
             {
                 user.Id = Guid.NewGuid().ToString();
             }
-            user.CreatedAt = DateTime.UtcNow;
-            user.UpdatedAt = DateTime.UtcNow;
+            user.CreatedAt = DateTimeOffset.UtcNow;
+            user.UpdatedAt = DateTimeOffset.UtcNow;
             _context.Users.Add(user);
             await _context.SaveChangesAsync();
             return user;
@@ -66,7 +66,7 @@ namespace RentManager.API.Services
 
             existingUser.Email = user.Email;
             existingUser.IsActive = user.IsActive;
-            existingUser.UpdatedAt = DateTime.UtcNow;
+            existingUser.UpdatedAt = DateTimeOffset.UtcNow;
 
             // Handle role updates if provided
             if (user.UserRoles != null && user.UserRoles.Any())
@@ -81,7 +81,7 @@ namespace RentManager.API.Services
                 foreach (var userRole in user.UserRoles)
                 {
                     userRole.UserId = id;
-                    userRole.AssignedAt = DateTime.UtcNow;
+                    userRole.AssignedAt = DateTimeOffset.UtcNow;
                     _context.UserRoles.Add(userRole);
                 }
             }
@@ -121,7 +121,7 @@ namespace RentManager.API.Services
                 if (!string.IsNullOrEmpty(request.LastName))
                     existingUser.Person.LastName = request.LastName;
 
-                existingUser.Person.UpdatedAt = DateTime.UtcNow;
+                existingUser.Person.UpdatedAt = DateTimeOffset.UtcNow;
             }
 
             // Update roles if provided
@@ -143,7 +143,7 @@ namespace RentManager.API.Services
                         {
                             UserId = id,
                             RoleId = role.Id,
-                            AssignedAt = DateTime.UtcNow
+                            AssignedAt = DateTimeOffset.UtcNow
                         });
                     }
                 }
@@ -155,7 +155,7 @@ namespace RentManager.API.Services
                 existingUser.IsActive = request.IsActive.Value;
             }
 
-            existingUser.UpdatedAt = DateTime.UtcNow;
+            existingUser.UpdatedAt = DateTimeOffset.UtcNow;
 
             await _context.SaveChangesAsync();
 
@@ -183,8 +183,8 @@ namespace RentManager.API.Services
             {
                 person.Id = Guid.NewGuid().ToString();
             }
-            person.CreatedAt = DateTime.UtcNow;
-            person.UpdatedAt = DateTime.UtcNow;
+            person.CreatedAt = DateTimeOffset.UtcNow;
+            person.UpdatedAt = DateTimeOffset.UtcNow;
 
             _context.Persons.Add(person);
             await _context.SaveChangesAsync();
@@ -215,8 +215,8 @@ namespace RentManager.API.Services
             {
                 property.Id = Guid.NewGuid().ToString();
             }
-            property.CreatedAt = DateTime.UtcNow;
-            property.UpdatedAt = DateTime.UtcNow;
+            property.CreatedAt = DateTimeOffset.UtcNow;
+            property.UpdatedAt = DateTimeOffset.UtcNow;
             _context.Properties.Add(property);
             await _context.SaveChangesAsync();
             return property;
@@ -240,7 +240,7 @@ namespace RentManager.API.Services
             existingProperty.ParkingType = property.ParkingType;
             existingProperty.SpaceNumber = property.SpaceNumber;
             existingProperty.SquareFootage = property.SquareFootage;
-            existingProperty.UpdatedAt = DateTime.UtcNow;
+            existingProperty.UpdatedAt = DateTimeOffset.UtcNow;
 
             await _context.SaveChangesAsync();
             return existingProperty;
@@ -278,8 +278,8 @@ namespace RentManager.API.Services
             {
                 tenant.Id = Guid.NewGuid().ToString();
             }
-            tenant.CreatedAt = DateTime.UtcNow;
-            tenant.UpdatedAt = DateTime.UtcNow;
+            tenant.CreatedAt = DateTimeOffset.UtcNow;
+            tenant.UpdatedAt = DateTimeOffset.UtcNow;
             _context.Tenants.Add(tenant);
             await _context.SaveChangesAsync();
             return tenant;
@@ -307,7 +307,7 @@ namespace RentManager.API.Services
             existingTenant.EmergencyContactName = tenant.EmergencyContactName;
             existingTenant.EmergencyContactPhone = tenant.EmergencyContactPhone;
             existingTenant.EmergencyContactRelation = tenant.EmergencyContactRelation;
-            existingTenant.UpdatedAt = DateTime.UtcNow;
+            existingTenant.UpdatedAt = DateTimeOffset.UtcNow;
 
             await _context.SaveChangesAsync();
             return existingTenant;
@@ -345,8 +345,8 @@ namespace RentManager.API.Services
             {
                 payment.Id = Guid.NewGuid().ToString();
             }
-            payment.CreatedAt = DateTime.UtcNow;
-            payment.UpdatedAt = DateTime.UtcNow;
+            payment.CreatedAt = DateTimeOffset.UtcNow;
+            payment.UpdatedAt = DateTimeOffset.UtcNow;
             _context.Payments.Add(payment);
             await _context.SaveChangesAsync();
             return payment;
@@ -366,7 +366,7 @@ namespace RentManager.API.Services
             existingPayment.Method = payment.Method;
             existingPayment.Status = payment.Status;
             existingPayment.Notes = payment.Notes;
-            existingPayment.UpdatedAt = DateTime.UtcNow;
+            existingPayment.UpdatedAt = DateTimeOffset.UtcNow;
 
             await _context.SaveChangesAsync();
             return existingPayment;
@@ -418,7 +418,7 @@ namespace RentManager.API.Services
             {
                 contract.Id = Guid.NewGuid().ToString();
             }
-            contract.UploadedAt = DateTime.UtcNow;
+            contract.UploadedAt = DateTimeOffset.UtcNow;
             _context.Contracts.Add(contract);
             await _context.SaveChangesAsync();
             return contract;
@@ -470,8 +470,8 @@ namespace RentManager.API.Services
             var totalRent = properties.Sum(p => p.RentAmount);
 
             // Calculate payments received this month
-            var currentMonth = DateTime.UtcNow.Month;
-            var currentYear = DateTime.UtcNow.Year;
+            var currentMonth = DateTimeOffset.UtcNow.Month;
+            var currentYear = DateTimeOffset.UtcNow.Year;
             var paymentsThisMonth = payments
                 .Where(p => p.Date.Month == currentMonth && p.Date.Year == currentYear && p.Status == PaymentStatus.Completed)
                 .Sum(p => p.Amount);
@@ -536,8 +536,8 @@ namespace RentManager.API.Services
         {
             if (tenant.LeaseStart == null) return 0;
 
-            var monthsSinceStart = ((DateTime.UtcNow.Year - tenant.LeaseStart.Value.Year) * 12) +
-                                   DateTime.UtcNow.Month - tenant.LeaseStart.Value.Month + 1;
+            var monthsSinceStart = ((DateTimeOffset.UtcNow.Year - tenant.LeaseStart.Value.Year) * 12) +
+                                   DateTimeOffset.UtcNow.Month - tenant.LeaseStart.Value.Month + 1;
             return Math.Max(0, monthsSinceStart * tenant.RentAmount);
         }
 

@@ -112,9 +112,9 @@ public class StripeWebhookController : ControllerBase
         if (payment.Status != PaymentStatus.Completed)
         {
             payment.Status = PaymentStatus.Completed;
-            payment.ProcessedAt = DateTime.UtcNow;
+            payment.ProcessedAt = DateTimeOffset.UtcNow;
             payment.ExternalTransactionId = paymentIntent.Id;
-            payment.UpdatedAt = DateTime.UtcNow;
+            payment.UpdatedAt = DateTimeOffset.UtcNow;
 
             await _paymentService.UpdatePaymentAsync(payment.Id, payment);
 
@@ -138,7 +138,7 @@ public class StripeWebhookController : ControllerBase
 
         payment.Status = PaymentStatus.Failed;
         payment.FailureReason = paymentIntent.LastPaymentError?.Message ?? "Payment failed";
-        payment.UpdatedAt = DateTime.UtcNow;
+        payment.UpdatedAt = DateTimeOffset.UtcNow;
 
         await _paymentService.UpdatePaymentAsync(payment.Id, payment);
 
@@ -184,7 +184,7 @@ public class StripeWebhookController : ControllerBase
         {
             // Mark as refunded - the actual refund payment was already created by RefundPaymentAsync
             payment.IsRefunded = true;
-            payment.UpdatedAt = DateTime.UtcNow;
+            payment.UpdatedAt = DateTimeOffset.UtcNow;
 
             await _paymentService.UpdatePaymentAsync(payment.Id, payment);
 
@@ -209,7 +209,7 @@ public class StripeWebhookController : ControllerBase
         if (payment.Status == PaymentStatus.Pending)
         {
             payment.Status = PaymentStatus.Processing;
-            payment.UpdatedAt = DateTime.UtcNow;
+            payment.UpdatedAt = DateTimeOffset.UtcNow;
 
             await _paymentService.UpdatePaymentAsync(payment.Id, payment);
 

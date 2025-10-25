@@ -409,8 +409,8 @@ namespace RentManager.API.Controllers
             [FromQuery] DateTime? to = null)
         {
             var currentUser = await GetCurrentUserAsync();
-            var fromDate = from ?? DateTime.UtcNow.AddMonths(-12);
-            var toDate = to ?? DateTime.UtcNow;
+            var fromDate = from ?? DateTimeOffset.UtcNow.AddMonths(-12);
+            var toDate = to ?? DateTimeOffset.UtcNow;
 
             var totalCollected = await _paymentService.GetTotalCollectedAsync(fromDate, toDate, currentUser);
             var byMethod = await _paymentService.GetPaymentsByMethodAsync(fromDate, toDate, currentUser);

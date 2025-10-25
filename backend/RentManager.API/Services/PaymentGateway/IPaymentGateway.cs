@@ -89,7 +89,7 @@ public class PaymentGatewayResponse
     public string? ErrorMessage { get; set; }
     public string? ErrorCode { get; set; }
     public decimal? ProcessingFee { get; set; }
-    public DateTime? ProcessedAt { get; set; }
+    public DateTimeOffset? ProcessedAt { get; set; }
     public string? ConfirmationCode { get; set; }
     public Dictionary<string, object>? Metadata { get; set; }
 

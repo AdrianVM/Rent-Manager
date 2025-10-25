@@ -27,24 +27,24 @@ public interface IPaymentService
 
     // Payment validation
     Task<bool> ValidatePaymentAsync(string tenantId, decimal amount);
-    Task<bool> CheckDuplicatePaymentAsync(string tenantId, DateTime date, decimal amount);
+    Task<bool> CheckDuplicatePaymentAsync(string tenantId, DateTimeOffset date, decimal amount);
 
     // Payment reconciliation
     Task<List<Payment>> GetPendingPaymentsAsync(User? user = null);
-    Task<List<Payment>> GetFailedPaymentsAsync(DateTime? from = null, DateTime? to = null);
-    Task<decimal> GetTotalCollectedAsync(DateTime? from = null, DateTime? to = null, User? user = null);
+    Task<List<Payment>> GetFailedPaymentsAsync(DateTimeOffset? from = null, DateTimeOffset? to = null);
+    Task<decimal> GetTotalCollectedAsync(DateTimeOffset? from = null, DateTimeOffset? to = null, User? user = null);
 
     // Recurring payments (for rent automation)
-    Task<List<Payment>> GenerateRecurringPaymentsAsync(DateTime forMonth);
+    Task<List<Payment>> GenerateRecurringPaymentsAsync(DateTimeOffset forMonth);
     Task<Payment?> GetLastPaymentForTenantAsync(string tenantId);
 
     // Romanian specific methods
-    Task<string> GenerateRomanianPaymentReferenceAsync(string tenantId, DateTime month);
+    Task<string> GenerateRomanianPaymentReferenceAsync(string tenantId, DateTimeOffset month);
     Task<bool> ValidateIBANAsync(string iban);
-    Task<Payment?> ReconcilePaymentByReferenceAsync(string reference, decimal amount, DateTime date);
+    Task<Payment?> ReconcilePaymentByReferenceAsync(string reference, decimal amount, DateTimeOffset date);
 
     // Analytics and reporting
-    Task<Dictionary<PaymentMethod, decimal>> GetPaymentsByMethodAsync(DateTime from, DateTime to, User? user = null);
+    Task<Dictionary<PaymentMethod, decimal>> GetPaymentsByMethodAsync(DateTimeOffset from, DateTimeOffset to, User? user = null);
     Task<Dictionary<PaymentStatus, int>> GetPaymentStatusDistributionAsync(User? user = null);
 
     // Delete (admin only)

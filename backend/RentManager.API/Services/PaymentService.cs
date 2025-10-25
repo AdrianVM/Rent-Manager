@@ -107,8 +107,8 @@ public class PaymentService : IPaymentService
     public async Task<Payment> CreatePaymentAsync(Payment payment, User? user = null)
     {
         payment.Id = Guid.NewGuid().ToString();
-        payment.CreatedAt = DateTime.UtcNow;
-        payment.UpdatedAt = DateTime.UtcNow;
+        payment.CreatedAt = DateTimeOffset.UtcNow;
+        payment.UpdatedAt = DateTimeOffset.UtcNow;
 
         if (string.IsNullOrEmpty(payment.IdempotencyKey))
         {
@@ -141,17 +141,17 @@ public class PaymentService : IPaymentService
             Id = Guid.NewGuid().ToString(),
             TenantId = tenantId,
             Amount = amount,
-            Date = DateTime.UtcNow,
+            Date = DateTimeOffset.UtcNow,
             Method = method,
             Status = PaymentStatus.Pending,
             IdempotencyKey = Guid.NewGuid().ToString(),
-            CreatedAt = DateTime.UtcNow,
-            UpdatedAt = DateTime.UtcNow
+            CreatedAt = DateTimeOffset.UtcNow,
+            UpdatedAt = DateTimeOffset.UtcNow
         };
 
         if (method == PaymentMethod.BankTransfer)
         {
-            payment.PaymentReference = await GenerateRomanianPaymentReferenceAsync(tenantId, DateTime.UtcNow);
+            payment.PaymentReference = await GenerateRomanianPaymentReferenceAsync(tenantId, DateTimeOffset.UtcNow);
         }
 
         _context.Payments.Add(payment);
@@ -188,7 +188,7 @@ public class PaymentService : IPaymentService
         {
             payment.ExternalTransactionId = response.TransactionId;
             payment.PaymentGatewayProvider = _paymentGateway.ProviderName;
-            payment.UpdatedAt = DateTime.UtcNow;
+            payment.UpdatedAt = DateTimeOffset.UtcNow;
             await _context.SaveChangesAsync();
         }
 
@@ -217,7 +217,7 @@ public class PaymentService : IPaymentService
 
         payment.Status = PaymentStatus.Processing;
         payment.ExternalTransactionId = externalTransactionId;
-        payment.UpdatedAt = DateTime.UtcNow;
+        payment.UpdatedAt = DateTimeOffset.UtcNow;
 
         await _context.SaveChangesAsync();
 
@@ -235,7 +235,7 @@ public class PaymentService : IPaymentService
                 {
                     payment.Status = PaymentStatus.Completed;
                     payment.ExternalTransactionId = externalTransactionId;
-                    payment.ProcessedAt = DateTime.UtcNow;
+                    payment.ProcessedAt = DateTimeOffset.UtcNow;
                     payment.PaymentGatewayProvider = _paymentGateway.ProviderName;
                 }
                 else
@@ -247,7 +247,7 @@ public class PaymentService : IPaymentService
                     {
                         payment.Status = gatewayResponse.Status;
                         payment.ExternalTransactionId = gatewayResponse.TransactionId;
-                        payment.ProcessedAt = gatewayResponse.ProcessedAt ?? DateTime.UtcNow;
+                        payment.ProcessedAt = gatewayResponse.ProcessedAt ?? DateTimeOffset.UtcNow;
                         payment.ProcessingFee = gatewayResponse.ProcessingFee;
                         payment.PaymentGatewayProvider = _paymentGateway.ProviderName;
                     }
@@ -262,10 +262,10 @@ public class PaymentService : IPaymentService
             {
                 // Manual processing for cash, check, or bank transfer
                 payment.Status = PaymentStatus.Completed;
-                payment.ProcessedAt = DateTime.UtcNow;
+                payment.ProcessedAt = DateTimeOffset.UtcNow;
             }
 
-            payment.UpdatedAt = DateTime.UtcNow;
+            payment.UpdatedAt = DateTimeOffset.UtcNow;
             await _context.SaveChangesAsync();
 
             _logger.LogInformation("Payment processed successfully: {PaymentId} via {Method}",
@@ -275,7 +275,7 @@ public class PaymentService : IPaymentService
         {
             payment.Status = PaymentStatus.Failed;
             payment.FailureReason = ex.Message;
-            payment.UpdatedAt = DateTime.UtcNow;
+            payment.UpdatedAt = DateTimeOffset.UtcNow;
 
             await _context.SaveChangesAsync();
 
@@ -296,8 +296,8 @@ public class PaymentService : IPaymentService
 
         payment.ConfirmationCode = confirmationCode;
         payment.Status = PaymentStatus.Completed;
-        payment.ProcessedAt = DateTime.UtcNow;
-        payment.UpdatedAt = DateTime.UtcNow;
+        payment.ProcessedAt = DateTimeOffset.UtcNow;
+        payment.UpdatedAt = DateTimeOffset.UtcNow;
 
         await _context.SaveChangesAsync();
 
@@ -328,7 +328,7 @@ public class PaymentService : IPaymentService
         existingPayment.Method = payment.Method;
         existingPayment.Status = payment.Status;
         existingPayment.Notes = payment.Notes;
-        existingPayment.UpdatedAt = DateTime.UtcNow;
+        existingPayment.UpdatedAt = DateTimeOffset.UtcNow;
 
         await _context.SaveChangesAsync();
 
@@ -352,7 +352,7 @@ public class PaymentService : IPaymentService
 
         payment.Status = PaymentStatus.Cancelled;
         payment.FailureReason = reason;
-        payment.UpdatedAt = DateTime.UtcNow;
+        payment.UpdatedAt = DateTimeOffset.UtcNow;
 
         await _context.SaveChangesAsync();
 
@@ -401,20 +401,20 @@ public class PaymentService : IPaymentService
             Id = Guid.NewGuid().ToString(),
             TenantId = originalPayment.TenantId,
             Amount = -refundAmount,
-            Date = DateTime.UtcNow,
+            Date = DateTimeOffset.UtcNow,
             Method = originalPayment.Method,
             Status = PaymentStatus.Refunded,
             Notes = $"Refund for payment {paymentId}. Reason: {reason}",
             RefundedPaymentId = paymentId,
             RefundReason = reason,
-            RefundedAt = DateTime.UtcNow,
-            CreatedAt = DateTime.UtcNow,
-            UpdatedAt = DateTime.UtcNow,
+            RefundedAt = DateTimeOffset.UtcNow,
+            CreatedAt = DateTimeOffset.UtcNow,
+            UpdatedAt = DateTimeOffset.UtcNow,
             PaymentGatewayProvider = originalPayment.PaymentGatewayProvider
         };
 
         originalPayment.IsRefunded = true;
-        originalPayment.UpdatedAt = DateTime.UtcNow;
+        originalPayment.UpdatedAt = DateTimeOffset.UtcNow;
 
         _context.Payments.Add(refundPayment);
         await _context.SaveChangesAsync();
@@ -449,7 +449,7 @@ public class PaymentService : IPaymentService
         return true;
     }
 
-    public async Task<bool> CheckDuplicatePaymentAsync(string tenantId, DateTime date, decimal amount)
+    public async Task<bool> CheckDuplicatePaymentAsync(string tenantId, DateTimeOffset date, decimal amount)
     {
         var existingPayment = await _context.Payments
             .Where(p => p.TenantId == tenantId
@@ -499,7 +499,7 @@ public class PaymentService : IPaymentService
         return await query.OrderBy(p => p.Date).ToListAsync();
     }
 
-    public async Task<List<Payment>> GetFailedPaymentsAsync(DateTime? from = null, DateTime? to = null)
+    public async Task<List<Payment>> GetFailedPaymentsAsync(DateTimeOffset? from = null, DateTimeOffset? to = null)
     {
         var query = _context.Payments.Where(p => p.Status == PaymentStatus.Failed);
 
@@ -516,7 +516,7 @@ public class PaymentService : IPaymentService
         return await query.OrderByDescending(p => p.Date).ToListAsync();
     }
 
-    public async Task<decimal> GetTotalCollectedAsync(DateTime? from = null, DateTime? to = null, User? user = null)
+    public async Task<decimal> GetTotalCollectedAsync(DateTimeOffset? from = null, DateTimeOffset? to = null, User? user = null)
     {
         var query = _context.Payments.Where(p => p.Status == PaymentStatus.Completed);
 
@@ -564,7 +564,7 @@ public class PaymentService : IPaymentService
 
     #region Recurring Payments
 
-    public async Task<List<Payment>> GenerateRecurringPaymentsAsync(DateTime forMonth)
+    public async Task<List<Payment>> GenerateRecurringPaymentsAsync(DateTimeOffset forMonth)
     {
         var firstDayOfMonth = new DateTime(forMonth.Year, forMonth.Month, 1);
         var activeTenants = await _context.Tenants
@@ -594,8 +594,8 @@ public class PaymentService : IPaymentService
                     IsRecurring = true,
                     RecurringForMonth = firstDayOfMonth,
                     PaymentReference = await GenerateRomanianPaymentReferenceAsync(tenant.Id, forMonth),
-                    CreatedAt = DateTime.UtcNow,
-                    UpdatedAt = DateTime.UtcNow
+                    CreatedAt = DateTimeOffset.UtcNow,
+                    UpdatedAt = DateTimeOffset.UtcNow
                 };
 
                 _context.Payments.Add(payment);
@@ -622,7 +622,7 @@ public class PaymentService : IPaymentService
 
     #region Romanian Specific Methods
 
-    public async Task<string> GenerateRomanianPaymentReferenceAsync(string tenantId, DateTime month)
+    public async Task<string> GenerateRomanianPaymentReferenceAsync(string tenantId, DateTimeOffset month)
     {
         var tenant = await _context.Tenants.FindAsync(tenantId);
         if (tenant == null)
@@ -661,7 +661,7 @@ public class PaymentService : IPaymentService
         return Task.FromResult(true);
     }
 
-    public async Task<Payment?> ReconcilePaymentByReferenceAsync(string reference, decimal amount, DateTime date)
+    public async Task<Payment?> ReconcilePaymentByReferenceAsync(string reference, decimal amount, DateTimeOffset date)
     {
         var payment = await _context.Payments
             .Where(p => p.PaymentReference == reference && p.Status == PaymentStatus.Pending)
@@ -681,7 +681,7 @@ public class PaymentService : IPaymentService
 
         payment.Status = PaymentStatus.Completed;
         payment.ProcessedAt = date;
-        payment.UpdatedAt = DateTime.UtcNow;
+        payment.UpdatedAt = DateTimeOffset.UtcNow;
 
         await _context.SaveChangesAsync();
 
@@ -694,7 +694,7 @@ public class PaymentService : IPaymentService
 
     #region Analytics and Reporting
 
-    public async Task<Dictionary<PaymentMethod, decimal>> GetPaymentsByMethodAsync(DateTime from, DateTime to, User? user = null)
+    public async Task<Dictionary<PaymentMethod, decimal>> GetPaymentsByMethodAsync(DateTimeOffset from, DateTimeOffset to, User? user = null)
     {
         var query = _context.Payments
             .Where(p => p.Status == PaymentStatus.Completed

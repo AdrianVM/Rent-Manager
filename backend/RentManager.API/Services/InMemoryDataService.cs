@@ -17,8 +17,8 @@ namespace RentManager.API.Services
             {
                 person.Id = Guid.NewGuid().ToString();
             }
-            person.CreatedAt = DateTime.UtcNow;
-            person.UpdatedAt = DateTime.UtcNow;
+            person.CreatedAt = DateTimeOffset.UtcNow;
+            person.UpdatedAt = DateTimeOffset.UtcNow;
 
             _persons.Add(person);
             return Task.FromResult(person);
@@ -88,8 +88,8 @@ namespace RentManager.API.Services
         public Task<Property> CreatePropertyAsync(Property property, User? user = null)
         {
             property.Id = Guid.NewGuid().ToString();
-            property.CreatedAt = DateTime.UtcNow;
-            property.UpdatedAt = DateTime.UtcNow;
+            property.CreatedAt = DateTimeOffset.UtcNow;
+            property.UpdatedAt = DateTimeOffset.UtcNow;
             _properties.Add(property);
             return Task.FromResult(property);
         }
@@ -109,7 +109,7 @@ namespace RentManager.API.Services
             existingProperty.ParkingType = property.ParkingType;
             existingProperty.SpaceNumber = property.SpaceNumber;
             existingProperty.SquareFootage = property.SquareFootage;
-            existingProperty.UpdatedAt = DateTime.UtcNow;
+            existingProperty.UpdatedAt = DateTimeOffset.UtcNow;
 
             return Task.FromResult<Property?>(existingProperty);
         }
@@ -155,8 +155,8 @@ namespace RentManager.API.Services
         public Task<Tenant> CreateTenantAsync(Tenant tenant, User? user = null)
         {
             tenant.Id = Guid.NewGuid().ToString();
-            tenant.CreatedAt = DateTime.UtcNow;
-            tenant.UpdatedAt = DateTime.UtcNow;
+            tenant.CreatedAt = DateTimeOffset.UtcNow;
+            tenant.UpdatedAt = DateTimeOffset.UtcNow;
             _tenants.Add(tenant);
             return Task.FromResult(tenant);
         }
@@ -180,7 +180,7 @@ namespace RentManager.API.Services
             existingTenant.EmergencyContactName = tenant.EmergencyContactName;
             existingTenant.EmergencyContactPhone = tenant.EmergencyContactPhone;
             existingTenant.EmergencyContactRelation = tenant.EmergencyContactRelation;
-            existingTenant.UpdatedAt = DateTime.UtcNow;
+            existingTenant.UpdatedAt = DateTimeOffset.UtcNow;
 
             return Task.FromResult<Tenant?>(existingTenant);
         }
@@ -232,8 +232,8 @@ namespace RentManager.API.Services
         public Task<Payment> CreatePaymentAsync(Payment payment, User? user = null)
         {
             payment.Id = Guid.NewGuid().ToString();
-            payment.CreatedAt = DateTime.UtcNow;
-            payment.UpdatedAt = DateTime.UtcNow;
+            payment.CreatedAt = DateTimeOffset.UtcNow;
+            payment.UpdatedAt = DateTimeOffset.UtcNow;
             _payments.Add(payment);
             return Task.FromResult(payment);
         }
@@ -249,7 +249,7 @@ namespace RentManager.API.Services
             existingPayment.Method = payment.Method;
             existingPayment.Status = payment.Status;
             existingPayment.Notes = payment.Notes;
-            existingPayment.UpdatedAt = DateTime.UtcNow;
+            existingPayment.UpdatedAt = DateTimeOffset.UtcNow;
 
             return Task.FromResult<Payment?>(existingPayment);
         }
@@ -313,7 +313,7 @@ namespace RentManager.API.Services
         public Task<Contract> CreateContractAsync(Contract contract, User? user = null)
         {
             contract.Id = Guid.NewGuid().ToString();
-            contract.UploadedAt = DateTime.UtcNow;
+            contract.UploadedAt = DateTimeOffset.UtcNow;
             _contracts.Add(contract);
             return Task.FromResult(contract);
         }
@@ -344,8 +344,8 @@ namespace RentManager.API.Services
         // Dashboard
         public Task<DashboardStats> GetDashboardStatsAsync(User? user = null)
         {
-            var currentMonth = DateTime.UtcNow.Month;
-            var currentYear = DateTime.UtcNow.Year;
+            var currentMonth = DateTimeOffset.UtcNow.Month;
+            var currentYear = DateTimeOffset.UtcNow.Year;
 
             var activeTenants = _tenants.Where(t => t.Status == TenantStatus.Active).ToList();
             var currentMonthPayments = _payments.Where(p => 
@@ -385,7 +385,7 @@ namespace RentManager.API.Services
                     PropertyName = property?.Name ?? "Unknown Property",
                     AmountDue = amountDue,
                     TotalPaid = tenantCurrentMonthPayments,
-                    IsOverdue = amountDue > 0 && DateTime.UtcNow.Day > 5
+                    IsOverdue = amountDue > 0 && DateTimeOffset.UtcNow.Day > 5
                 };
             }).Where(item => item.AmountDue > 0).ToList();
 

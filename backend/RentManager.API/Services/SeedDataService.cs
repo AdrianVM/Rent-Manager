@@ -59,15 +59,15 @@ namespace RentManager.API.Services
                         DateOfBirth = new DateTime(1990, 1, 1, 0, 0, 0, DateTimeKind.Utc),
                         Nationality = "Demo",
                         Occupation = "Demo User",
-                        CreatedAt = DateTime.UtcNow,
-                        UpdatedAt = DateTime.UtcNow
+                        CreatedAt = DateTimeOffset.UtcNow,
+                        UpdatedAt = DateTimeOffset.UtcNow
                     };
 
                     _context.Persons.Add(person);
                     await _context.SaveChangesAsync();
 
                     existingUser.PersonId = person.Id;
-                    existingUser.UpdatedAt = DateTime.UtcNow;
+                    existingUser.UpdatedAt = DateTimeOffset.UtcNow;
                     await _context.SaveChangesAsync();
                 }
 
@@ -101,8 +101,8 @@ namespace RentManager.API.Services
                     DateOfBirth = new DateTime(1990, 1, 1, 0, 0, 0, DateTimeKind.Utc),
                     Nationality = "Demo",
                     Occupation = "Demo User",
-                    CreatedAt = DateTime.UtcNow,
-                    UpdatedAt = DateTime.UtcNow
+                    CreatedAt = DateTimeOffset.UtcNow,
+                    UpdatedAt = DateTimeOffset.UtcNow
                 };
 
                 _context.Persons.Add(person);
@@ -115,8 +115,8 @@ namespace RentManager.API.Services
                     PasswordHash = "not-used-zitadel-auth", // Using Zitadel for authentication
                     IsActive = true,
                     PersonId = person.Id,
-                    CreatedAt = DateTime.UtcNow,
-                    UpdatedAt = DateTime.UtcNow
+                    CreatedAt = DateTimeOffset.UtcNow,
+                    UpdatedAt = DateTimeOffset.UtcNow
                 };
 
                 _context.Users.Add(existingUser);
@@ -131,9 +131,9 @@ namespace RentManager.API.Services
             // Add all three roles to the user
             var userRoles = new List<UserRole>
             {
-                new UserRole { UserId = existingUser.Id, RoleId = adminRole.Id, AssignedAt = DateTime.UtcNow },
-                new UserRole { UserId = existingUser.Id, RoleId = propertyOwnerRole.Id, AssignedAt = DateTime.UtcNow },
-                new UserRole { UserId = existingUser.Id, RoleId = renterRole.Id, AssignedAt = DateTime.UtcNow }
+                new UserRole { UserId = existingUser.Id, RoleId = adminRole.Id, AssignedAt = DateTimeOffset.UtcNow },
+                new UserRole { UserId = existingUser.Id, RoleId = propertyOwnerRole.Id, AssignedAt = DateTimeOffset.UtcNow },
+                new UserRole { UserId = existingUser.Id, RoleId = renterRole.Id, AssignedAt = DateTimeOffset.UtcNow }
             };
 
             _context.UserRoles.AddRange(userRoles);
@@ -246,8 +246,8 @@ namespace RentManager.API.Services
                 {
                     Id = Guid.NewGuid().ToString(),
                     PropertyId = property.Id,
-                    CreatedAt = DateTime.UtcNow,
-                    UpdatedAt = DateTime.UtcNow
+                    CreatedAt = DateTimeOffset.UtcNow,
+                    UpdatedAt = DateTimeOffset.UtcNow
                 };
 
                 _context.PropertyOwners.Add(propertyOwner);

@@ -34,7 +34,7 @@ namespace RentManager.API.Controllers
                 return BadRequest(new { message = $"This invitation has already been {invitation.Status.ToString().ToLower()}" });
             }
 
-            if (invitation.ExpiresAt < DateTime.UtcNow)
+            if (invitation.ExpiresAt < DateTimeOffset.UtcNow)
             {
                 invitation.Status = InvitationStatus.Expired;
                 return BadRequest(new { message = "This invitation has expired" });
@@ -82,7 +82,7 @@ namespace RentManager.API.Controllers
 
             // Mark invitation as accepted
             invitation.Status = InvitationStatus.Accepted;
-            invitation.UpdatedAt = DateTime.UtcNow;
+            invitation.UpdatedAt = DateTimeOffset.UtcNow;
 
             return Ok(new
             {

@@ -83,7 +83,7 @@ namespace RentManager.API.Controllers
                 return BadRequest(new { message = $"This invitation has already been {invitation.Status.ToString().ToLower()}" });
             }
 
-            if (invitation.ExpiresAt < DateTime.UtcNow)
+            if (invitation.ExpiresAt < DateTimeOffset.UtcNow)
             {
                 invitation.Status = InvitationStatus.Expired;
                 return BadRequest(new { message = "This invitation has expired" });
@@ -115,7 +115,7 @@ namespace RentManager.API.Controllers
             }
 
             invitation.Status = InvitationStatus.Cancelled;
-            invitation.UpdatedAt = DateTime.UtcNow;
+            invitation.UpdatedAt = DateTimeOffset.UtcNow;
 
             return Ok(new { message = "Invitation cancelled successfully" });
         }
@@ -134,9 +134,9 @@ namespace RentManager.API.Controllers
 
             // Generate new token and extend expiration
             invitation.InvitationToken = Guid.NewGuid().ToString();
-            invitation.ExpiresAt = DateTime.UtcNow.AddDays(7);
+            invitation.ExpiresAt = DateTimeOffset.UtcNow.AddDays(7);
             invitation.Status = InvitationStatus.Pending;
-            invitation.UpdatedAt = DateTime.UtcNow;
+            invitation.UpdatedAt = DateTimeOffset.UtcNow;
 
             // Get frontend URL from configuration
             var frontendUrl = _configuration["FrontendUrl"] ?? "http://localhost:3000";
