@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using RentManager.API.Models;
 using RentManager.API.Services;
+using RentManager.API.DTOs;
 
 namespace RentManager.API.Controllers
 {
@@ -18,7 +19,7 @@ namespace RentManager.API.Controllers
         }
 
         [HttpGet("me")]
-        public async Task<ActionResult<User>> GetCurrentUser()
+        public async Task<ActionResult<UserDto>> GetCurrentUser()
         {
             var userId = GetCurrentUserId();
             if (string.IsNullOrEmpty(userId))
@@ -32,13 +33,11 @@ namespace RentManager.API.Controllers
                 return NotFound();
             }
 
-            // Remove password hash from response
-            user.PasswordHash = "";
-            return Ok(user);
+            return Ok(UserMapper.ToDto(user));
         }
 
         [HttpPut("me")]
-        public async Task<ActionResult<User>> UpdateCurrentUser([FromBody] UserUpdateRequest request)
+        public async Task<ActionResult<UserDto>> UpdateCurrentUser([FromBody] UserUpdateRequest request)
         {
             var userId = GetCurrentUserId();
             if (string.IsNullOrEmpty(userId))
@@ -52,27 +51,18 @@ namespace RentManager.API.Controllers
                 return NotFound();
             }
 
-            // Remove password hash from response
-            user.PasswordHash = "";
-            return Ok(user);
+            return Ok(UserMapper.ToDto(user));
         }
 
         [HttpGet("users")]
-        public async Task<ActionResult<List<User>>> GetUsers()
+        public async Task<ActionResult<List<UserDto>>> GetUsers()
         {
             var users = await _authService.GetUsersAsync();
-
-            // Remove password hashes from response
-            foreach (var user in users)
-            {
-                user.PasswordHash = "";
-            }
-
-            return Ok(users);
+            return Ok(UserMapper.ToDto(users));
         }
 
         [HttpPut("users/{userId}")]
-        public async Task<ActionResult<User>> UpdateUser(string userId, [FromBody] UserUpdateRequest request)
+        public async Task<ActionResult<UserDto>> UpdateUser(string userId, [FromBody] UserUpdateRequest request)
         {
             var user = await _authService.UpdateUserAsync(userId, request);
             if (user == null)
@@ -80,9 +70,7 @@ namespace RentManager.API.Controllers
                 return NotFound();
             }
 
-            // Remove password hash from response
-            user.PasswordHash = "";
-            return Ok(user);
+            return Ok(UserMapper.ToDto(user));
         }
 
         [HttpDelete("users/{userId}")]
