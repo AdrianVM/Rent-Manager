@@ -1,79 +1,43 @@
 using RentManager.API.Models;
+using RentManager.API.Data;
 
 namespace RentManager.API.Services
 {
     public class AuthService : IAuthService
     {
-        private readonly IDataService _dataService;
+        private readonly PostgresDataService _postgresDataService;
         private readonly IConfiguration _configuration;
-        private readonly Dictionary<string, User> _users = new();
 
         public AuthService(IDataService dataService, IConfiguration configuration)
         {
-            _dataService = dataService;
+            _postgresDataService = dataService as PostgresDataService
+                ?? throw new ArgumentException("AuthService requires PostgresDataService");
             _configuration = configuration;
         }
 
         public async Task<User?> GetUserByIdAsync(string userId)
         {
-            _users.TryGetValue(userId, out var user);
-            return await Task.FromResult(user);
+            return await _postgresDataService.GetUserByIdAsync(userId);
         }
 
         public async Task<User?> GetUserByEmailAsync(string email)
         {
-            var user = _users.Values.FirstOrDefault(u => u.Email.Equals(email, StringComparison.OrdinalIgnoreCase));
-            return await Task.FromResult(user);
+            return await _postgresDataService.GetUserByEmailAsync(email);
         }
 
         public async Task<User?> UpdateUserAsync(string userId, UserUpdateRequest request)
         {
-            if (!_users.TryGetValue(userId, out var user))
-            {
-                return null;
-            }
-
-            // Update Person details if provided
-            if (user.Person != null)
-            {
-                if (!string.IsNullOrEmpty(request.FirstName))
-                    user.Person.FirstName = request.FirstName;
-
-                if (!string.IsNullOrEmpty(request.MiddleName))
-                    user.Person.MiddleName = request.MiddleName;
-
-                if (!string.IsNullOrEmpty(request.LastName))
-                    user.Person.LastName = request.LastName;
-
-                user.Person.UpdatedAt = DateTime.UtcNow;
-            }
-
-            if (!string.IsNullOrEmpty(request.Email))
-                user.Email = request.Email;
-
-            // Role updates should be handled separately through UserRoles relationship
-            if (request.Roles != null && request.Roles.Any())
-            {
-                // TODO: Implement role updates in in-memory service if needed
-            }
-
-            if (request.IsActive.HasValue)
-                user.IsActive = request.IsActive.Value;
-
-            user.UpdatedAt = DateTime.UtcNow;
-
-            return await Task.FromResult(user);
+            return await _postgresDataService.UpdateUserAsync(userId, request);
         }
 
         public async Task<bool> DeleteUserAsync(string userId)
         {
-            var removed = _users.Remove(userId);
-            return await Task.FromResult(removed);
+            return await _postgresDataService.DeleteUserAsync(userId);
         }
 
         public async Task<List<User>> GetUsersAsync()
         {
-            return await Task.FromResult(_users.Values.ToList());
+            return await _postgresDataService.GetAllUsersAsync();
         }
     }
 }

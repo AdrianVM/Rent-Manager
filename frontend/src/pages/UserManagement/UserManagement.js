@@ -4,10 +4,15 @@ import apiService from '../../services/api';
 import { Table } from '../../components/common';
 
 function EditUserModal({ user, onSave, onClose }) {
+  // Get the first role from userRoles array, or default to 'Renter'
+  const userRole = user.userRoles && user.userRoles.length > 0
+    ? user.userRoles[0].role.name
+    : 'Renter';
+
   const [formData, setFormData] = useState({
     name: user.name || '',
     email: user.email || '',
-    role: user.role || 'renter',
+    role: userRole,
     isActive: user.isActive !== undefined ? user.isActive : true
   });
 
@@ -50,9 +55,9 @@ function EditUserModal({ user, onSave, onClose }) {
               onChange={(e) => setFormData({ ...formData, role: e.target.value })}
               className="form-select"
             >
-              <option value="renter">Renter</option>
-              <option value="propertyowner">Property Owner</option>
-              <option value="admin">Admin</option>
+              <option value="Renter">Renter</option>
+              <option value="PropertyOwner">Property Owner</option>
+              <option value="Admin">Admin</option>
             </select>
           </div>
           <div className="form-group">
@@ -148,9 +153,9 @@ function CreateUserModal({ onClose, onUserCreated }) {
               onChange={(e) => setFormData({ ...formData, role: e.target.value })}
               className="form-select"
             >
-              <option value="renter">Renter</option>
-              <option value="propertyowner">Property Owner</option>
-              <option value="admin">Admin</option>
+              <option value="Renter">Renter</option>
+              <option value="PropertyOwner">Property Owner</option>
+              <option value="Admin">Admin</option>
             </select>
           </div>
           <div className="modal-actions">
@@ -263,11 +268,16 @@ function UserManagement() {
             },
             {
               header: 'Role',
-              render: (user) => (
-                <span className={`role-badge ${user.role?.toLowerCase()}`}>
-                  {user.role}
-                </span>
-              )
+              render: (user) => {
+                const role = user.userRoles && user.userRoles.length > 0
+                  ? user.userRoles[0].role.name
+                  : 'Unknown';
+                return (
+                  <span className={`role-badge ${role.toLowerCase()}`}>
+                    {role}
+                  </span>
+                );
+              }
             },
             {
               header: 'Status',
@@ -314,8 +324,8 @@ function UserManagement() {
                 <div className="card-item-detail">
                   <span className="card-item-label">Role:</span>
                   <span className="card-item-value">
-                    <span className={`role-badge ${user.role?.toLowerCase()}`}>
-                      {user.role}
+                    <span className={`role-badge ${(user.userRoles && user.userRoles.length > 0 ? user.userRoles[0].role.name : 'Unknown').toLowerCase()}`}>
+                      {user.userRoles && user.userRoles.length > 0 ? user.userRoles[0].role.name : 'Unknown'}
                     </span>
                   </span>
                 </div>

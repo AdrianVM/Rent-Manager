@@ -19,6 +19,7 @@ namespace RentManager.API.Services
         public async Task<User?> GetUserByIdAsync(string id)
         {
             return await _context.Users
+                .Include(u => u.Person)
                 .Include(u => u.UserRoles)
                     .ThenInclude(ur => ur.Role)
                 .FirstOrDefaultAsync(u => u.Id == id);
@@ -27,6 +28,7 @@ namespace RentManager.API.Services
         public async Task<User?> GetUserByEmailAsync(string email)
         {
             return await _context.Users
+                .Include(u => u.Person)
                 .Include(u => u.UserRoles)
                     .ThenInclude(ur => ur.Role)
                 .FirstOrDefaultAsync(u => u.Email == email);
@@ -35,6 +37,7 @@ namespace RentManager.API.Services
         public async Task<List<User>> GetAllUsersAsync()
         {
             return await _context.Users
+                .Include(u => u.Person)
                 .Include(u => u.UserRoles)
                     .ThenInclude(ur => ur.Role)
                 .ToListAsync();
