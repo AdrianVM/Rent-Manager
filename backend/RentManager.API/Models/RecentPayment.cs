@@ -6,7 +6,7 @@ namespace RentManager.API.Models
         public string TenantName { get; set; } = string.Empty;
         public string PropertyName { get; set; } = string.Empty;
         public decimal Amount { get; set; }
-        public DateTime Date { get; set; }
+        public DateTimeOffset Date { get; set; }
         public PaymentStatus Status { get; set; }
     }
 }

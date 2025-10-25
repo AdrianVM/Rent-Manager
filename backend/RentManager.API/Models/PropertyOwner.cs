@@ -12,7 +12,7 @@ namespace RentManager.API.Models
         public ICollection<Person> PersonOwners { get; set; } = new List<Person>();
         public ICollection<Company> OwningCompanies { get; set; } = new List<Company>();
 
-        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
-        public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
+        public DateTimeOffset CreatedAt { get; set; } = DateTimeOffset.UtcNow;
+        public DateTimeOffset UpdatedAt { get; set; } = DateTimeOffset.UtcNow;
     }
 }

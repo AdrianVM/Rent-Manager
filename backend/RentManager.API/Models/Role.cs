@@ -10,7 +10,7 @@ namespace RentManager.API.Models
         public int Id { get; set; }
         public string Name { get; set; } = string.Empty;
         public string? Description { get; set; }
-        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+        public DateTimeOffset CreatedAt { get; set; } = DateTimeOffset.UtcNow;
 
         // Navigation property
         public ICollection<UserRole> UserRoles { get; set; } = new List<UserRole>();

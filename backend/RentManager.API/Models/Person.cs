@@ -10,8 +10,8 @@ namespace RentManager.API.Models
         public string? IdNumber { get; set; }
         public string? Nationality { get; set; }
         public string? Occupation { get; set; }
-        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
-        public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
+        public DateTimeOffset CreatedAt { get; set; } = DateTimeOffset.UtcNow;
+        public DateTimeOffset UpdatedAt { get; set; } = DateTimeOffset.UtcNow;
 
         // Computed property for full name
         public string FullName

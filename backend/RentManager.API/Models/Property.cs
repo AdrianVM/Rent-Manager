@@ -13,8 +13,8 @@ namespace RentManager.API.Models
         public ParkingType? ParkingType { get; set; }
         public string? SpaceNumber { get; set; }
         public int? SquareFootage { get; set; }
-        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
-        public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
+        public DateTimeOffset CreatedAt { get; set; } = DateTimeOffset.UtcNow;
+        public DateTimeOffset UpdatedAt { get; set; } = DateTimeOffset.UtcNow;
 
         // Navigation properties
         public ICollection<PropertyOwner> PropertyOwners { get; set; } = new List<PropertyOwner>();

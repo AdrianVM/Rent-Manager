@@ -20,14 +20,14 @@ namespace RentManager.API.Models
 
         public string PropertyId { get; set; } = string.Empty;
         public Property Property { get; set; } = null!;
-        public DateTime? LeaseStart { get; set; }
-        public DateTime? LeaseEnd { get; set; }
+        public DateTimeOffset? LeaseStart { get; set; }
+        public DateTimeOffset? LeaseEnd { get; set; }
         public decimal RentAmount { get; set; }
         public decimal? Deposit { get; set; }
         public TenantStatus Status { get; set; } = TenantStatus.Active;
 
-        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
-        public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
+        public DateTimeOffset CreatedAt { get; set; } = DateTimeOffset.UtcNow;
+        public DateTimeOffset UpdatedAt { get; set; } = DateTimeOffset.UtcNow;
 
         // Emergency contact information
         public string? EmergencyContactName { get; set; }

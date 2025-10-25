@@ -9,8 +9,8 @@ namespace RentManager.API.Models
         public string FileContentBase64 { get; set; } = string.Empty;
         public string MimeType { get; set; } = string.Empty;
         public long FileSizeBytes { get; set; }
-        public DateTime UploadedAt { get; set; } = DateTime.UtcNow;
-        public DateTime? SignedAt { get; set; }
+        public DateTimeOffset UploadedAt { get; set; } = DateTimeOffset.UtcNow;
+        public DateTimeOffset? SignedAt { get; set; }
         public ContractStatus Status { get; set; } = ContractStatus.Draft;
         public string? Notes { get; set; }
     }

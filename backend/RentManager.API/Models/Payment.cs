@@ -5,7 +5,7 @@ namespace RentManager.API.Models
         public string Id { get; set; } = string.Empty;
         public string TenantId { get; set; } = string.Empty;
         public decimal Amount { get; set; }
-        public DateTime Date { get; set; }
+        public DateTimeOffset Date { get; set; }
         public PaymentMethod Method { get; set; }
         public PaymentStatus Status { get; set; }
         public string? Notes { get; set; }
@@ -13,7 +13,7 @@ namespace RentManager.API.Models
         // Transaction tracking
         public string? ExternalTransactionId { get; set; }
         public string? PaymentGatewayProvider { get; set; }
-        public DateTime? ProcessedAt { get; set; }
+        public DateTimeOffset? ProcessedAt { get; set; }
         public decimal? ProcessingFee { get; set; }
         public string? FailureReason { get; set; }
         public string? IdempotencyKey { get; set; }
@@ -26,16 +26,16 @@ namespace RentManager.API.Models
 
         // Recurring payment tracking
         public bool IsRecurring { get; set; }
-        public DateTime? RecurringForMonth { get; set; }
+        public DateTimeOffset? RecurringForMonth { get; set; }
 
         // Refund tracking
         public bool IsRefunded { get; set; }
         public string? RefundedPaymentId { get; set; }
-        public DateTime? RefundedAt { get; set; }
+        public DateTimeOffset? RefundedAt { get; set; }
         public string? RefundReason { get; set; }
 
-        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
-        public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
+        public DateTimeOffset CreatedAt { get; set; } = DateTimeOffset.UtcNow;
+        public DateTimeOffset UpdatedAt { get; set; } = DateTimeOffset.UtcNow;
     }
 
     public enum PaymentMethod

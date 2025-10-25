@@ -6,16 +6,16 @@ namespace RentManager.API.Models
         public string PropertyId { get; set; } = string.Empty;
         public string Email { get; set; } = string.Empty;
         public string InvitationToken { get; set; } = Guid.NewGuid().ToString();
-        public DateTime ExpiresAt { get; set; } = DateTime.UtcNow.AddDays(7);
+        public DateTimeOffset ExpiresAt { get; set; } = DateTimeOffset.UtcNow.AddDays(7);
         public InvitationStatus Status { get; set; } = InvitationStatus.Pending;
         public string? InvitedByUserId { get; set; }
-        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
-        public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
+        public DateTimeOffset CreatedAt { get; set; } = DateTimeOffset.UtcNow;
+        public DateTimeOffset UpdatedAt { get; set; } = DateTimeOffset.UtcNow;
 
         // Pre-filled lease information (optional)
         public decimal? RentAmount { get; set; }
-        public DateTime? LeaseStart { get; set; }
-        public DateTime? LeaseEnd { get; set; }
+        public DateTimeOffset? LeaseStart { get; set; }
+        public DateTimeOffset? LeaseEnd { get; set; }
         public decimal? Deposit { get; set; }
     }
 
@@ -32,8 +32,8 @@ namespace RentManager.API.Models
         public string PropertyId { get; set; } = string.Empty;
         public string Email { get; set; } = string.Empty;
         public decimal? RentAmount { get; set; }
-        public DateTime? LeaseStart { get; set; }
-        public DateTime? LeaseEnd { get; set; }
+        public DateTimeOffset? LeaseStart { get; set; }
+        public DateTimeOffset? LeaseEnd { get; set; }
         public decimal? Deposit { get; set; }
     }
 
