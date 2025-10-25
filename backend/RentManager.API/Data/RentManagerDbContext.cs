@@ -41,11 +41,6 @@ namespace RentManager.API.Data
                 entity.Property(e => e.CreatedAt).IsRequired();
                 entity.Property(e => e.UpdatedAt).IsRequired();
 
-                // Store PropertyIds as JSON
-                entity.Property(e => e.PropertyIds)
-                    .HasColumnType("jsonb")
-                    .IsRequired();
-
                 // Configure relationship with Person (optional)
                 entity.HasOne(u => u.Person)
                     .WithMany()

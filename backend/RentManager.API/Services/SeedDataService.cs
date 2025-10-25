@@ -27,9 +27,6 @@ namespace RentManager.API.Services
             await SeedPropertyOwnersAsync(properties, mainUser);
             var tenants = await SeedTenantsAsync(properties, mainUser);
             await SeedPaymentsAsync(tenants);
-
-            // Update main user with property IDs
-            await UpdateUserWithPropertyIds(mainUser, properties);
         }
 
         private async Task<User> CreateMainUserAsync(string userEmail)
@@ -518,18 +515,5 @@ namespace RentManager.API.Services
                 await _dataService.CreatePaymentAsync(payment);
             }
         }
-
-        private async Task UpdateUserWithPropertyIds(User user, List<Property> properties)
-        {
-            // Assign all property IDs to the user (as property owner)
-            var dbUser = await _context.Users.FindAsync(user.Id);
-            if (dbUser != null)
-            {
-                dbUser.PropertyIds = properties.Select(p => p.Id).ToList();
-                dbUser.UpdatedAt = DateTime.UtcNow;
-                await _context.SaveChangesAsync();
-            }
-        }
-
     }
 }

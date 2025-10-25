@@ -63,7 +63,6 @@ namespace RentManager.API.Services
 
             existingUser.Email = user.Email;
             existingUser.IsActive = user.IsActive;
-            existingUser.PropertyIds = user.PropertyIds;
             existingUser.UpdatedAt = DateTime.UtcNow;
 
             // Handle role updates if provided

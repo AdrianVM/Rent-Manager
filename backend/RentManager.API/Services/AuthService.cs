@@ -60,9 +60,6 @@ namespace RentManager.API.Services
             if (request.IsActive.HasValue)
                 user.IsActive = request.IsActive.Value;
 
-            if (request.PropertyIds != null)
-                user.PropertyIds = request.PropertyIds;
-
             user.UpdatedAt = DateTime.UtcNow;
 
             return await Task.FromResult(user);

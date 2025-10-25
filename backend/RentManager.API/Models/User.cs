@@ -14,9 +14,6 @@ namespace RentManager.API.Models
         public string? PersonId { get; set; }
         public Person? Person { get; set; }
 
-        // Navigation properties for role-specific data
-        public List<string> PropertyIds { get; set; } = new List<string>();  // For PropertyOwner role
-
         // Navigation property for roles
         public ICollection<UserRole> UserRoles { get; set; } = new List<UserRole>();
 
@@ -75,6 +72,5 @@ namespace RentManager.API.Models
         public string? LastName { get; set; }
         public List<string>? Roles { get; set; }
         public bool? IsActive { get; set; }
-        public List<string>? PropertyIds { get; set; }
     }
 }
