@@ -60,7 +60,7 @@ public class ReconcilePaymentRequest
 {
     public string PaymentReference { get; set; } = string.Empty;
     public decimal Amount { get; set; }
-    public DateTime Date { get; set; }
+    public DateTimeOffset Date { get; set; }
     public string? BankIBAN { get; set; }
 }
 
@@ -107,17 +107,17 @@ public class PaymentResponse
     public string? TenantName { get; set; }
     public string? PropertyName { get; set; }
     public decimal Amount { get; set; }
-    public DateTime Date { get; set; }
+    public DateTimeOffset Date { get; set; }
     public PaymentMethod Method { get; set; }
     public PaymentStatus Status { get; set; }
     public string? Notes { get; set; }
     public string? PaymentReference { get; set; }
     public string? ConfirmationCode { get; set; }
     public bool IsRecurring { get; set; }
-    public DateTime? RecurringForMonth { get; set; }
+    public DateTimeOffset? RecurringForMonth { get; set; }
     public bool IsRefunded { get; set; }
-    public DateTime CreatedAt { get; set; }
-    public DateTime UpdatedAt { get; set; }
+    public DateTimeOffset CreatedAt { get; set; }
+    public DateTimeOffset UpdatedAt { get; set; }
 
     public static PaymentResponse FromPayment(Payment payment, string? tenantName = null, string? propertyName = null)
     {

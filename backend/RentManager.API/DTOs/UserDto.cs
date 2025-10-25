@@ -6,9 +6,9 @@ namespace RentManager.API.DTOs
         public string Email { get; set; } = string.Empty;
         public string Name { get; set; } = string.Empty;
         public bool IsActive { get; set; }
-        public DateTime CreatedAt { get; set; }
-        public DateTime UpdatedAt { get; set; }
-        public DateTime? LastLoginAt { get; set; }
+        public DateTimeOffset CreatedAt { get; set; }
+        public DateTimeOffset UpdatedAt { get; set; }
+        public DateTimeOffset? LastLoginAt { get; set; }
 
         // Person details
         public PersonDto? Person { get; set; }
@@ -35,7 +35,7 @@ namespace RentManager.API.DTOs
     public class UserRoleDto
     {
         public RoleDto Role { get; set; } = new RoleDto();
-        public DateTime AssignedAt { get; set; }
+        public DateTimeOffset AssignedAt { get; set; }
     }
 
     public class RoleDto
