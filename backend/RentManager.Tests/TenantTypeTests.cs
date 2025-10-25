@@ -17,11 +17,10 @@ namespace RentManager.Tests
                 Id = "test-1",
                 TenantType = TenantType.Person,
                 Email = "john.doe@example.com",
-                PersonDetails = new PersonDetails
-                {
+                Person = new Person { Id = Guid.NewGuid().ToString(),
                     FirstName = "John",
                     LastName = "Doe"
-                }
+                },
             };
 
             // Act
@@ -40,11 +39,10 @@ namespace RentManager.Tests
                 Id = "test-1",
                 TenantType = TenantType.Person,
                 Email = "john@example.com",
-                PersonDetails = new PersonDetails
-                {
+                Person = new Person { Id = Guid.NewGuid().ToString(),
                     FirstName = "John",
                     LastName = ""
-                }
+                },
             };
 
             // Act
@@ -63,11 +61,10 @@ namespace RentManager.Tests
                 Id = "test-1",
                 TenantType = TenantType.Person,
                 Email = "doe@example.com",
-                PersonDetails = new PersonDetails
-                {
+                Person = new Person { Id = Guid.NewGuid().ToString(),
                     FirstName = "",
                     LastName = "Doe"
-                }
+                },
             };
 
             // Act
@@ -86,7 +83,7 @@ namespace RentManager.Tests
                 Id = "test-1",
                 TenantType = TenantType.Person,
                 Email = "test@example.com",
-                PersonDetails = null
+                Person = null
             };
 
             // Act
@@ -105,11 +102,10 @@ namespace RentManager.Tests
                 Id = "test-1",
                 TenantType = TenantType.Person,
                 Email = "test@example.com",
-                PersonDetails = new PersonDetails
-                {
+                Person = new Person { Id = Guid.NewGuid().ToString(),
                     FirstName = "",
                     LastName = ""
-                }
+                },
             };
 
             // Act
@@ -128,11 +124,10 @@ namespace RentManager.Tests
                 Id = "test-1",
                 TenantType = TenantType.Person,
                 Email = "test@example.com",
-                PersonDetails = new PersonDetails
-                {
+                Person = new Person { Id = Guid.NewGuid().ToString(),
                     FirstName = "  John  ",
                     LastName = "  Doe  "
-                }
+                },
             };
 
             // Act
@@ -151,27 +146,22 @@ namespace RentManager.Tests
                 Id = "test-1",
                 TenantType = TenantType.Person,
                 Email = "john.doe@example.com",
-                PersonDetails = new PersonDetails
-                {
+                Person = new Person { Id = Guid.NewGuid().ToString(),
                     FirstName = "John",
                     LastName = "Doe",
                     DateOfBirth = new DateTime(1985, 5, 15),
                     IdNumber = "123-45-6789",
                     Nationality = "American",
-                    Occupation = "Engineer",
-                    EmergencyContactName = "Jane Doe",
-                    EmergencyContactPhone = "+1234567890",
-                    EmergencyContactRelation = "Spouse"
-                }
+                    Occupation = "Engineer" },
             };
 
             // Assert
-            tenant.PersonDetails.Should().NotBeNull();
-            tenant.PersonDetails.FirstName.Should().Be("John");
-            tenant.PersonDetails.LastName.Should().Be("Doe");
-            tenant.PersonDetails.EmergencyContactName.Should().Be("Jane Doe");
-            tenant.PersonDetails.EmergencyContactPhone.Should().Be("+1234567890");
-            tenant.PersonDetails.EmergencyContactRelation.Should().Be("Spouse");
+            tenant.Person.Should().NotBeNull();
+            tenant.Person.FirstName.Should().Be("John");
+            tenant.Person.LastName.Should().Be("Doe");
+            tenant.EmergencyContactName.Should().Be("Jane Doe");
+            tenant.EmergencyContactPhone.Should().Be("+1234567890");
+            tenant.EmergencyContactRelation.Should().Be("Spouse");
         }
 
         #endregion
@@ -348,11 +338,10 @@ namespace RentManager.Tests
                 Phone = "+1234567890",
                 PropertyId = "prop-1",
                 RentAmount = 1500,
-                PersonDetails = new PersonDetails
-                {
+                Person = new Person { Id = Guid.NewGuid().ToString(),
                     FirstName = "John",
                     LastName = "Doe"
-                }
+                },
             };
 
             // Act
@@ -362,8 +351,8 @@ namespace RentManager.Tests
             result.Should().NotBeNull();
             result.Id.Should().NotBeNullOrEmpty();
             result.TenantType.Should().Be(TenantType.Person);
-            result.PersonDetails.Should().NotBeNull();
-            result.PersonDetails.FirstName.Should().Be("John");
+            result.Person.Should().NotBeNull();
+            result.Person.FirstName.Should().Be("John");
             result.Name.Should().Be("John Doe");
         }
 
@@ -409,26 +398,25 @@ namespace RentManager.Tests
                 Email = "john.doe@example.com",
                 PropertyId = "prop-1",
                 RentAmount = 1500,
-                PersonDetails = new PersonDetails
-                {
+                Person = new Person { Id = Guid.NewGuid().ToString(),
                     FirstName = "John",
                     LastName = "Doe"
-                }
+                },
             };
 
             var created = await dataService.CreateTenantAsync(tenant);
 
             // Act
-            created.PersonDetails.Should().NotBeNull();
-            created.PersonDetails!.FirstName = "Jane";
-            created.PersonDetails.Occupation = "Doctor";
+            created.Person.Should().NotBeNull();
+            created.Person!.FirstName = "Jane";
+            created.Person.Occupation = "Doctor";
             var updated = await dataService.UpdateTenantAsync(created.Id, created);
 
             // Assert
             updated.Should().NotBeNull();
-            updated.PersonDetails.Should().NotBeNull();
-            updated.PersonDetails!.FirstName.Should().Be("Jane");
-            updated.PersonDetails.Occupation.Should().Be("Doctor");
+            updated.Person.Should().NotBeNull();
+            updated.Person!.FirstName.Should().Be("Jane");
+            updated.Person.Occupation.Should().Be("Doctor");
             updated.Name.Should().Be("Jane Doe");
         }
 
@@ -478,7 +466,7 @@ namespace RentManager.Tests
                 Email = "person@example.com",
                 PropertyId = "prop-1",
                 RentAmount = 1500,
-                PersonDetails = new PersonDetails { FirstName = "John", LastName = "Doe" }
+                Person = new Person { Id = Guid.NewGuid().ToString(), FirstName = "John", LastName = "Doe" },
             };
 
             var companyTenant = new Tenant
@@ -516,16 +504,15 @@ namespace RentManager.Tests
                 Id = "test-1",
                 TenantType = TenantType.Person,
                 Email = "test@example.com",
-                PersonDetails = new PersonDetails
-                {
+                Person = new Person { Id = Guid.NewGuid().ToString(),
                     FirstName = "John",
                     LastName = "Doe"
-                }
+                },
             };
 
             // Act
             tenant.TenantType = TenantType.Company;
-            tenant.PersonDetails = null;
+            tenant.Person = null;
             tenant.CompanyDetails = new CompanyDetails
             {
                 CompanyName = "Doe Enterprises"
@@ -545,7 +532,7 @@ namespace RentManager.Tests
                 Id = "test-1",
                 TenantType = TenantType.Person,
                 Email = "test@example.com",
-                PersonDetails = new PersonDetails { FirstName = "John", LastName = "Doe" },
+                Person = new Person { Id = Guid.NewGuid().ToString(), FirstName = "John", LastName = "Doe" },
                 CompanyDetails = new CompanyDetails { CompanyName = "TechCorp" } // This shouldn't be used
             };
 
@@ -565,11 +552,10 @@ namespace RentManager.Tests
                 Id = "test-1",
                 TenantType = TenantType.Person,
                 Email = "test@example.com",
-                PersonDetails = new PersonDetails
-                {
+                Person = new Person { Id = Guid.NewGuid().ToString(),
                     FirstName = "María",
                     LastName = "O'Brien-Smith"
-                }
+                },
             };
 
             // Act
@@ -610,11 +596,10 @@ namespace RentManager.Tests
                 Id = "test-1",
                 TenantType = TenantType.Person,
                 Email = "test@example.com",
-                PersonDetails = new PersonDetails
-                {
+                Person = new Person { Id = Guid.NewGuid().ToString(),
                     FirstName = "VeryLongFirstNameThatExceedsNormalLength",
                     LastName = "VeryLongLastNameThatExceedsNormalLength"
-                }
+                },
             };
 
             // Act
@@ -635,17 +620,16 @@ namespace RentManager.Tests
                 Id = "test-1",
                 TenantType = TenantType.Person,
                 Email = "test@example.com",
-                PersonDetails = new PersonDetails
-                {
+                Person = new Person { Id = Guid.NewGuid().ToString(),
                     FirstName = "John",
                     LastName = "Doe",
                     DateOfBirth = pastDate
-                }
+                },
             };
 
             // Assert
-            tenant.PersonDetails.DateOfBirth.Should().Be(pastDate);
-            tenant.PersonDetails.DateOfBirth.Value.Year.Should().Be(1950);
+            tenant.Person.DateOfBirth.Should().Be(pastDate);
+            tenant.Person.DateOfBirth.Value.Year.Should().Be(1950);
         }
 
         [Fact]
@@ -657,16 +641,15 @@ namespace RentManager.Tests
                 Id = "test-1",
                 TenantType = TenantType.Person,
                 Email = "test@example.com",
-                PersonDetails = new PersonDetails
-                {
+                Person = new Person { Id = Guid.NewGuid().ToString(),
                     FirstName = "John",
                     LastName = "Doe",
                     DateOfBirth = null
-                }
+                },
             };
 
             // Assert
-            tenant.PersonDetails.DateOfBirth.Should().BeNull();
+            tenant.Person.DateOfBirth.Should().BeNull();
         }
 
         #endregion

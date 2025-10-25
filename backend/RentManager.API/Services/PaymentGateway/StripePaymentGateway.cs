@@ -388,9 +388,9 @@ public class StripePaymentGateway : IPaymentGateway
 
     private string GetTenantName(Tenant tenant)
     {
-        if (tenant.TenantType == TenantType.Person && tenant.PersonDetails != null)
+        if (tenant.TenantType == TenantType.Person && tenant.Person != null)
         {
-            return $"{tenant.PersonDetails.FirstName} {tenant.PersonDetails.LastName}";
+            return tenant.Person.FullName;
         }
         else if (tenant.TenantType == TenantType.Company && tenant.CompanyDetails != null)
         {

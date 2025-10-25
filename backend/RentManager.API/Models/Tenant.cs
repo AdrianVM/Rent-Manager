@@ -26,8 +26,7 @@ namespace RentManager.API.Models
         public decimal? Deposit { get; set; }
         public TenantStatus Status { get; set; } = TenantStatus.Active;
 
-        // Type-specific details (only one will be populated based on TenantType)
-        public PersonDetails? PersonDetails { get; set; }
+        // Type-specific details (for company tenants)
         public CompanyDetails? CompanyDetails { get; set; }
 
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
@@ -38,35 +37,16 @@ namespace RentManager.API.Models
         public string? EmergencyContactPhone { get; set; }
         public string? EmergencyContactRelation { get; set; }
 
-        // Computed property for display name (backward compatibility)
+        // Computed property for display name
         public string Name => TenantType == TenantType.Person
-            ? (PersonDetails == null || (string.IsNullOrWhiteSpace(PersonDetails.FirstName) && string.IsNullOrWhiteSpace(PersonDetails.LastName)))
-                ? "Unknown"
-                : $"{PersonDetails.FirstName} {PersonDetails.LastName}".Trim()
-            : string.IsNullOrWhiteSpace(CompanyDetails?.CompanyName)
-                ? "Unknown"
-                : CompanyDetails.CompanyName;
+            ? string.IsNullOrWhiteSpace(Person?.FullName) ? "Unknown" : Person.FullName
+            : string.IsNullOrWhiteSpace(CompanyDetails?.CompanyName) ? "Unknown" : CompanyDetails.CompanyName;
     }
 
     public enum TenantType
     {
         Person,
         Company
-    }
-
-    public class PersonDetails
-    {
-        public string FirstName { get; set; } = string.Empty;
-        public string LastName { get; set; } = string.Empty;
-        public DateTime? DateOfBirth { get; set; }
-        public string? IdNumber { get; set; }  // SSN, National ID, Passport, etc.
-        public string? Nationality { get; set; }
-        public string? Occupation { get; set; }
-
-        // Emergency contact information
-        public string? EmergencyContactName { get; set; }
-        public string? EmergencyContactPhone { get; set; }
-        public string? EmergencyContactRelation { get; set; }
     }
 
     public class CompanyDetails

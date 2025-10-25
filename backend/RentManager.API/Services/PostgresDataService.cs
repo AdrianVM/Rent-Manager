@@ -100,6 +100,26 @@ namespace RentManager.API.Services
             return true;
         }
 
+        // Person operations
+        public async Task<Person> CreatePersonAsync(Person person)
+        {
+            if (string.IsNullOrEmpty(person.Id))
+            {
+                person.Id = Guid.NewGuid().ToString();
+            }
+            person.CreatedAt = DateTime.UtcNow;
+            person.UpdatedAt = DateTime.UtcNow;
+
+            _context.Persons.Add(person);
+            await _context.SaveChangesAsync();
+            return person;
+        }
+
+        public async Task<Person?> GetPersonAsync(string id)
+        {
+            return await _context.Persons.FindAsync(id);
+        }
+
         // Property operations
         public async Task<List<Property>> GetPropertiesAsync(User? user = null)
         {
@@ -201,12 +221,16 @@ namespace RentManager.API.Services
             existingTenant.Email = tenant.Email;
             existingTenant.Phone = tenant.Phone;
             existingTenant.PropertyId = tenant.PropertyId;
+            existingTenant.PersonId = tenant.PersonId;
+            existingTenant.CompanyId = tenant.CompanyId;
             existingTenant.LeaseStart = tenant.LeaseStart;
             existingTenant.LeaseEnd = tenant.LeaseEnd;
             existingTenant.RentAmount = tenant.RentAmount;
             existingTenant.Deposit = tenant.Deposit;
             existingTenant.Status = tenant.Status;
-            existingTenant.PersonDetails = tenant.PersonDetails;
+            existingTenant.EmergencyContactName = tenant.EmergencyContactName;
+            existingTenant.EmergencyContactPhone = tenant.EmergencyContactPhone;
+            existingTenant.EmergencyContactRelation = tenant.EmergencyContactRelation;
             existingTenant.CompanyDetails = tenant.CompanyDetails;
             existingTenant.UpdatedAt = DateTime.UtcNow;
 

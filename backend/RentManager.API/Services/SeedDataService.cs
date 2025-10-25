@@ -264,193 +264,30 @@ namespace RentManager.API.Services
             }
         }
 
-        private async Task<List<Tenant>> SeedTenantsAsync(List<Property> properties, User mainUser)
+    private async Task<List<Tenant>> SeedTenantsAsync(List<Property> properties, User mainUser)
+    {
+        // Create one tenant for the main user using their Person entity
+        var tenant = new Tenant
         {
-            var tenants = new List<Tenant>
-            {
-                // Create tenant record for the main user
-                new Tenant
-                {
-                    Id = "tenant-main-user", // Fixed ID for main user
-                    TenantType = TenantType.Person,
-                    Email = mainUser.Email,
-                    Phone = "+1 (555) 000-0000",
-                    PersonId = mainUser.PersonId, // Link to the main user's Person
-                    PropertyId = properties[0].Id, // Sunset Apartments - main user is renting this
-                    LeaseStart = new DateTime(2024, 1, 1, 0, 0, 0, DateTimeKind.Utc),
-                    LeaseEnd = new DateTime(2025, 12, 31, 0, 0, 0, DateTimeKind.Utc),
-                    RentAmount = 2500,
-                    Deposit = 2500,
-                    Status = TenantStatus.Active,
-                    PersonDetails = new PersonDetails
-                    {
-                        FirstName = mainUser.Person?.FirstName ?? "User",
-                        LastName = mainUser.Person?.LastName ?? "Name",
-                        DateOfBirth = mainUser.Person?.DateOfBirth ?? new DateTime(1990, 1, 1, 0, 0, 0, DateTimeKind.Utc),
-                        IdNumber = mainUser.Person?.IdNumber ?? "DEMO-ID-001",
-                        Nationality = mainUser.Person?.Nationality ?? "Demo",
-                        Occupation = mainUser.Person?.Occupation ?? "Demo User",
-                        EmergencyContactName = "Emergency Contact",
-                        EmergencyContactPhone = "+1 (555) 999-9999",
-                        EmergencyContactRelation = "Family"
-                    }
-                },
-                new Tenant
-                {
-                    TenantType = TenantType.Person,
-                    Email = "sarah.johnson@email.com",
-                    Phone = "+1 (555) 234-5678",
-                    PropertyId = properties[1].Id, // Downtown Luxury Condo
-                    LeaseStart = new DateTime(2023, 3, 1, 0, 0, 0, DateTimeKind.Utc),
-                    LeaseEnd = new DateTime(2024, 2, 28, 0, 0, 0, DateTimeKind.Utc),
-                    RentAmount = 3200,
-                    Deposit = 3200,
-                    Status = TenantStatus.Active,
-                    PersonDetails = new PersonDetails
-                    {
-                        FirstName = "Sarah",
-                        LastName = "Johnson",
-                        DateOfBirth = new DateTime(1990, 7, 22, 0, 0, 0, DateTimeKind.Utc),
-                        IdNumber = "XXX-XX-5678",
-                        Nationality = "American",
-                        Occupation = "Marketing Manager",
-                        EmergencyContactName = "Robert Johnson",
-                        EmergencyContactPhone = "+1 (555) 234-8888",
-                        EmergencyContactRelation = "Father"
-                    }
-                },
-                new Tenant
-                {
-                    TenantType = TenantType.Person,
-                    Email = "michael.davis@email.com",
-                    Phone = "+1 (555) 345-6789",
-                    PropertyId = properties[2].Id, // Family House
-                    LeaseStart = new DateTime(2023, 8, 1, 0, 0, 0, DateTimeKind.Utc),
-                    LeaseEnd = new DateTime(2024, 7, 31, 0, 0, 0, DateTimeKind.Utc),
-                    RentAmount = 4500,
-                    Deposit = 4500,
-                    Status = TenantStatus.Active,
-                    PersonDetails = new PersonDetails
-                    {
-                        FirstName = "Michael",
-                        LastName = "Davis",
-                        DateOfBirth = new DateTime(1982, 11, 8, 0, 0, 0, DateTimeKind.Utc),
-                        IdNumber = "XXX-XX-9012",
-                        Nationality = "American",
-                        Occupation = "School Teacher",
-                        EmergencyContactName = "Lisa Davis",
-                        EmergencyContactPhone = "+1 (555) 345-7777",
-                        EmergencyContactRelation = "Spouse"
-                    }
-                },
-                new Tenant
-                {
-                    TenantType = TenantType.Company,
-                    Email = "parking@corporate.com",
-                    Phone = "+1 (555) 456-7890",
-                    PropertyId = properties[3].Id, // Parking Space
-                    LeaseStart = new DateTime(2023, 1, 1, 0, 0, 0, DateTimeKind.Utc),
-                    LeaseEnd = new DateTime(2023, 12, 31, 0, 0, 0, DateTimeKind.Utc),
-                    RentAmount = 150,
-                    Deposit = 300,
-                    Status = TenantStatus.Active,
-                    CompanyDetails = new CompanyDetails
-                    {
-                        CompanyName = "Corporate Parking LLC",
-                        TaxId = "12-3456789",
-                        RegistrationNumber = "LLC-2020-45678",
-                        LegalForm = "LLC",
-                        Industry = "Parking Management",
-                        ContactPersonName = "David Wilson",
-                        ContactPersonTitle = "Facilities Manager",
-                        ContactPersonEmail = "david.wilson@corporate.com",
-                        ContactPersonPhone = "+1 (555) 456-7890"
-                    }
-                },
-                new Tenant
-                {
-                    TenantType = TenantType.Company,
-                    Email = "facilities@techcorp.com",
-                    Phone = "+1 (555) 567-8901",
-                    PropertyId = properties[4].Id, // Office Suite
-                    LeaseStart = new DateTime(2022, 10, 1, 0, 0, 0, DateTimeKind.Utc),
-                    LeaseEnd = new DateTime(2025, 9, 30, 0, 0, 0, DateTimeKind.Utc),
-                    RentAmount = 8000,
-                    Deposit = 16000,
-                    Status = TenantStatus.Active,
-                    CompanyDetails = new CompanyDetails
-                    {
-                        CompanyName = "TechCorp Solutions",
-                        TaxId = "98-7654321",
-                        RegistrationNumber = "C-2018-98765",
-                        LegalForm = "Corporation",
-                        Industry = "Technology Services",
-                        ContactPersonName = "Jennifer Martinez",
-                        ContactPersonTitle = "Office Manager",
-                        ContactPersonEmail = "jennifer.martinez@techcorp.com",
-                        ContactPersonPhone = "+1 (555) 567-8901",
-                        BillingAddress = "TechCorp Solutions, P.O. Box 12345, Los Angeles, CA 90001"
-                    }
-                },
-                new Tenant
-                {
-                    TenantType = TenantType.Person,
-                    Email = "emily.rodriguez@email.com",
-                    Phone = "+1 (555) 678-9012",
-                    PropertyId = properties[5].Id, // Garden Apartment
-                    LeaseStart = new DateTime(2023, 4, 1, 0, 0, 0, DateTimeKind.Utc),
-                    LeaseEnd = new DateTime(2024, 3, 31, 0, 0, 0, DateTimeKind.Utc),
-                    RentAmount = 3800,
-                    Deposit = 3800,
-                    Status = TenantStatus.Active,
-                    PersonDetails = new PersonDetails
-                    {
-                        FirstName = "Emily",
-                        LastName = "Rodriguez",
-                        DateOfBirth = new DateTime(1988, 5, 30, 0, 0, 0, DateTimeKind.Utc),
-                        IdNumber = "XXX-XX-3456",
-                        Nationality = "American",
-                        Occupation = "Graphic Designer",
-                        EmergencyContactName = "Carlos Rodriguez",
-                        EmergencyContactPhone = "+1 (555) 678-6666",
-                        EmergencyContactRelation = "Brother"
-                    }
-                },
-                new Tenant
-                {
-                    TenantType = TenantType.Person,
-                    Email = "alex.chen@student.ucla.edu",
-                    Phone = "+1 (555) 789-0123",
-                    PropertyId = properties[6].Id, // Studio Apartment
-                    LeaseStart = new DateTime(2023, 9, 1, 0, 0, 0, DateTimeKind.Utc),
-                    LeaseEnd = new DateTime(2024, 6, 30, 0, 0, 0, DateTimeKind.Utc),
-                    RentAmount = 1800,
-                    Deposit = 1800,
-                    Status = TenantStatus.Active,
-                    PersonDetails = new PersonDetails
-                    {
-                        FirstName = "Alex",
-                        LastName = "Chen",
-                        DateOfBirth = new DateTime(2001, 12, 5, 0, 0, 0, DateTimeKind.Utc),
-                        IdNumber = "XXX-XX-7890",
-                        Nationality = "American",
-                        Occupation = "Student",
-                        EmergencyContactName = "Ming Chen",
-                        EmergencyContactPhone = "+1 (555) 789-5555",
-                        EmergencyContactRelation = "Parent"
-                    }
-                }
-            };
+            Id = "tenant-main-user", // Fixed ID for main user
+            TenantType = TenantType.Person,
+            Email = mainUser.Email,
+            Phone = "+1 (555) 000-0000",
+            PersonId = mainUser.PersonId, // Link to the main user's Person
+            PropertyId = properties[0].Id, // First property
+            LeaseStart = new DateTime(2024, 1, 1, 0, 0, 0, DateTimeKind.Utc),
+            LeaseEnd = new DateTime(2025, 12, 31, 0, 0, 0, DateTimeKind.Utc),
+            RentAmount = 2500,
+            Deposit = 2500,
+            Status = TenantStatus.Active,
+            EmergencyContactName = "Emergency Contact",
+            EmergencyContactPhone = "+1 (555) 999-9999",
+            EmergencyContactRelation = "Family"
+        };
 
-            var createdTenants = new List<Tenant>();
-            foreach (var tenant in tenants)
-            {
-                var created = await _dataService.CreateTenantAsync(tenant);
-                createdTenants.Add(created);
-            }
-
-            return createdTenants;
-        }
+        var createdTenant = await _dataService.CreateTenantAsync(tenant);
+        return new List<Tenant> { createdTenant };
+    }
 
         private async Task SeedPaymentsAsync(List<Tenant> tenants)
         {

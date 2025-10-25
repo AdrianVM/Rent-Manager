@@ -52,27 +52,30 @@ namespace RentManager.API.Controllers
                 return Unauthorized(new { message = "User not authenticated" });
             }
 
-            // Create tenant record (assuming person tenant for onboarding)
+            // Create Person entity for the tenant
             var nameParts = request.Name.Split(' ', 2);
             var firstName = nameParts[0];
             var lastName = nameParts.Length > 1 ? nameParts[1] : "";
 
+            var person = await _dataService.CreatePersonAsync(new Person
+            {
+                FirstName = firstName,
+                LastName = lastName
+            });
+
+            // Create tenant record
             var tenant = new Tenant
             {
                 TenantType = TenantType.Person,
                 Email = request.Email,
                 Phone = request.Phone,
+                PersonId = person.Id,
                 PropertyId = invitation.PropertyId,
                 RentAmount = invitation.RentAmount ?? 0,
                 LeaseStart = invitation.LeaseStart,
                 LeaseEnd = invitation.LeaseEnd,
                 Deposit = invitation.Deposit,
-                Status = TenantStatus.Active,
-                PersonDetails = new PersonDetails
-                {
-                    FirstName = firstName,
-                    LastName = lastName
-                }
+                Status = TenantStatus.Active
             };
 
             tenant = await _dataService.CreateTenantAsync(tenant);

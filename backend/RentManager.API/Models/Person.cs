@@ -12,5 +12,16 @@ namespace RentManager.API.Models
         public string? Occupation { get; set; }
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
         public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
+
+        // Computed property for full name
+        public string FullName
+        {
+            get
+            {
+                var parts = new[] { FirstName, MiddleName, LastName }
+                    .Where(p => !string.IsNullOrWhiteSpace(p));
+                return string.Join(" ", parts);
+            }
+        }
     }
 }

@@ -4,10 +4,31 @@ namespace RentManager.API.Services
 {
     public class InMemoryDataService : IDataService
     {
+        private readonly List<Person> _persons = new();
         private readonly List<Property> _properties = new();
         private readonly List<Tenant> _tenants = new();
         private readonly List<Payment> _payments = new();
         private readonly List<Contract> _contracts = new();
+
+        // Persons
+        public Task<Person> CreatePersonAsync(Person person)
+        {
+            if (string.IsNullOrEmpty(person.Id))
+            {
+                person.Id = Guid.NewGuid().ToString();
+            }
+            person.CreatedAt = DateTime.UtcNow;
+            person.UpdatedAt = DateTime.UtcNow;
+
+            _persons.Add(person);
+            return Task.FromResult(person);
+        }
+
+        public Task<Person?> GetPersonAsync(string id)
+        {
+            var person = _persons.FirstOrDefault(p => p.Id == id);
+            return Task.FromResult(person);
+        }
 
         // Properties
         public Task<List<Property>> GetPropertiesAsync(User? user = null)
@@ -149,12 +170,16 @@ namespace RentManager.API.Services
             existingTenant.Email = tenant.Email;
             existingTenant.Phone = tenant.Phone;
             existingTenant.PropertyId = tenant.PropertyId;
+            existingTenant.PersonId = tenant.PersonId;
+            existingTenant.CompanyId = tenant.CompanyId;
             existingTenant.LeaseStart = tenant.LeaseStart;
             existingTenant.LeaseEnd = tenant.LeaseEnd;
             existingTenant.RentAmount = tenant.RentAmount;
             existingTenant.Deposit = tenant.Deposit;
             existingTenant.Status = tenant.Status;
-            existingTenant.PersonDetails = tenant.PersonDetails;
+            existingTenant.EmergencyContactName = tenant.EmergencyContactName;
+            existingTenant.EmergencyContactPhone = tenant.EmergencyContactPhone;
+            existingTenant.EmergencyContactRelation = tenant.EmergencyContactRelation;
             existingTenant.CompanyDetails = tenant.CompanyDetails;
             existingTenant.UpdatedAt = DateTime.UtcNow;
 

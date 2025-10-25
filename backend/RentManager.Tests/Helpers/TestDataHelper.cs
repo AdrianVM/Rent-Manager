@@ -136,13 +136,13 @@ namespace RentManager.Tests.Helpers
                 RentAmount = 1500.00m,
                 Deposit = 1500.00m,
                 Status = TenantStatus.Active,
-                PersonDetails = new PersonDetails
+                Person = new Person
                 {
+                    Id = $"person-{id}",
                     FirstName = "Test",
-                    LastName = $"Tenant {id}",
-                    DateOfBirth = DateTime.UtcNow.AddYears(-30),
-                    Nationality = "American"
+                    LastName = $"Tenant {id}"
                 },
+                PersonId = $"person-{id}",
                 CreatedAt = DateTime.UtcNow.AddDays(-1),
                 UpdatedAt = DateTime.UtcNow
             };
