@@ -263,13 +263,19 @@ namespace RentManager.API.Services
         public async Task<List<Tenant>> GetTenantsAsync(User? user = null)
         {
             // TODO: Add user-based filtering if needed
-            return await _context.Tenants.ToListAsync();
+            return await _context.Tenants
+                .Include(t => t.Person)
+                .Include(t => t.Company)
+                .ToListAsync();
         }
 
         public async Task<Tenant?> GetTenantAsync(string id, User? user = null)
         {
             // TODO: Add user-based access control if needed
-            return await _context.Tenants.FindAsync(id);
+            return await _context.Tenants
+                .Include(t => t.Person)
+                .Include(t => t.Company)
+                .FirstOrDefaultAsync(t => t.Id == id);
         }
 
         public async Task<Tenant> CreateTenantAsync(Tenant tenant, User? user = null)
