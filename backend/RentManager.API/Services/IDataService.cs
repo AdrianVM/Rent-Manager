@@ -38,6 +38,15 @@ namespace RentManager.API.Services
         Task<Contract?> UpdateContractAsync(string id, Contract contract, User? user = null);
         Task<bool> DeleteContractAsync(string id, User? user = null);
 
+        // Maintenance Requests
+        Task<List<MaintenanceRequest>> GetMaintenanceRequestsAsync(User? user = null);
+        Task<MaintenanceRequest?> GetMaintenanceRequestAsync(string id, User? user = null);
+        Task<List<MaintenanceRequest>> GetMaintenanceRequestsByTenantIdAsync(string tenantId, User? user = null);
+        Task<List<MaintenanceRequest>> GetMaintenanceRequestsByPropertyIdAsync(string propertyId, User? user = null);
+        Task<MaintenanceRequest> CreateMaintenanceRequestAsync(MaintenanceRequest request, User? user = null);
+        Task<MaintenanceRequest?> UpdateMaintenanceRequestAsync(string id, MaintenanceRequest request, User? user = null);
+        Task<bool> DeleteMaintenanceRequestAsync(string id, User? user = null);
+
         // Dashboard
         Task<DashboardStats> GetDashboardStatsAsync(User? user = null);
     }

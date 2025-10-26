@@ -9,6 +9,7 @@ namespace RentManager.API.Services
         private readonly List<Tenant> _tenants = new();
         private readonly List<Payment> _payments = new();
         private readonly List<Contract> _contracts = new();
+        private readonly List<MaintenanceRequest> _maintenanceRequests = new();
 
         // Persons
         public Task<Person> CreatePersonAsync(Person person)
@@ -400,6 +401,80 @@ namespace RentManager.API.Services
                 RecentPayments = recentPayments,
                 OutstandingRentItems = outstandingRentItems
             });
+        }
+
+        // Maintenance Requests
+        public Task<List<MaintenanceRequest>> GetMaintenanceRequestsAsync(User? user = null)
+        {
+            return Task.FromResult(_maintenanceRequests.OrderByDescending(mr => mr.CreatedAt).ToList());
+        }
+
+        public Task<MaintenanceRequest?> GetMaintenanceRequestAsync(string id, User? user = null)
+        {
+            var request = _maintenanceRequests.FirstOrDefault(mr => mr.Id == id);
+            return Task.FromResult(request);
+        }
+
+        public Task<List<MaintenanceRequest>> GetMaintenanceRequestsByTenantIdAsync(string tenantId, User? user = null)
+        {
+            var requests = _maintenanceRequests
+                .Where(mr => mr.TenantId == tenantId)
+                .OrderByDescending(mr => mr.CreatedAt)
+                .ToList();
+            return Task.FromResult(requests);
+        }
+
+        public Task<List<MaintenanceRequest>> GetMaintenanceRequestsByPropertyIdAsync(string propertyId, User? user = null)
+        {
+            var requests = _maintenanceRequests
+                .Where(mr => mr.PropertyId == propertyId)
+                .OrderByDescending(mr => mr.CreatedAt)
+                .ToList();
+            return Task.FromResult(requests);
+        }
+
+        public Task<MaintenanceRequest> CreateMaintenanceRequestAsync(MaintenanceRequest request, User? user = null)
+        {
+            if (string.IsNullOrEmpty(request.Id))
+            {
+                request.Id = Guid.NewGuid().ToString();
+            }
+            request.CreatedAt = DateTimeOffset.UtcNow;
+            request.UpdatedAt = DateTimeOffset.UtcNow;
+            _maintenanceRequests.Add(request);
+            return Task.FromResult(request);
+        }
+
+        public Task<MaintenanceRequest?> UpdateMaintenanceRequestAsync(string id, MaintenanceRequest request, User? user = null)
+        {
+            var existing = _maintenanceRequests.FirstOrDefault(mr => mr.Id == id);
+            if (existing == null)
+            {
+                return Task.FromResult<MaintenanceRequest?>(null);
+            }
+
+            existing.Title = request.Title;
+            existing.Description = request.Description;
+            existing.Status = request.Status;
+            existing.Priority = request.Priority;
+            existing.AssignedTo = request.AssignedTo;
+            existing.ResolutionNotes = request.ResolutionNotes;
+            existing.ResolvedAt = request.ResolvedAt;
+            existing.UpdatedAt = DateTimeOffset.UtcNow;
+
+            return Task.FromResult<MaintenanceRequest?>(existing);
+        }
+
+        public Task<bool> DeleteMaintenanceRequestAsync(string id, User? user = null)
+        {
+            var request = _maintenanceRequests.FirstOrDefault(mr => mr.Id == id);
+            if (request == null)
+            {
+                return Task.FromResult(false);
+            }
+
+            _maintenanceRequests.Remove(request);
+            return Task.FromResult(true);
         }
     }
 }

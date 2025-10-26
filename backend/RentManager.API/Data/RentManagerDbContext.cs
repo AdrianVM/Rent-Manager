@@ -21,6 +21,7 @@ namespace RentManager.API.Data
         public DbSet<TenantInvitation> TenantInvitations { get; set; } = null!;
         public DbSet<Company> Companies { get; set; } = null!;
         public DbSet<Person> Persons { get; set; } = null!;
+        public DbSet<MaintenanceRequest> MaintenanceRequests { get; set; } = null!;
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -272,6 +273,40 @@ namespace RentManager.API.Data
                 entity.Property(e => e.TaxId);
                 entity.Property(e => e.CreatedAt).IsRequired();
                 entity.Property(e => e.UpdatedAt).IsRequired();
+            });
+
+            // Configure MaintenanceRequest entity
+            modelBuilder.Entity<MaintenanceRequest>(entity =>
+            {
+                entity.ToTable("maintenance_requests");
+                entity.HasKey(e => e.Id);
+                entity.HasIndex(e => e.TenantId);
+                entity.HasIndex(e => e.PropertyId);
+                entity.HasIndex(e => e.Status);
+
+                entity.Property(e => e.Id).IsRequired();
+                entity.Property(e => e.TenantId).IsRequired();
+                entity.Property(e => e.PropertyId).IsRequired();
+                entity.Property(e => e.Title).IsRequired().HasMaxLength(255);
+                entity.Property(e => e.Description).IsRequired().HasMaxLength(2000);
+                entity.Property(e => e.Status).HasConversion<string>().IsRequired();
+                entity.Property(e => e.Priority).HasConversion<string>().IsRequired();
+                entity.Property(e => e.AssignedTo).HasMaxLength(255);
+                entity.Property(e => e.ResolutionNotes).HasMaxLength(2000);
+                entity.Property(e => e.CreatedAt).IsRequired();
+                entity.Property(e => e.UpdatedAt).IsRequired();
+
+                // Configure relationship with Tenant
+                entity.HasOne(mr => mr.Tenant)
+                    .WithMany()
+                    .HasForeignKey(mr => mr.TenantId)
+                    .OnDelete(DeleteBehavior.Cascade);
+
+                // Configure relationship with Property
+                entity.HasOne(mr => mr.Property)
+                    .WithMany()
+                    .HasForeignKey(mr => mr.PropertyId)
+                    .OnDelete(DeleteBehavior.Cascade);
             });
         }
     }

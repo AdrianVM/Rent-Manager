@@ -265,6 +265,43 @@ class ApiService {
   async getTenantInvitation(token) {
     return this.request(`/tenantinvitations/${token}`);
   }
+
+  // Maintenance Requests API
+  async getMaintenanceRequests() {
+    return this.request('/maintenancerequests');
+  }
+
+  async getMaintenanceRequest(id) {
+    return this.request(`/maintenancerequests/${id}`);
+  }
+
+  async getMaintenanceRequestsByTenant(tenantId) {
+    return this.request(`/maintenancerequests/tenant/${tenantId}`);
+  }
+
+  async getMaintenanceRequestsByProperty(propertyId) {
+    return this.request(`/maintenancerequests/property/${propertyId}`);
+  }
+
+  async createMaintenanceRequest(requestData) {
+    return this.request('/maintenancerequests', {
+      method: 'POST',
+      body: requestData,
+    });
+  }
+
+  async updateMaintenanceRequest(id, requestData) {
+    return this.request(`/maintenancerequests/${id}`, {
+      method: 'PUT',
+      body: requestData,
+    });
+  }
+
+  async deleteMaintenanceRequest(id) {
+    return this.request(`/maintenancerequests/${id}`, {
+      method: 'DELETE',
+    });
+  }
 }
 
 const apiService = new ApiService();

@@ -2,6 +2,7 @@ import React, { useState, useEffect, useMemo } from 'react';
 import apiService from '../../services/api';
 import PaymentModal from '../../components/PaymentModal';
 import { ContractViewer } from '../../components/common';
+import MaintenanceRequestModal from '../../components/MaintenanceRequestModal';
 import './RenterDashboard.css';
 
 function RentPaymentHistory({ payments, currentTenant }) {
@@ -397,40 +398,51 @@ function NextPaymentDue({ currentTenant, payments, onPaymentSuccess }) {
   );
 }
 
-function MaintenanceRequests() {
-  // Mock maintenance requests - in a real app, this would come from API
-  const [requests] = useState([
-    {
-      id: 1,
-      title: 'Leaky Faucet in Kitchen',
-      status: 'in_progress',
-      priority: 'medium',
-      dateSubmitted: '2024-01-15',
-      description: 'Kitchen sink faucet has been dripping consistently'
-    },
-    {
-      id: 2,
-      title: 'AC Unit Making Noise',
-      status: 'pending',
-      priority: 'low',
-      dateSubmitted: '2024-01-10',
-      description: 'Air conditioning unit making unusual sounds'
+function MaintenanceRequests({ tenantId, propertyId }) {
+  const [requests, setRequests] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [showModal, setShowModal] = useState(false);
+
+  useEffect(() => {
+    if (tenantId) {
+      loadRequests();
     }
-  ]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [tenantId]);
+
+  const loadRequests = async () => {
+    try {
+      setLoading(true);
+      const data = await apiService.getMaintenanceRequestsByTenant(tenantId);
+      setRequests(data || []);
+    } catch (err) {
+      console.error('Error loading maintenance requests:', err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleRequestSubmitted = () => {
+    loadRequests();
+  };
 
   const getStatusBadge = (status) => {
+    // Convert backend status format (e.g., "InProgress") to display format
+    const displayStatus = status.replace(/([A-Z])/g, ' $1').trim().toLowerCase();
+    const cssClass = status.toLowerCase().replace(/([A-Z])/g, '_$1');
     return (
-      <span className={`maintenance-status-badge ${status}`}>
-        {status.replace('_', ' ')}
+      <span className={`maintenance-status-badge ${cssClass}`}>
+        {displayStatus}
       </span>
     );
   };
 
   const getPriorityIcon = (priority) => {
     const icons = {
-      high: '🔴',
-      medium: '🟡',
-      low: '🟢'
+      Emergency: '🔴',
+      High: '🔴',
+      Medium: '🟡',
+      Low: '🟢'
     };
     return icons[priority] || '🟡';
   };
@@ -440,7 +452,11 @@ function MaintenanceRequests() {
       <h3 className="renter-section-title">
         Maintenance Requests
       </h3>
-      {requests.length === 0 ? (
+      {loading ? (
+        <div style={{ padding: '20px', textAlign: 'center', color: 'var(--text-secondary)' }}>
+          Loading maintenance requests...
+        </div>
+      ) : requests.length === 0 ? (
         <div className="maintenance-empty">
           <div className="maintenance-empty-icon">🔧</div>
           <p>No maintenance requests</p>
@@ -464,16 +480,24 @@ function MaintenanceRequests() {
                 {request.description}
               </p>
               <div className="maintenance-request-date">
-                Submitted: {new Date(request.dateSubmitted).toLocaleDateString()}
+                Submitted: {new Date(request.createdAt).toLocaleDateString()}
               </div>
             </div>
           ))}
           <button
             className="btn btn-accent maintenance-submit-button"
-            onClick={() => alert('Maintenance request form would open here')}
+            onClick={() => setShowModal(true)}
           >
             + Submit New Request
           </button>
+          {showModal && (
+            <MaintenanceRequestModal
+              onClose={() => setShowModal(false)}
+              onSuccess={handleRequestSubmitted}
+              tenantId={tenantId}
+              propertyId={propertyId}
+            />
+          )}
         </div>
       )}
     </div>
@@ -750,7 +774,7 @@ function RenterDashboard() {
             </div>
             <div>
               <RentPaymentHistory payments={payments} currentTenant={currentTenant} />
-              <MaintenanceRequests />
+              <MaintenanceRequests tenantId={currentTenant?.id} propertyId={currentTenant?.propertyId} />
             </div>
           </div>
 

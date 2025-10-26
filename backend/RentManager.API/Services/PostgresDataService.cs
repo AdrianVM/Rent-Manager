@@ -465,6 +465,105 @@ namespace RentManager.API.Services
             return true;
         }
 
+        // Maintenance Request operations
+        public async Task<List<MaintenanceRequest>> GetMaintenanceRequestsAsync(User? user = null)
+        {
+            // TODO: Add user-based filtering if needed
+            return await _context.MaintenanceRequests
+                .Include(mr => mr.Tenant)
+                    .ThenInclude(t => t.Person)
+                .Include(mr => mr.Tenant)
+                    .ThenInclude(t => t.Company)
+                .Include(mr => mr.Property)
+                .OrderByDescending(mr => mr.CreatedAt)
+                .ToListAsync();
+        }
+
+        public async Task<MaintenanceRequest?> GetMaintenanceRequestAsync(string id, User? user = null)
+        {
+            // TODO: Add user-based access control if needed
+            return await _context.MaintenanceRequests
+                .Include(mr => mr.Tenant)
+                    .ThenInclude(t => t.Person)
+                .Include(mr => mr.Tenant)
+                    .ThenInclude(t => t.Company)
+                .Include(mr => mr.Property)
+                .FirstOrDefaultAsync(mr => mr.Id == id);
+        }
+
+        public async Task<List<MaintenanceRequest>> GetMaintenanceRequestsByTenantIdAsync(string tenantId, User? user = null)
+        {
+            return await _context.MaintenanceRequests
+                .Include(mr => mr.Tenant)
+                    .ThenInclude(t => t.Person)
+                .Include(mr => mr.Tenant)
+                    .ThenInclude(t => t.Company)
+                .Include(mr => mr.Property)
+                .Where(mr => mr.TenantId == tenantId)
+                .OrderByDescending(mr => mr.CreatedAt)
+                .ToListAsync();
+        }
+
+        public async Task<List<MaintenanceRequest>> GetMaintenanceRequestsByPropertyIdAsync(string propertyId, User? user = null)
+        {
+            return await _context.MaintenanceRequests
+                .Include(mr => mr.Tenant)
+                    .ThenInclude(t => t.Person)
+                .Include(mr => mr.Tenant)
+                    .ThenInclude(t => t.Company)
+                .Include(mr => mr.Property)
+                .Where(mr => mr.PropertyId == propertyId)
+                .OrderByDescending(mr => mr.CreatedAt)
+                .ToListAsync();
+        }
+
+        public async Task<MaintenanceRequest> CreateMaintenanceRequestAsync(MaintenanceRequest request, User? user = null)
+        {
+            if (string.IsNullOrEmpty(request.Id))
+            {
+                request.Id = Guid.NewGuid().ToString();
+            }
+            request.CreatedAt = DateTimeOffset.UtcNow;
+            request.UpdatedAt = DateTimeOffset.UtcNow;
+            _context.MaintenanceRequests.Add(request);
+            await _context.SaveChangesAsync();
+            return request;
+        }
+
+        public async Task<MaintenanceRequest?> UpdateMaintenanceRequestAsync(string id, MaintenanceRequest request, User? user = null)
+        {
+            var existingRequest = await _context.MaintenanceRequests.FindAsync(id);
+            if (existingRequest == null)
+            {
+                return null;
+            }
+
+            existingRequest.Title = request.Title;
+            existingRequest.Description = request.Description;
+            existingRequest.Status = request.Status;
+            existingRequest.Priority = request.Priority;
+            existingRequest.AssignedTo = request.AssignedTo;
+            existingRequest.ResolutionNotes = request.ResolutionNotes;
+            existingRequest.ResolvedAt = request.ResolvedAt;
+            existingRequest.UpdatedAt = DateTimeOffset.UtcNow;
+
+            await _context.SaveChangesAsync();
+            return existingRequest;
+        }
+
+        public async Task<bool> DeleteMaintenanceRequestAsync(string id, User? user = null)
+        {
+            var request = await _context.MaintenanceRequests.FindAsync(id);
+            if (request == null)
+            {
+                return false;
+            }
+
+            _context.MaintenanceRequests.Remove(request);
+            await _context.SaveChangesAsync();
+            return true;
+        }
+
         // Dashboard operations
         public async Task<DashboardStats> GetDashboardStatsAsync(User? user = null)
         {
