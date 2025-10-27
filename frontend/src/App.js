@@ -13,7 +13,8 @@ import {
   Tenants,
   Payments,
   UserManagement,
-  SystemSettings
+  SystemSettings,
+  MaintenanceRequests
 } from './pages';
 import TenantOnboarding from './pages/TenantOnboarding';
 import AuthCallback from './pages/AuthCallback';
@@ -148,6 +149,13 @@ function App() {
                       <RenterDashboard />
                     }
                   />
+
+                  {/* Renter-specific routes */}
+                  {isRenter && (
+                    <>
+                      <Route path="/maintenance" element={<MaintenanceRequests />} />
+                    </>
+                  )}
 
                   {/* Feature routes - only accessible by property owners and admins */}
                   {canAccessPropertyOwnerFeatures && (
