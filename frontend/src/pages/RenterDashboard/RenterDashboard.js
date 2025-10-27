@@ -456,34 +456,38 @@ function MaintenanceRequests({ tenantId, propertyId }) {
         <div style={{ padding: '20px', textAlign: 'center', color: 'var(--text-secondary)' }}>
           Loading maintenance requests...
         </div>
-      ) : requests.length === 0 ? (
-        <div className="maintenance-empty">
-          <div className="maintenance-empty-icon">🔧</div>
-          <p>No maintenance requests</p>
-          <p className="maintenance-empty-hint">Submit a request if you need assistance</p>
-        </div>
       ) : (
-        <div>
-          {requests.map(request => (
-            <div
-              key={request.id}
-              className="maintenance-request-item"
-            >
-              <div className="maintenance-request-header">
-                <div className="maintenance-request-title-row">
-                  <span>{getPriorityIcon(request.priority)}</span>
-                  <strong className="maintenance-request-title">{request.title}</strong>
-                </div>
-                {getStatusBadge(request.status)}
-              </div>
-              <p className="maintenance-request-description">
-                {request.description}
-              </p>
-              <div className="maintenance-request-date">
-                Submitted: {new Date(request.createdAt).toLocaleDateString()}
-              </div>
+        <>
+          {requests.length === 0 ? (
+            <div className="maintenance-empty">
+              <div className="maintenance-empty-icon">🔧</div>
+              <p>No maintenance requests</p>
+              <p className="maintenance-empty-hint">Submit a request if you need assistance</p>
             </div>
-          ))}
+          ) : (
+            <div>
+              {requests.map(request => (
+                <div
+                  key={request.id}
+                  className="maintenance-request-item"
+                >
+                  <div className="maintenance-request-header">
+                    <div className="maintenance-request-title-row">
+                      <span>{getPriorityIcon(request.priority)}</span>
+                      <strong className="maintenance-request-title">{request.title}</strong>
+                    </div>
+                    {getStatusBadge(request.status)}
+                  </div>
+                  <p className="maintenance-request-description">
+                    {request.description}
+                  </p>
+                  <div className="maintenance-request-date">
+                    Submitted: {new Date(request.createdAt).toLocaleDateString()}
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
           <button
             className="btn btn-accent maintenance-submit-button"
             onClick={() => setShowModal(true)}
@@ -498,7 +502,7 @@ function MaintenanceRequests({ tenantId, propertyId }) {
               propertyId={propertyId}
             />
           )}
-        </div>
+        </>
       )}
     </div>
   );

@@ -28,7 +28,7 @@ function MaintenanceRequestModal({ onClose, onSuccess, tenantId, propertyId }) {
       setLoading(true);
       setError(null);
 
-      await apiService.createMaintenanceRequest({
+      const result = await apiService.createMaintenanceRequest({
         tenantId,
         propertyId,
         title: formData.title,
@@ -36,7 +36,12 @@ function MaintenanceRequestModal({ onClose, onSuccess, tenantId, propertyId }) {
         priority: formData.priority
       });
 
-      onSuccess();
+      console.log('Maintenance request created successfully:', result);
+
+      // Call onSuccess first to reload the list
+      await onSuccess();
+
+      // Then close the modal
       onClose();
     } catch (err) {
       setError('Error submitting maintenance request: ' + err.message);

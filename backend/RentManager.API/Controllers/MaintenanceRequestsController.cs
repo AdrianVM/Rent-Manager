@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using RentManager.API.Models;
+using RentManager.API.DTOs;
 using RentManager.API.Services;
 
 namespace RentManager.API.Controllers
@@ -18,54 +18,59 @@ namespace RentManager.API.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<List<MaintenanceRequest>>> GetMaintenanceRequests()
+        public async Task<ActionResult<List<MaintenanceRequestDto>>> GetMaintenanceRequests()
         {
             var requests = await _dataService.GetMaintenanceRequestsAsync();
-            return Ok(requests);
+            var dtos = MaintenanceRequestMapper.ToDto(requests);
+            return Ok(dtos);
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<MaintenanceRequest>> GetMaintenanceRequest(string id)
+        public async Task<ActionResult<MaintenanceRequestDto>> GetMaintenanceRequest(string id)
         {
             var request = await _dataService.GetMaintenanceRequestAsync(id);
             if (request == null)
             {
                 return NotFound();
             }
-            return Ok(request);
+            var dto = MaintenanceRequestMapper.ToDto(request);
+            return Ok(dto);
         }
 
         [HttpGet("tenant/{tenantId}")]
-        public async Task<ActionResult<List<MaintenanceRequest>>> GetMaintenanceRequestsByTenant(string tenantId)
+        public async Task<ActionResult<List<MaintenanceRequestDto>>> GetMaintenanceRequestsByTenant(string tenantId)
         {
             var requests = await _dataService.GetMaintenanceRequestsByTenantIdAsync(tenantId);
-            return Ok(requests);
+            var dtos = MaintenanceRequestMapper.ToDto(requests);
+            return Ok(dtos);
         }
 
         [HttpGet("property/{propertyId}")]
-        public async Task<ActionResult<List<MaintenanceRequest>>> GetMaintenanceRequestsByProperty(string propertyId)
+        public async Task<ActionResult<List<MaintenanceRequestDto>>> GetMaintenanceRequestsByProperty(string propertyId)
         {
             var requests = await _dataService.GetMaintenanceRequestsByPropertyIdAsync(propertyId);
-            return Ok(requests);
+            var dtos = MaintenanceRequestMapper.ToDto(requests);
+            return Ok(dtos);
         }
 
         [HttpPost]
-        public async Task<ActionResult<MaintenanceRequest>> CreateMaintenanceRequest([FromBody] MaintenanceRequestCreateRequest request)
+        public async Task<ActionResult<MaintenanceRequestDto>> CreateMaintenanceRequest([FromBody] MaintenanceRequestCreateDto dto)
         {
             try
             {
-                var maintenanceRequest = new MaintenanceRequest
-                {
-                    TenantId = request.TenantId,
-                    PropertyId = request.PropertyId,
-                    Title = request.Title,
-                    Description = request.Description,
-                    Priority = request.Priority,
-                    Status = MaintenanceStatus.Pending
-                };
+                var entity = MaintenanceRequestMapper.ToEntity(dto);
+                var createdRequest = await _dataService.CreateMaintenanceRequestAsync(entity);
 
-                var createdRequest = await _dataService.CreateMaintenanceRequestAsync(maintenanceRequest);
-                return CreatedAtAction(nameof(GetMaintenanceRequest), new { id = createdRequest.Id }, createdRequest);
+                // Reload the request with all relationships
+                var fullRequest = await _dataService.GetMaintenanceRequestAsync(createdRequest.Id);
+
+                if (fullRequest == null)
+                {
+                    return BadRequest("Failed to retrieve created request");
+                }
+
+                var responseDto = MaintenanceRequestMapper.ToDto(fullRequest);
+                return CreatedAtAction(nameof(GetMaintenanceRequest), new { id = createdRequest.Id }, responseDto);
             }
             catch (Exception ex)
             {
@@ -75,7 +80,7 @@ namespace RentManager.API.Controllers
 
         [HttpPut("{id}")]
         [Authorize(Roles = "Admin,PropertyOwner")]
-        public async Task<ActionResult<MaintenanceRequest>> UpdateMaintenanceRequest(string id, [FromBody] MaintenanceRequestUpdateRequest request)
+        public async Task<ActionResult<MaintenanceRequestDto>> UpdateMaintenanceRequest(string id, [FromBody] MaintenanceRequestUpdateDto dto)
         {
             var existingRequest = await _dataService.GetMaintenanceRequestAsync(id);
             if (existingRequest == null)
@@ -83,20 +88,16 @@ namespace RentManager.API.Controllers
                 return NotFound();
             }
 
-            existingRequest.Title = request.Title;
-            existingRequest.Description = request.Description;
-            existingRequest.Status = request.Status;
-            existingRequest.Priority = request.Priority;
-            existingRequest.AssignedTo = request.AssignedTo;
-            existingRequest.ResolutionNotes = request.ResolutionNotes;
-
-            if (request.Status == MaintenanceStatus.Completed && existingRequest.ResolvedAt == null)
-            {
-                existingRequest.ResolvedAt = DateTimeOffset.UtcNow;
-            }
+            MaintenanceRequestMapper.UpdateEntity(existingRequest, dto);
 
             var updatedRequest = await _dataService.UpdateMaintenanceRequestAsync(id, existingRequest);
-            return Ok(updatedRequest);
+            if (updatedRequest == null)
+            {
+                return NotFound();
+            }
+
+            var responseDto = MaintenanceRequestMapper.ToDto(updatedRequest);
+            return Ok(responseDto);
         }
 
         [HttpDelete("{id}")]
@@ -110,24 +111,5 @@ namespace RentManager.API.Controllers
             }
             return NoContent();
         }
-    }
-
-    public class MaintenanceRequestCreateRequest
-    {
-        public string TenantId { get; set; } = string.Empty;
-        public string PropertyId { get; set; } = string.Empty;
-        public string Title { get; set; } = string.Empty;
-        public string Description { get; set; } = string.Empty;
-        public MaintenancePriority Priority { get; set; } = MaintenancePriority.Medium;
-    }
-
-    public class MaintenanceRequestUpdateRequest
-    {
-        public string Title { get; set; } = string.Empty;
-        public string Description { get; set; } = string.Empty;
-        public MaintenanceStatus Status { get; set; }
-        public MaintenancePriority Priority { get; set; }
-        public string? AssignedTo { get; set; }
-        public string? ResolutionNotes { get; set; }
     }
 }
