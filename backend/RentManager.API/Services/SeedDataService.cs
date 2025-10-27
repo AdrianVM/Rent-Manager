@@ -22,11 +22,12 @@ namespace RentManager.API.Services
             // Create the main user with multiple roles
             var mainUser = await CreateMainUserAsync(userEmail);
 
-            // Seed data in order (properties first, then property owners, then tenants, then payments)
+            // Seed data in order (properties first, then property owners, then tenants, then payments, then maintenance requests)
             var properties = await SeedPropertiesAsync();
             await SeedPropertyOwnersAsync(properties, mainUser);
             var tenants = await SeedTenantsAsync(properties, mainUser);
             await SeedPaymentsAsync(tenants);
+            await SeedMaintenanceRequestsAsync(tenants, properties);
         }
 
         private async Task<User> CreateMainUserAsync(string userEmail)
@@ -350,6 +351,100 @@ namespace RentManager.API.Services
             foreach (var payment in payments)
             {
                 await _dataService.CreatePaymentAsync(payment);
+            }
+        }
+
+        private async Task SeedMaintenanceRequestsAsync(List<Tenant> tenants, List<Property> properties)
+        {
+            if (!tenants.Any())
+            {
+                return;
+            }
+
+            var tenant = tenants[0];
+            var property = properties[0];
+
+            var now = DateTimeOffset.UtcNow;
+            var today = new DateTimeOffset(now.Year, now.Month, now.Day, 10, 30, 0, now.Offset);
+            var yesterday = today.AddDays(-1);
+            var twoDaysAgo = today.AddDays(-2);
+
+            var maintenanceRequests = new List<MaintenanceRequest>
+            {
+                // Two days ago - Completed
+                new MaintenanceRequest
+                {
+                    Id = Guid.NewGuid().ToString(),
+                    TenantId = tenant.Id,
+                    PropertyId = property.Id,
+                    Title = "Leaky Kitchen Faucet",
+                    Description = "The kitchen faucet has been dripping constantly for the past week. It's wasting water and the sound is quite annoying.",
+                    Priority = MaintenancePriority.Medium,
+                    Status = MaintenanceStatus.Completed,
+                    AssignedTo = "Mike Johnson",
+                    ResolutionNotes = "Replaced the faucet cartridge and checked all seals. No more leaks detected.",
+                    CreatedAt = twoDaysAgo,
+                    UpdatedAt = yesterday,
+                    ResolvedAt = yesterday
+                },
+                // Yesterday - In Progress
+                new MaintenanceRequest
+                {
+                    Id = Guid.NewGuid().ToString(),
+                    TenantId = tenant.Id,
+                    PropertyId = property.Id,
+                    Title = "Broken Window Lock",
+                    Description = "The lock on the bedroom window is broken and won't secure properly. This is a security concern.",
+                    Priority = MaintenancePriority.High,
+                    Status = MaintenanceStatus.InProgress,
+                    AssignedTo = "Sarah Williams",
+                    CreatedAt = yesterday,
+                    UpdatedAt = today
+                },
+                // Yesterday - Pending
+                new MaintenanceRequest
+                {
+                    Id = Guid.NewGuid().ToString(),
+                    TenantId = tenant.Id,
+                    PropertyId = property.Id,
+                    Title = "Noisy Ceiling Fan",
+                    Description = "The ceiling fan in the living room makes a loud rattling noise when running at medium or high speed.",
+                    Priority = MaintenancePriority.Low,
+                    Status = MaintenanceStatus.Pending,
+                    CreatedAt = yesterday,
+                    UpdatedAt = yesterday
+                },
+                // Today - Emergency
+                new MaintenanceRequest
+                {
+                    Id = Guid.NewGuid().ToString(),
+                    TenantId = tenant.Id,
+                    PropertyId = property.Id,
+                    Title = "No Hot Water",
+                    Description = "The water heater appears to be broken. There's no hot water coming from any faucet. This needs immediate attention.",
+                    Priority = MaintenancePriority.Emergency,
+                    Status = MaintenanceStatus.Pending,
+                    CreatedAt = today,
+                    UpdatedAt = today
+                },
+                // Today - Pending
+                new MaintenanceRequest
+                {
+                    Id = Guid.NewGuid().ToString(),
+                    TenantId = tenant.Id,
+                    PropertyId = property.Id,
+                    Title = "AC Not Cooling Properly",
+                    Description = "The air conditioning unit is running but not cooling the apartment effectively. Room temperature stays around 78°F even when set to 68°F.",
+                    Priority = MaintenancePriority.High,
+                    Status = MaintenanceStatus.Pending,
+                    CreatedAt = today,
+                    UpdatedAt = today
+                }
+            };
+
+            foreach (var request in maintenanceRequests)
+            {
+                await _dataService.CreateMaintenanceRequestAsync(request);
             }
         }
     }
