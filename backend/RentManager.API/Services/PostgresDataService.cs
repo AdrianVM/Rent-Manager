@@ -548,7 +548,15 @@ namespace RentManager.API.Services
             existingRequest.UpdatedAt = DateTimeOffset.UtcNow;
 
             await _context.SaveChangesAsync();
-            return existingRequest;
+
+            // Reload with navigation properties
+            return await _context.MaintenanceRequests
+                .Include(mr => mr.Tenant)
+                    .ThenInclude(t => t.Person)
+                .Include(mr => mr.Tenant)
+                    .ThenInclude(t => t.Company)
+                .Include(mr => mr.Property)
+                .FirstOrDefaultAsync(mr => mr.Id == id);
         }
 
         public async Task<bool> DeleteMaintenanceRequestAsync(string id, User? user = null)

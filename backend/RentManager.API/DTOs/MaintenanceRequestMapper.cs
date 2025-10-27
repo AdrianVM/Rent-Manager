@@ -10,10 +10,10 @@ namespace RentManager.API.DTOs
             {
                 Id = request.Id,
                 TenantId = request.TenantId,
-                TenantName = request.Tenant?.Name ?? "Unknown",
+                TenantName = request.Tenant.Name,
                 PropertyId = request.PropertyId,
-                PropertyName = request.Property?.Name ?? "Unknown",
-                PropertyAddress = request.Property?.Address ?? "Unknown",
+                PropertyName = request.Property.Name,
+                PropertyAddress = request.Property.Address,
                 Title = request.Title,
                 Description = request.Description,
                 Status = request.Status.ToString(),

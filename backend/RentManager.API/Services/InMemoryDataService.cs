@@ -406,12 +406,18 @@ namespace RentManager.API.Services
         // Maintenance Requests
         public Task<List<MaintenanceRequest>> GetMaintenanceRequestsAsync(User? user = null)
         {
-            return Task.FromResult(_maintenanceRequests.OrderByDescending(mr => mr.CreatedAt).ToList());
+            var requests = _maintenanceRequests.OrderByDescending(mr => mr.CreatedAt).ToList();
+            PopulateMaintenanceRequestNavigationProperties(requests);
+            return Task.FromResult(requests);
         }
 
         public Task<MaintenanceRequest?> GetMaintenanceRequestAsync(string id, User? user = null)
         {
             var request = _maintenanceRequests.FirstOrDefault(mr => mr.Id == id);
+            if (request != null)
+            {
+                PopulateMaintenanceRequestNavigationProperties(new List<MaintenanceRequest> { request });
+            }
             return Task.FromResult(request);
         }
 
@@ -421,6 +427,7 @@ namespace RentManager.API.Services
                 .Where(mr => mr.TenantId == tenantId)
                 .OrderByDescending(mr => mr.CreatedAt)
                 .ToList();
+            PopulateMaintenanceRequestNavigationProperties(requests);
             return Task.FromResult(requests);
         }
 
@@ -430,7 +437,17 @@ namespace RentManager.API.Services
                 .Where(mr => mr.PropertyId == propertyId)
                 .OrderByDescending(mr => mr.CreatedAt)
                 .ToList();
+            PopulateMaintenanceRequestNavigationProperties(requests);
             return Task.FromResult(requests);
+        }
+
+        private void PopulateMaintenanceRequestNavigationProperties(List<MaintenanceRequest> requests)
+        {
+            foreach (var request in requests)
+            {
+                request.Tenant = _tenants.FirstOrDefault(t => t.Id == request.TenantId)!;
+                request.Property = _properties.FirstOrDefault(p => p.Id == request.PropertyId)!;
+            }
         }
 
         public Task<MaintenanceRequest> CreateMaintenanceRequestAsync(MaintenanceRequest request, User? user = null)
@@ -461,6 +478,9 @@ namespace RentManager.API.Services
             existing.ResolutionNotes = request.ResolutionNotes;
             existing.ResolvedAt = request.ResolvedAt;
             existing.UpdatedAt = DateTimeOffset.UtcNow;
+
+            // Populate navigation properties
+            PopulateMaintenanceRequestNavigationProperties(new List<MaintenanceRequest> { existing });
 
             return Task.FromResult<MaintenanceRequest?>(existing);
         }

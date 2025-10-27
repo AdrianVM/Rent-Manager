@@ -4,9 +4,9 @@ namespace RentManager.API.Models
     {
         public string Id { get; set; } = string.Empty;
         public string TenantId { get; set; } = string.Empty;
-        public Tenant? Tenant { get; set; }
+        public Tenant Tenant { get; set; } = null!;
         public string PropertyId { get; set; } = string.Empty;
-        public Property? Property { get; set; }
+        public Property Property { get; set; } = null!;
 
         public string Title { get; set; } = string.Empty;
         public string Description { get; set; } = string.Empty;
