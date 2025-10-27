@@ -442,10 +442,9 @@ namespace RentManager.API.Services
                 }
             };
 
-            foreach (var request in maintenanceRequests)
-            {
-                await _dataService.CreateMaintenanceRequestAsync(request);
-            }
+            // Add directly to context to preserve the CreatedAt dates
+            _context.MaintenanceRequests.AddRange(maintenanceRequests);
+            await _context.SaveChangesAsync();
         }
     }
 }
