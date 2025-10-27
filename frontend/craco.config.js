@@ -1,3 +1,9 @@
+const fs = require('fs');
+const evalSourceMapMiddleware = require('react-dev-utils/evalSourceMapMiddleware');
+const noopServiceWorkerMiddleware = require('react-dev-utils/noopServiceWorkerMiddleware');
+const redirectServedPath = require('react-dev-utils/redirectServedPathMiddleware');
+const paths = require('react-scripts/config/paths');
+
 module.exports = {
   webpack: {
     configure: (webpackConfig) => {
@@ -22,9 +28,37 @@ module.exports = {
       return webpackConfig;
     },
   },
-  devServer: {
-    setupMiddlewares: (middlewares, devServer) => {
+  devServer: (devServerConfig) => {
+    // Remove deprecated options
+    delete devServerConfig.onBeforeSetupMiddleware;
+    delete devServerConfig.onAfterSetupMiddleware;
+
+    // Use the new setupMiddlewares option
+    devServerConfig.setupMiddlewares = (middlewares, devServer) => {
+      if (!devServer) {
+        throw new Error('webpack-dev-server is not defined');
+      }
+
+      // Apply before middlewares
+      if (fs.existsSync(paths.proxySetup)) {
+        require(paths.proxySetup)(devServer.app);
+      }
+      devServer.app.use(evalSourceMapMiddleware(devServer));
+
+      // Add default middlewares
+      middlewares.push({
+        name: 'redirect-served-path',
+        middleware: redirectServedPath(paths.publicUrlOrPath),
+      });
+
+      middlewares.push({
+        name: 'noop-service-worker',
+        middleware: noopServiceWorkerMiddleware(paths.publicUrlOrPath),
+      });
+
       return middlewares;
-    },
+    };
+
+    return devServerConfig;
   },
 };
