@@ -8,7 +8,7 @@ module.exports = {
             (typeof loader === 'string' && loader.includes('source-map-loader')) ||
             (typeof loader === 'object' && loader.loader && loader.loader.includes('source-map-loader'))
           );
-          
+
           if (sourceMapLoaderIndex !== -1) {
             return {
               ...rule,
@@ -18,8 +18,13 @@ module.exports = {
         }
         return rule;
       });
-      
+
       return webpackConfig;
+    },
+  },
+  devServer: {
+    setupMiddlewares: (middlewares, devServer) => {
+      return middlewares;
     },
   },
 };
