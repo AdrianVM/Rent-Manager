@@ -15,7 +15,8 @@ import {
   UserManagement,
   SystemSettings,
   MaintenanceRequests,
-  Documents
+  Documents,
+  PaymentHistory
 } from './pages';
 import TenantOnboarding from './pages/TenantOnboarding';
 import AuthCallback from './pages/AuthCallback';
@@ -156,6 +157,7 @@ function App() {
                     <>
                       <Route path="/maintenance" element={<MaintenanceRequests />} />
                       <Route path="/documents" element={<Documents />} />
+                      <Route path="/payment-history" element={<PaymentHistory />} />
                     </>
                   )}
 
