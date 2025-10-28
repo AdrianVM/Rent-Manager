@@ -11,3 +11,10 @@ export { default as MaintenanceRequests } from './MaintenanceRequests/Maintenanc
 export { default as Documents } from './Documents';
 export { default as PaymentHistory } from './PaymentHistory';
 export { default as PropertyDetails } from './PropertyDetails';
+
+// Financial Reports
+export { default as Reports } from './Reports';
+export { default as IncomeStatement } from './Reports/IncomeStatement';
+export { default as RentCollection } from './Reports/RentCollection';
+export { default as CashFlow } from './Reports/CashFlow';
+export { default as OccupancyRevenue } from './Reports/OccupancyRevenue';

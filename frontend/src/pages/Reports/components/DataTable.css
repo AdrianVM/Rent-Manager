@@ -1,0 +1,154 @@
+/* DataTable Component - Financial Data Tables */
+
+.report-table-container {
+  background: var(--card-bg);
+  backdrop-filter: var(--card-backdrop-blur);
+  -webkit-backdrop-filter: var(--card-backdrop-blur);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--card-shadow);
+  padding: var(--space-xl);
+  margin-bottom: var(--space-xl);
+  overflow-x: auto;
+}
+
+.report-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+}
+
+.report-table thead {
+  border-bottom: 2px solid var(--border-base);
+}
+
+.report-table th {
+  padding: var(--space-md);
+  text-align: left;
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.report-table th.align-right,
+.report-table td.align-right {
+  text-align: right;
+}
+
+.report-table tbody tr {
+  border-bottom: 1px solid var(--border-base);
+  transition: background-color var(--transition-base);
+}
+
+.report-table tbody tr:hover {
+  background-color: var(--bg-overlay);
+}
+
+.report-table tbody tr:last-child {
+  border-bottom: none;
+}
+
+.report-table td {
+  padding: var(--space-md);
+  font-size: var(--font-size-sm);
+  color: var(--text-primary);
+}
+
+/* Tabular numbers for currency/numbers */
+.report-table .currency {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum";
+}
+
+/* Total row styling */
+.report-table .total-row {
+  font-weight: var(--font-weight-bold);
+  background-color: var(--bg-secondary);
+  border-top: 2px solid var(--border-base);
+}
+
+.report-table .total-row:hover {
+  background-color: var(--bg-secondary);
+}
+
+/* Color coding for positive/negative values */
+.report-table .positive-value {
+  color: var(--color-success);
+}
+
+.report-table .negative-value {
+  color: var(--color-danger);
+}
+
+/* Empty state */
+.table-empty {
+  text-align: center;
+  padding: var(--space-3xl) var(--space-xl);
+  color: var(--text-secondary);
+}
+
+.table-empty .empty-icon {
+  font-size: 48px;
+  margin-bottom: var(--space-md);
+  opacity: 0.5;
+}
+
+.table-empty p {
+  margin: 0;
+  font-size: var(--font-size-sm);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .report-table-container {
+    overflow-x: scroll;
+    -webkit-overflow-scrolling: touch;
+    padding: var(--space-md);
+  }
+
+  .report-table {
+    min-width: 600px;
+  }
+
+  .report-table th,
+  .report-table td {
+    padding: var(--space-sm);
+    font-size: 13px;
+  }
+}
+
+/* Alternative: Card view for mobile (optional, uncomment if needed) */
+/*
+@media (max-width: 480px) {
+  .report-table thead {
+    display: none;
+  }
+
+  .report-table tbody tr {
+    display: block;
+    margin-bottom: var(--space-md);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius-md);
+    padding: var(--space-md);
+  }
+
+  .report-table td {
+    display: flex;
+    justify-content: space-between;
+    padding: var(--space-sm) 0;
+    border-bottom: 1px solid var(--border-base);
+  }
+
+  .report-table td:last-child {
+    border-bottom: none;
+  }
+
+  .report-table td:before {
+    content: attr(data-label);
+    font-weight: var(--font-weight-semibold);
+    color: var(--text-secondary);
+  }
+}
+*/

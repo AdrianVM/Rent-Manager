@@ -17,7 +17,12 @@ import {
   MaintenanceRequests,
   Documents,
   PaymentHistory,
-  PropertyDetails
+  PropertyDetails,
+  Reports,
+  IncomeStatement,
+  RentCollection,
+  CashFlow,
+  OccupancyRevenue
 } from './pages';
 import TenantOnboarding from './pages/TenantOnboarding';
 import AuthCallback from './pages/AuthCallback';
@@ -169,6 +174,13 @@ function App() {
                       <Route path="/properties" element={<Properties />} />
                       <Route path="/tenants" element={<Tenants />} />
                       <Route path="/payments" element={<Payments />} />
+
+                      {/* Financial Reports */}
+                      <Route path="/reports" element={<Reports />} />
+                      <Route path="/reports/income-statement" element={<IncomeStatement />} />
+                      <Route path="/reports/rent-collection" element={<RentCollection />} />
+                      <Route path="/reports/cash-flow" element={<CashFlow />} />
+                      <Route path="/reports/occupancy-revenue" element={<OccupancyRevenue />} />
                     </>
                   )}
 
