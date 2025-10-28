@@ -14,7 +14,8 @@ import {
   Payments,
   UserManagement,
   SystemSettings,
-  MaintenanceRequests
+  MaintenanceRequests,
+  Documents
 } from './pages';
 import TenantOnboarding from './pages/TenantOnboarding';
 import AuthCallback from './pages/AuthCallback';
@@ -154,6 +155,7 @@ function App() {
                   {isRenter && (
                     <>
                       <Route path="/maintenance" element={<MaintenanceRequests />} />
+                      <Route path="/documents" element={<Documents />} />
                     </>
                   )}
 
