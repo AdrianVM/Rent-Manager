@@ -16,7 +16,8 @@ import {
   SystemSettings,
   MaintenanceRequests,
   Documents,
-  PaymentHistory
+  PaymentHistory,
+  PropertyDetails
 } from './pages';
 import TenantOnboarding from './pages/TenantOnboarding';
 import AuthCallback from './pages/AuthCallback';
@@ -155,6 +156,7 @@ function App() {
                   {/* Renter-specific routes */}
                   {isRenter && (
                     <>
+                      <Route path="/my-rental" element={<PropertyDetails />} />
                       <Route path="/maintenance" element={<MaintenanceRequests />} />
                       <Route path="/documents" element={<Documents />} />
                       <Route path="/payment-history" element={<PaymentHistory />} />

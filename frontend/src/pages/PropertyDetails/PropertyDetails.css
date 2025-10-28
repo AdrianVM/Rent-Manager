@@ -1,0 +1,451 @@
+/* ===== PROPERTY DETAILS - APPLE-INSPIRED DESIGN ===== */
+
+.property-details-page {
+  padding: var(--space-2xl);
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+/* Page Header with Animation */
+.property-details-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: var(--space-xl);
+  animation: slideDown 0.6s ease-out;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.property-details-title {
+  font-size: 42px;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  background: linear-gradient(135deg, var(--avm-royal-blue) 0%, var(--avm-teal) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin: 0 0 8px 0;
+}
+
+[data-theme="dark"] .property-details-title {
+  background: linear-gradient(135deg, var(--color-primary) 0%, var(--avm-teal) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.property-details-subtitle {
+  color: var(--text-secondary);
+  font-size: 16px;
+  font-weight: 400;
+  margin: 0;
+  letter-spacing: -0.01em;
+}
+
+/* Loading State */
+.property-details-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-3xl) var(--space-2xl);
+  color: var(--text-secondary);
+}
+
+.loading-spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid var(--border-base);
+  border-top-color: var(--color-primary);
+  border-radius: var(--radius-full);
+  animation: spin 1s linear infinite;
+  margin-bottom: var(--space-md);
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Error State */
+.property-details-error {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-3xl) var(--space-2xl);
+  color: var(--text-secondary);
+  text-align: center;
+}
+
+.error-icon {
+  font-size: var(--font-size-4xl);
+  margin-bottom: var(--space-md);
+}
+
+/* Property Overview Card - Hero Section */
+.property-overview-card {
+  background: var(--card-bg);
+  backdrop-filter: var(--card-backdrop-blur);
+  -webkit-backdrop-filter: var(--card-backdrop-blur);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius-2xl);
+  box-shadow: var(--card-shadow);
+  padding: var(--space-2xl);
+  margin-bottom: var(--space-2xl);
+  display: flex;
+  align-items: center;
+  gap: var(--space-2xl);
+  transition: all var(--transition-slower);
+  animation: fadeIn 0.8s ease-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.property-overview-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--card-shadow-hover);
+}
+
+.property-icon-large {
+  font-size: 80px;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.property-overview-content {
+  flex: 1;
+}
+
+.property-name {
+  font-size: var(--font-size-3xl);
+  font-weight: var(--font-weight-bold);
+  color: var(--text-primary);
+  margin: 0 0 var(--space-sm) 0;
+  letter-spacing: -0.02em;
+}
+
+.property-address {
+  font-size: var(--font-size-lg);
+  color: var(--text-secondary);
+  margin: 0 0 var(--space-md) 0;
+}
+
+.property-type-badge {
+  display: inline-flex;
+  padding: var(--space-xs) var(--space-md);
+  border-radius: var(--radius-full);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  text-transform: uppercase;
+  letter-spacing: var(--letter-spacing-wide);
+  background: var(--bg-overlay);
+  color: var(--color-primary);
+  border: 1px solid var(--color-primary);
+}
+
+/* Property Details Grid */
+.property-details-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: var(--space-md);
+  margin-bottom: var(--space-2xl);
+  animation: fadeIn 0.8s ease-out 0.2s both;
+}
+
+.detail-card {
+  background: var(--card-bg);
+  backdrop-filter: var(--card-backdrop-blur);
+  -webkit-backdrop-filter: var(--card-backdrop-blur);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--card-shadow);
+  padding: var(--space-xl);
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  transition: all var(--transition-slower);
+}
+
+.detail-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--card-shadow-hover);
+}
+
+.detail-icon {
+  font-size: var(--font-size-3xl);
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.detail-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.detail-label {
+  font-size: var(--font-size-sm);
+  color: var(--text-secondary);
+  margin-bottom: var(--space-xs);
+}
+
+.detail-value {
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-bold);
+  color: var(--text-primary);
+  line-height: var(--line-height-tight);
+}
+
+/* Description Card */
+.property-description-card {
+  background: var(--card-bg);
+  backdrop-filter: var(--card-backdrop-blur);
+  -webkit-backdrop-filter: var(--card-backdrop-blur);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--card-shadow);
+  padding: var(--space-2xl);
+  margin-bottom: var(--space-2xl);
+  transition: all var(--transition-slower);
+  animation: fadeIn 0.8s ease-out 0.3s both;
+}
+
+.property-description-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--card-shadow-hover);
+}
+
+.section-title {
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-bold);
+  color: var(--text-primary);
+  margin: 0 0 var(--space-md) 0;
+  letter-spacing: -0.02em;
+}
+
+.property-description {
+  font-size: var(--font-size-base);
+  color: var(--text-secondary);
+  line-height: var(--line-height-relaxed);
+  margin: 0;
+}
+
+/* Lease Information Card */
+.lease-info-card {
+  background: var(--card-bg);
+  backdrop-filter: var(--card-backdrop-blur);
+  -webkit-backdrop-filter: var(--card-backdrop-blur);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--card-shadow);
+  padding: var(--space-2xl);
+  margin-bottom: var(--space-2xl);
+  transition: all var(--transition-slower);
+  animation: fadeIn 0.8s ease-out 0.4s both;
+}
+
+.lease-info-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--card-shadow-hover);
+}
+
+.lease-info-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: var(--space-xl);
+}
+
+.lease-info-item {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+}
+
+.info-label {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: var(--letter-spacing-wide);
+}
+
+.info-value {
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-semibold);
+  color: var(--text-primary);
+}
+
+.info-value.status-active {
+  color: var(--color-success);
+}
+
+.info-value.status-pending {
+  color: var(--color-warning);
+}
+
+.info-value.status-inactive {
+  color: var(--text-secondary);
+}
+
+/* Map Card */
+.property-map-card {
+  background: var(--card-bg);
+  backdrop-filter: var(--card-backdrop-blur);
+  -webkit-backdrop-filter: var(--card-backdrop-blur);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--card-shadow);
+  padding: var(--space-2xl);
+  transition: all var(--transition-slower);
+  animation: fadeIn 0.8s ease-out 0.5s both;
+}
+
+.property-map-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--card-shadow-hover);
+}
+
+.map-container {
+  margin-top: var(--space-md);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  border: 1px solid var(--border-base);
+}
+
+.map-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-3xl) var(--space-2xl);
+  color: var(--text-secondary);
+}
+
+.map-error {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-3xl) var(--space-2xl);
+  text-align: center;
+  color: var(--text-secondary);
+  background: var(--bg-secondary);
+  border-radius: var(--radius-lg);
+  border: 2px dashed var(--border-base);
+}
+
+.map-error-address {
+  font-weight: var(--font-weight-semibold);
+  color: var(--text-primary);
+  margin-top: var(--space-xs);
+}
+
+/* Leaflet Popup Customization */
+.leaflet-popup-content-wrapper {
+  background: var(--card-bg);
+  backdrop-filter: var(--card-backdrop-blur);
+  -webkit-backdrop-filter: var(--card-backdrop-blur);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--card-shadow);
+}
+
+.leaflet-popup-content {
+  color: var(--text-primary);
+  font-family: var(--font-family-base);
+}
+
+.leaflet-popup-tip {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .property-details-page {
+    padding: var(--space-md);
+  }
+
+  .property-details-title {
+    font-size: var(--font-size-2xl);
+  }
+
+  .property-overview-card {
+    flex-direction: column;
+    text-align: center;
+    padding: var(--space-xl);
+  }
+
+  .property-icon-large {
+    font-size: 60px;
+  }
+
+  .property-name {
+    font-size: var(--font-size-2xl);
+  }
+
+  .property-address {
+    font-size: var(--font-size-base);
+  }
+
+  .property-details-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .detail-card {
+    padding: var(--space-md);
+  }
+
+  .detail-icon {
+    font-size: var(--font-size-2xl);
+  }
+
+  .detail-value {
+    font-size: var(--font-size-lg);
+  }
+
+  .lease-info-grid {
+    grid-template-columns: 1fr;
+    gap: var(--space-md);
+  }
+
+  .map-container {
+    height: 300px;
+  }
+}
+
+@media (max-width: 480px) {
+  .property-details-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .property-overview-card {
+    padding: var(--space-md);
+  }
+
+  .property-icon-large {
+    font-size: 50px;
+  }
+
+  .property-name {
+    font-size: var(--font-size-xl);
+  }
+}
