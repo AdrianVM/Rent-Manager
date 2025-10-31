@@ -17,7 +17,7 @@ function Navigation({ user, availableRoles, currentRole, onRoleChange, onLogout 
         {/* Brand Section */}
         <div className={styles.appleNavBrand}>
           <Link to="/" className={styles.appleBrandLink}>
-            <Logo size="medium" showText={true} showSubtext={false} />
+            <Logo size="medium" showText={true} showSubtext={true} />
           </Link>
         </div>
 
