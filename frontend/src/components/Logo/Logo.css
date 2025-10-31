@@ -1,0 +1,83 @@
+/* ===== Logo Container ===== */
+.logo-container {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  user-select: none;
+}
+
+/* Logo icon animation */
+.logo-icon {
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.logo-container:hover .logo-icon {
+  transform: scale(1.05);
+}
+
+/* ===== Full Logo (Icon + Text) ===== */
+.logo-full {
+  flex-direction: row;
+}
+
+/* ===== Icon Only ===== */
+.logo-icon-only {
+  justify-content: center;
+}
+
+/* ===== Text Group ===== */
+.logo-text-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  line-height: 1;
+}
+
+.logo-text {
+  margin: 0;
+  font-weight: 700;
+  letter-spacing: -0.04em;
+  background: linear-gradient(135deg, #1F4E79 0%, #1CA9A3 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', sans-serif;
+}
+
+.logo-subtext {
+  margin: 0;
+  margin-top: 2px;
+  font-weight: 500;
+  color: var(--text-secondary, #666666);
+  letter-spacing: -0.01em;
+  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Segoe UI', sans-serif;
+}
+
+/* Dark mode support */
+[data-theme="dark"] .logo-text {
+  background: linear-gradient(135deg, #4a7ba7 0%, #2eb8b1 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+[data-theme="dark"] .logo-subtext {
+  color: var(--text-secondary, #cccccc);
+}
+
+/* ===== Text Only Variant ===== */
+.logo-text-only {
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+/* ===== Responsive ===== */
+@media (max-width: 768px) {
+  .logo-container {
+    gap: 8px;
+  }
+
+  .logo-subtext {
+    font-size: 11px;
+  }
+}

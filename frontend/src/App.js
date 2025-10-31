@@ -18,6 +18,7 @@ import {
   Documents,
   PaymentHistory,
   PropertyDetails,
+  LogoShowcase,
   Reports,
   IncomeStatement,
   RentCollection,
@@ -96,6 +97,7 @@ function App() {
           <Route path="/auth/callback" element={<AuthCallback onAuthSuccess={handleLoginSuccess} />} />
           <Route path="/logout" element={<Logout />} />
           <Route path="/onboard" element={<TenantOnboarding />} />
+          <Route path="/logo-showcase" element={<LogoShowcase />} />
           <Route path="*" element={<Login onLoginSuccess={handleLoginSuccess} />} />
         </Routes>
         <Footer />
@@ -122,8 +124,9 @@ function App() {
         {/* Logout route */}
         <Route path="/logout" element={<Logout />} />
 
-        {/* Public route accessible even when logged in */}
+        {/* Public routes accessible even when logged in */}
         <Route path="/onboard" element={<TenantOnboarding />} />
+        <Route path="/logo-showcase" element={<LogoShowcase />} />
 
         {/* Authenticated routes */}
         <Route path="/*" element={

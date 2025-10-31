@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
+import Logo from '../Logo';
 import styles from './Sidebar.module.css';
 
 function Sidebar({ user, currentRole }) {
@@ -176,8 +177,7 @@ function Sidebar({ user, currentRole }) {
         {/* Mobile Header */}
         <div className={styles.mobileHeader}>
           <div className={styles.mobileLogo}>
-            <span className={styles.logoIcon}>AVM</span>
-            <span className={styles.logoText}>Property Management</span>
+            <Logo size="medium" showText={true} showSubtext={false} />
           </div>
           <button
             className={styles.mobileClose}

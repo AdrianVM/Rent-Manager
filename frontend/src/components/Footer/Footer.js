@@ -1,4 +1,5 @@
 import React from 'react';
+import Logo from '../Logo';
 import './Footer.css';
 
 function Footer() {
@@ -11,21 +12,7 @@ function Footer() {
           {/* Company Info */}
           <div className="footer-section">
             <div className="footer-logo">
-              <div className="footer-logo-icon">
-                <svg width="32" height="32" viewBox="0 0 56 56" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <rect width="56" height="56" rx="12" fill="url(#footerGradient)" />
-                  <path d="M28 14L18 20L28 26L38 20L28 14Z" fill="white" fillOpacity="0.9"/>
-                  <path d="M18 36L28 42L38 36" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" strokeOpacity="0.9"/>
-                  <path d="M18 28L28 34L38 28" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" strokeOpacity="0.9"/>
-                  <defs>
-                    <linearGradient id="footerGradient" x1="0" y1="0" x2="56" y2="56" gradientUnits="userSpaceOnUse">
-                      <stop stopColor="#1F4E79"/>
-                      <stop offset="1" stopColor="#1CA9A3"/>
-                    </linearGradient>
-                  </defs>
-                </svg>
-              </div>
-              <span className="footer-logo-text">AVM</span>
+              <Logo size="medium" showText={true} showSubtext={false} />
             </div>
             <p className="footer-tagline">
               Modern property management made simple

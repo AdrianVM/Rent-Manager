@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import Logo from '../../components/Logo';
 import './Logout.css';
 
 function Logout() {
@@ -26,6 +27,11 @@ function Logout() {
 
       {/* Main Card */}
       <div className="logout-card">
+        {/* Logo */}
+        <div className="logout-logo">
+          <Logo size="large" variant="icon-only" />
+        </div>
+
         {/* Success Checkmark */}
         <div className="logout-checkmark-container">
           <span className="logout-checkmark">✓</span>

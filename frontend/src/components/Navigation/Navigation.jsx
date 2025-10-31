@@ -2,6 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { useTheme } from '../../contexts/ThemeContext';
 import RoleSwitcher from '../RoleSwitcher/RoleSwitcher';
+import Logo from '../Logo';
 import styles from './Navigation.module.css';
 
 function Navigation({ user, availableRoles, currentRole, onRoleChange, onLogout }) {
@@ -16,8 +17,7 @@ function Navigation({ user, availableRoles, currentRole, onRoleChange, onLogout 
         {/* Brand Section */}
         <div className={styles.appleNavBrand}>
           <Link to="/" className={styles.appleBrandLink}>
-            <div className={styles.appleBrandIcon}>AVM</div>
-            <div className={styles.appleBrandText}>Property Management</div>
+            <Logo size="medium" showText={true} showSubtext={false} />
           </Link>
         </div>
 

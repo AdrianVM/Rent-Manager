@@ -1,5 +1,13 @@
 /* Logout Page Styles - Apple-inspired Design */
 
+/* Logo Styling */
+.logout-logo {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 24px;
+  animation: fadeInDown 0.8s ease-out;
+}
+
 .logout-container {
   position: relative;
   min-height: 100vh;

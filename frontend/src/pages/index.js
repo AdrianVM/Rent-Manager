@@ -11,6 +11,7 @@ export { default as MaintenanceRequests } from './MaintenanceRequests/Maintenanc
 export { default as Documents } from './Documents';
 export { default as PaymentHistory } from './PaymentHistory';
 export { default as PropertyDetails } from './PropertyDetails';
+export { default as LogoShowcase } from './LogoShowcase';
 
 // Financial Reports
 export { default as Reports } from './Reports';
