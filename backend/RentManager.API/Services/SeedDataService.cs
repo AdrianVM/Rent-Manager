@@ -22,10 +22,13 @@ namespace RentManager.API.Services
             // Create the main user with multiple roles
             var mainUser = await CreateMainUserAsync(userEmail);
 
+            // Create additional users
+            var additionalUsers = await CreateAdditionalUsersAsync();
+
             // Seed data in order (properties first, then property owners, then tenants, then payments, then maintenance requests)
             var properties = await SeedPropertiesAsync();
             await SeedPropertyOwnersAsync(properties, mainUser);
-            var tenants = await SeedTenantsAsync(properties, mainUser);
+            var tenants = await SeedTenantsAsync(properties, mainUser, additionalUsers);
             await SeedPaymentsAsync(tenants);
             await SeedMaintenanceRequestsAsync(tenants, properties);
         }
@@ -57,7 +60,7 @@ namespace RentManager.API.Services
                         FirstName = nameParts.Length > 0 ? nameParts[0] : displayName,
                         MiddleName = nameParts.Length > 2 ? nameParts[1] : string.Empty,
                         LastName = nameParts.Length > 1 ? nameParts[^1] : string.Empty,
-                        DateOfBirth = new DateTime(1990, 1, 1, 0, 0, 0, DateTimeKind.Utc),
+                        DateOfBirth = DateTime.SpecifyKind(new DateTime(1990, 1, 1), DateTimeKind.Utc),
                         Nationality = "Demo",
                         Occupation = "Demo User",
                         CreatedAt = DateTimeOffset.UtcNow,
@@ -99,7 +102,7 @@ namespace RentManager.API.Services
                     FirstName = nameParts.Length > 0 ? nameParts[0] : displayName,
                     MiddleName = nameParts.Length > 2 ? nameParts[1] : string.Empty,
                     LastName = nameParts.Length > 1 ? nameParts[^1] : string.Empty,
-                    DateOfBirth = new DateTime(1990, 1, 1, 0, 0, 0, DateTimeKind.Utc),
+                    DateOfBirth = DateTime.SpecifyKind(new DateTime(1990, 1, 1), DateTimeKind.Utc),
                     Nationality = "Demo",
                     Occupation = "Demo User",
                     CreatedAt = DateTimeOffset.UtcNow,
@@ -130,11 +133,12 @@ namespace RentManager.API.Services
             var renterRole = await _context.Roles.FirstAsync(r => r.Name == Role.Renter);
 
             // Add all three roles to the user
+            var utcNow = DateTimeOffset.UtcNow;
             var userRoles = new List<UserRole>
             {
-                new UserRole { UserId = existingUser.Id, RoleId = adminRole.Id, AssignedAt = DateTimeOffset.UtcNow },
-                new UserRole { UserId = existingUser.Id, RoleId = propertyOwnerRole.Id, AssignedAt = DateTimeOffset.UtcNow },
-                new UserRole { UserId = existingUser.Id, RoleId = renterRole.Id, AssignedAt = DateTimeOffset.UtcNow }
+                new UserRole { UserId = existingUser.Id, RoleId = adminRole.Id, AssignedAt = utcNow },
+                new UserRole { UserId = existingUser.Id, RoleId = propertyOwnerRole.Id, AssignedAt = utcNow },
+                new UserRole { UserId = existingUser.Id, RoleId = renterRole.Id, AssignedAt = utcNow }
             };
 
             _context.UserRoles.AddRange(userRoles);
@@ -146,6 +150,97 @@ namespace RentManager.API.Services
                     .ThenInclude(ur => ur.Role)
                 .Include(u => u.Person)
                 .FirstAsync(u => u.Id == existingUser.Id);
+        }
+
+        private async Task<List<User>> CreateAdditionalUsersAsync()
+        {
+            var additionalUsers = new List<User>();
+
+            // Get roles from database
+            var propertyOwnerRole = await _context.Roles.FirstAsync(r => r.Name == Role.PropertyOwner);
+            var renterRole = await _context.Roles.FirstAsync(r => r.Name == Role.Renter);
+
+            // Define additional users with their details
+            var userDetails = new[]
+            {
+                new { Email = "john.smith@example.com", FirstName = "John", LastName = "Smith", Role = renterRole },
+                new { Email = "sarah.johnson@example.com", FirstName = "Sarah", LastName = "Johnson", Role = renterRole },
+                new { Email = "michael.brown@example.com", FirstName = "Michael", LastName = "Brown", Role = renterRole },
+                new { Email = "emily.davis@example.com", FirstName = "Emily", LastName = "Davis", Role = renterRole },
+                new { Email = "david.wilson@example.com", FirstName = "David", LastName = "Wilson", Role = renterRole },
+                new { Email = "lisa.anderson@example.com", FirstName = "Lisa", LastName = "Anderson", Role = propertyOwnerRole },
+                new { Email = "james.taylor@example.com", FirstName = "James", LastName = "Taylor", Role = renterRole }
+            };
+
+            foreach (var userDetail in userDetails)
+            {
+                // Check if user already exists
+                var existingUser = await _context.Users
+                    .Include(u => u.UserRoles)
+                        .ThenInclude(ur => ur.Role)
+                    .Include(u => u.Person)
+                    .FirstOrDefaultAsync(u => u.Email == userDetail.Email);
+
+                if (existingUser != null)
+                {
+                    additionalUsers.Add(existingUser);
+                    continue; // Skip if user already exists
+                }
+
+                // Create Person record
+                var person = new Person
+                {
+                    Id = Guid.NewGuid().ToString(),
+                    FirstName = userDetail.FirstName,
+                    MiddleName = string.Empty,
+                    LastName = userDetail.LastName,
+                    DateOfBirth = DateTime.SpecifyKind(new DateTime(1985 + additionalUsers.Count, 5, 15), DateTimeKind.Utc),
+                    Nationality = "US",
+                    Occupation = userDetail.Role.Name == Role.Renter ? "Professional" : "Property Manager",
+                    CreatedAt = DateTimeOffset.UtcNow,
+                    UpdatedAt = DateTimeOffset.UtcNow
+                };
+
+                _context.Persons.Add(person);
+                await _context.SaveChangesAsync();
+
+                // Create User record
+                var user = new User
+                {
+                    Id = Guid.NewGuid().ToString(),
+                    Email = userDetail.Email,
+                    PasswordHash = "not-used-zitadel-auth",
+                    IsActive = true,
+                    PersonId = person.Id,
+                    CreatedAt = DateTimeOffset.UtcNow,
+                    UpdatedAt = DateTimeOffset.UtcNow
+                };
+
+                _context.Users.Add(user);
+                await _context.SaveChangesAsync();
+
+                // Assign role
+                var userRole = new UserRole
+                {
+                    UserId = user.Id,
+                    RoleId = userDetail.Role.Id,
+                    AssignedAt = DateTimeOffset.UtcNow
+                };
+
+                _context.UserRoles.Add(userRole);
+                await _context.SaveChangesAsync();
+
+                // Reload user with all navigation properties
+                var loadedUser = await _context.Users
+                    .Include(u => u.UserRoles)
+                        .ThenInclude(ur => ur.Role)
+                    .Include(u => u.Person)
+                    .FirstAsync(u => u.Id == user.Id);
+
+                additionalUsers.Add(loadedUser);
+            }
+
+            return additionalUsers;
         }
 
         private async Task<List<Property>> SeedPropertiesAsync()
@@ -265,89 +360,209 @@ namespace RentManager.API.Services
             }
         }
 
-    private async Task<List<Tenant>> SeedTenantsAsync(List<Property> properties, User mainUser)
+    private async Task<List<Tenant>> SeedTenantsAsync(List<Property> properties, User mainUser, List<User> additionalUsers)
     {
-        // Create one tenant for the main user using their Person entity
-        var tenant = new Tenant
+        var tenants = new List<Tenant>();
+
+        // Check if tenant for main user already exists
+        var existingMainTenant = await _context.Tenants
+            .FirstOrDefaultAsync(t => t.PersonId == mainUser.PersonId && t.PropertyId == properties[0].Id);
+
+        if (existingMainTenant != null)
         {
-            Id = "tenant-main-user", // Fixed ID for main user
-            TenantType = TenantType.Person,
-            Email = mainUser.Email,
-            Phone = "+1 (555) 000-0000",
-            PersonId = mainUser.PersonId, // Link to the main user's Person
-            PropertyId = properties[0].Id, // First property
-            LeaseStart = new DateTime(2024, 1, 1, 0, 0, 0, DateTimeKind.Utc),
-            LeaseEnd = new DateTime(2025, 12, 31, 0, 0, 0, DateTimeKind.Utc),
-            RentAmount = 2500,
-            Deposit = 2500,
-            Status = TenantStatus.Active,
-            EmergencyContactName = "Emergency Contact",
-            EmergencyContactPhone = "+1 (555) 999-9999",
-            EmergencyContactRelation = "Family"
+            tenants.Add(existingMainTenant);
+        }
+        else
+        {
+            // Create tenant for the main user
+            var mainTenant = new Tenant
+            {
+                TenantType = TenantType.Person,
+                Email = mainUser.Email,
+                Phone = "+1 (555) 000-0000",
+                PersonId = mainUser.PersonId,
+                PropertyId = properties[0].Id, // Sunset Apartments
+                LeaseStart = new DateTimeOffset(2024, 1, 1, 0, 0, 0, TimeSpan.Zero).ToUniversalTime(),
+                LeaseEnd = new DateTimeOffset(2025, 12, 31, 0, 0, 0, TimeSpan.Zero).ToUniversalTime(),
+                RentAmount = properties[0].RentAmount,
+                Deposit = properties[0].RentAmount,
+                Status = TenantStatus.Active,
+                EmergencyContactName = "Emergency Contact",
+                EmergencyContactPhone = "+1 (555) 999-9999",
+                EmergencyContactRelation = "Family"
+            };
+            tenants.Add(await _dataService.CreateTenantAsync(mainTenant));
+        }
+
+        // Create tenants for additional users
+        var tenantData = new[]
+        {
+            new { UserIndex = 0, PropertyIndex = 1, Phone = "+1 (555) 101-1001", LeaseStart = new DateTimeOffset(2024, 2, 1, 0, 0, 0, TimeSpan.Zero).ToUniversalTime(), LeaseEnd = new DateTimeOffset(2025, 1, 31, 0, 0, 0, TimeSpan.Zero).ToUniversalTime(), Status = TenantStatus.Active },
+            new { UserIndex = 1, PropertyIndex = 2, Phone = "+1 (555) 102-1002", LeaseStart = new DateTimeOffset(2023, 6, 1, 0, 0, 0, TimeSpan.Zero).ToUniversalTime(), LeaseEnd = new DateTimeOffset(2026, 5, 31, 0, 0, 0, TimeSpan.Zero).ToUniversalTime(), Status = TenantStatus.Active },
+            new { UserIndex = 2, PropertyIndex = 5, Phone = "+1 (555) 103-1003", LeaseStart = new DateTimeOffset(2024, 3, 1, 0, 0, 0, TimeSpan.Zero).ToUniversalTime(), LeaseEnd = new DateTimeOffset(2025, 2, 28, 0, 0, 0, TimeSpan.Zero).ToUniversalTime(), Status = TenantStatus.Active },
+            new { UserIndex = 3, PropertyIndex = 6, Phone = "+1 (555) 104-1004", LeaseStart = new DateTimeOffset(2023, 9, 1, 0, 0, 0, TimeSpan.Zero).ToUniversalTime(), LeaseEnd = new DateTimeOffset(2024, 8, 31, 0, 0, 0, TimeSpan.Zero).ToUniversalTime(), Status = TenantStatus.Active },
+            new { UserIndex = 4, PropertyIndex = 3, Phone = "+1 (555) 105-1005", LeaseStart = new DateTimeOffset(2023, 12, 1, 0, 0, 0, TimeSpan.Zero).ToUniversalTime(), LeaseEnd = new DateTimeOffset(2025, 11, 30, 0, 0, 0, TimeSpan.Zero).ToUniversalTime(), Status = TenantStatus.Active },
+            new { UserIndex = 6, PropertyIndex = 4, Phone = "+1 (555) 107-1007", LeaseStart = new DateTimeOffset(2022, 1, 1, 0, 0, 0, TimeSpan.Zero).ToUniversalTime(), LeaseEnd = new DateTimeOffset(2024, 12, 31, 0, 0, 0, TimeSpan.Zero).ToUniversalTime(), Status = TenantStatus.Active }
         };
 
-        var createdTenant = await _dataService.CreateTenantAsync(tenant);
-        return new List<Tenant> { createdTenant };
+        foreach (var data in tenantData)
+        {
+            if (data.UserIndex >= additionalUsers.Count || data.PropertyIndex >= properties.Count)
+                continue;
+
+            var user = additionalUsers[data.UserIndex];
+            var property = properties[data.PropertyIndex];
+
+            // Check if tenant already exists for this user and property
+            var existingTenant = await _context.Tenants
+                .FirstOrDefaultAsync(t => t.PersonId == user.PersonId && t.PropertyId == property.Id);
+
+            if (existingTenant != null)
+            {
+                tenants.Add(existingTenant);
+                continue;
+            }
+
+            var tenant = new Tenant
+            {
+                TenantType = TenantType.Person,
+                Email = user.Email,
+                Phone = data.Phone,
+                PersonId = user.PersonId,
+                PropertyId = property.Id,
+                LeaseStart = data.LeaseStart,
+                LeaseEnd = data.LeaseEnd,
+                RentAmount = property.RentAmount,
+                Deposit = property.RentAmount,
+                Status = data.Status,
+                EmergencyContactName = "Emergency Contact",
+                EmergencyContactPhone = "+1 (555) 999-9999",
+                EmergencyContactRelation = "Family"
+            };
+
+            tenants.Add(await _dataService.CreateTenantAsync(tenant));
+        }
+
+        return tenants;
     }
 
         private async Task SeedPaymentsAsync(List<Tenant> tenants)
         {
             var payments = new List<Payment>();
+            var random = new Random(42); // Fixed seed for reproducibility
+            var methods = new[] { PaymentMethod.BankTransfer, PaymentMethod.Check, PaymentMethod.Online, PaymentMethod.Cash };
 
-            foreach (var tenant in tenants)
+            // Generate payment history for each tenant
+            for (int i = 0; i < tenants.Count; i++)
             {
-                // Create payment history for each tenant
-                var paymentDates = new[]
-                {
-                    new DateTime(2024, 1, 1, 0, 0, 0, DateTimeKind.Utc),
-                    new DateTime(2023, 12, 1, 0, 0, 0, DateTimeKind.Utc),
-                    new DateTime(2023, 11, 1, 0, 0, 0, DateTimeKind.Utc),
-                    new DateTime(2023, 10, 1, 0, 0, 0, DateTimeKind.Utc)
-                };
+                var tenant = tenants[i];
 
-                var methods = new[] { PaymentMethod.BankTransfer, PaymentMethod.Check, PaymentMethod.Online };
-                var random = new Random();
+                // Skip if tenant has no lease start date
+                if (!tenant.LeaseStart.HasValue)
+                    continue;
 
-                foreach (var date in paymentDates)
+                var leaseStartDate = tenant.LeaseStart.Value;
+                var currentDate = DateTimeOffset.UtcNow;
+
+                // Calculate months between lease start and now (inclusive of current month)
+                var monthsDiff = ((currentDate.Year - leaseStartDate.Year) * 12) + currentDate.Month - leaseStartDate.Month + 1;
+                var paymentMonths = Math.Min(monthsDiff, 24); // Cap at 24 months for performance
+
+                // Create payment history from lease start
+                for (int monthOffset = 0; monthOffset < paymentMonths; monthOffset++)
                 {
+                    var paymentDate = leaseStartDate.AddMonths(monthOffset);
+
+                    // Make payment date the 1st of the month
+                    paymentDate = new DateTimeOffset(paymentDate.Year, paymentDate.Month, 1, 0, 0, 0, TimeSpan.Zero);
+
+                    // Skip future payments
+                    if (paymentDate > currentDate)
+                        continue;
+
+                    // Occasionally add late payments (10% chance)
+                    if (random.Next(100) < 10)
+                    {
+                        paymentDate = paymentDate.AddDays(random.Next(5, 15));
+                    }
+
+                    // Most payments are completed (90%)
+                    var status = random.Next(100) < 90 ? PaymentStatus.Completed : PaymentStatus.Pending;
+
+                    // Occasionally create partial payments (5% chance)
+                    var amount = tenant.RentAmount;
+                    var isPartial = random.Next(100) < 5;
+                    if (isPartial)
+                    {
+                        amount = tenant.RentAmount * (decimal)(0.4 + random.NextDouble() * 0.4); // 40-80% of rent
+                    }
+
                     var payment = new Payment
                     {
                         TenantId = tenant.Id,
-                        Amount = tenant.RentAmount,
-                        Date = date,
+                        Amount = amount,
+                        Date = paymentDate,
                         Method = methods[random.Next(methods.Length)],
-                        Status = PaymentStatus.Completed,
-                        Notes = $"{date.ToString("MMMM")} rent payment"
+                        Status = status,
+                        ProcessedAt = status == PaymentStatus.Completed ? paymentDate : null,
+                        Notes = isPartial
+                            ? $"Partial {paymentDate.ToString("MMMM yyyy")} rent payment"
+                            : $"{paymentDate.ToString("MMMM yyyy")} rent payment"
                     };
 
                     payments.Add(payment);
                 }
+
+                // Add some additional special case payments for variety
+                if (i == 1 && paymentMonths > 2)
+                {
+                    // Add a late fee for tenant 1
+                    var lateFeeDate = leaseStartDate.AddMonths(2).AddDays(10);
+                    payments.Add(new Payment
+                    {
+                        TenantId = tenant.Id,
+                        Amount = 50,
+                        Date = lateFeeDate,
+                        Method = PaymentMethod.Online,
+                        Status = PaymentStatus.Completed,
+                        ProcessedAt = lateFeeDate,
+                        Notes = "Late payment fee"
+                    });
+                }
+
+                if (i == 2 && paymentMonths > 3)
+                {
+                    // Add a maintenance fee payment
+                    var petDepositDate = leaseStartDate.AddMonths(3).AddDays(5);
+                    payments.Add(new Payment
+                    {
+                        TenantId = tenant.Id,
+                        Amount = 150,
+                        Date = petDepositDate,
+                        Method = PaymentMethod.BankTransfer,
+                        Status = PaymentStatus.Completed,
+                        ProcessedAt = petDepositDate,
+                        Notes = "Pet deposit"
+                    });
+                }
+
+                if (i == 3 && paymentMonths > 1)
+                {
+                    // Add a pending payment for tenant 3
+                    var lastMonth = currentDate.AddMonths(-1);
+                    payments.Add(new Payment
+                    {
+                        TenantId = tenant.Id,
+                        Amount = tenant.RentAmount,
+                        Date = new DateTimeOffset(lastMonth.Year, lastMonth.Month, 5, 0, 0, 0, TimeSpan.Zero),
+                        Method = PaymentMethod.Check,
+                        Status = PaymentStatus.Pending,
+                        Notes = $"{lastMonth.ToString("MMMM yyyy")} rent payment - check processing"
+                    });
+                }
             }
 
-            // Add a partial payment and a pending payment for realism
-            if (tenants.Count > 1)
-            {
-                payments.Add(new Payment
-                {
-                    TenantId = tenants[1].Id,
-                    Amount = tenants[1].RentAmount * 0.5m,
-                    Date = new DateTime(2024, 2, 1, 0, 0, 0, DateTimeKind.Utc),
-                    Method = PaymentMethod.Online,
-                    Status = PaymentStatus.Completed,
-                    Notes = "Partial February payment"
-                });
-
-                payments.Add(new Payment
-                {
-                    TenantId = tenants[2].Id,
-                    Amount = tenants[2].RentAmount,
-                    Date = new DateTime(2024, 2, 5, 0, 0, 0, DateTimeKind.Utc),
-                    Method = PaymentMethod.Check,
-                    Status = PaymentStatus.Pending,
-                    Notes = "February rent payment - check processing"
-                });
-            }
-
+            // Save all payments
             foreach (var payment in payments)
             {
                 await _dataService.CreatePaymentAsync(payment);
@@ -365,7 +580,7 @@ namespace RentManager.API.Services
             var property = properties[0];
 
             var now = DateTimeOffset.UtcNow;
-            var today = new DateTimeOffset(now.Year, now.Month, now.Day, 10, 30, 0, now.Offset);
+            var today = new DateTimeOffset(now.Year, now.Month, now.Day, 10, 30, 0, TimeSpan.Zero);
             var yesterday = today.AddDays(-1);
             var twoDaysAgo = today.AddDays(-2);
 
