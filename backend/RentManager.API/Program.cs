@@ -85,13 +85,26 @@ builder.Services.AddAuthorization();
 builder.Services.AddTransient<Microsoft.AspNetCore.Authentication.IClaimsTransformation, ZitadelClaimsTransformation>();
 
 // Add CORS for frontend
+var frontendUrl = builder.Configuration["FrontendUrl"];
+var allowedOrigins = new List<string> { "http://localhost:3000" };
+
+if (!string.IsNullOrEmpty(frontendUrl) && frontendUrl != "your-fe-url")
+{
+    allowedOrigins.Add(frontendUrl);
+}
+
+// Log the configured origins for debugging
+Console.WriteLine($"[CORS] Configured allowed origins: {string.Join(", ", allowedOrigins)}");
+
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowFrontend", policy =>
     {
-        policy.WithOrigins("http://localhost:3000")
+        policy.WithOrigins(allowedOrigins.ToArray())
               .AllowAnyHeader()
-              .AllowAnyMethod();
+              .AllowAnyMethod()
+              .AllowCredentials()
+              .SetPreflightMaxAge(TimeSpan.FromMinutes(10));
     });
 });
 
@@ -115,6 +128,14 @@ app.UseAuthorization();
 
 // Redirect root to Swagger UI
 app.MapGet("/", () => Results.Redirect("/swagger")).ExcludeFromDescription();
+
+// Debug endpoint to check CORS configuration
+app.MapGet("/debug/cors", () => new
+{
+    FrontendUrl = builder.Configuration["FrontendUrl"],
+    AllowedOrigins = allowedOrigins,
+    Environment = builder.Environment.EnvironmentName
+}).ExcludeFromDescription();
 
 app.MapControllers();
 app.MapHealthChecks("/health");

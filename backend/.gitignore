@@ -1,0 +1,8 @@
+# Environment files with secrets
+.env.local
+.env.production.local
+.env.development.local
+
+# Local configuration files with secrets
+appsettings.Local.json
+appsettings.*.local.json
