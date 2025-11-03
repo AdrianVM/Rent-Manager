@@ -129,14 +129,6 @@ app.UseAuthorization();
 // Redirect root to Swagger UI
 app.MapGet("/", () => Results.Redirect("/swagger")).ExcludeFromDescription();
 
-// Debug endpoint to check CORS configuration
-app.MapGet("/debug/cors", () => new
-{
-    FrontendUrl = builder.Configuration["FrontendUrl"],
-    AllowedOrigins = allowedOrigins,
-    Environment = builder.Environment.EnvironmentName
-}).ExcludeFromDescription();
-
 app.MapControllers();
 app.MapHealthChecks("/health");
 
