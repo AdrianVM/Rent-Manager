@@ -192,6 +192,7 @@
     font-size: 16px;
   }
 
+  /* Hide label by default on mobile */
   .roleSwitcherLabel {
     display: none;
   }
@@ -208,17 +209,59 @@
   }
 }
 
+/* Override: Show label when inside mobile menu actions */
+@media (max-width: 980px) {
+  /* Target when parent has specific class pattern */
+  :global(.Navigation_appleMobileAction__*) .roleSwitcherLabel,
+  :global([class*="appleMobileAction"]) .roleSwitcherLabel {
+    display: inline !important;
+  }
+
+  :global(.Navigation_appleMobileAction__*) .roleSwitcherArrow,
+  :global([class*="appleMobileAction"]) .roleSwitcherArrow {
+    display: inline !important;
+  }
+
+  :global(.Navigation_appleMobileAction__*) .roleSwitcherTrigger,
+  :global([class*="appleMobileAction"]) .roleSwitcherTrigger {
+    padding: 12px 16px !important;
+    font-size: 15px !important;
+  }
+
+  /* Fix dropdown positioning when inside mobile menu */
+  :global(.Navigation_appleMobileAction__*) .roleSwitcherDropdown,
+  :global([class*="appleMobileAction"]) .roleSwitcherDropdown {
+    position: absolute !important;
+    top: calc(100% + 8px) !important;
+    left: 0 !important;
+    right: auto !important;
+    transform: translateY(-8px) scale(0.95) !important;
+    width: 100% !important;
+    min-width: 220px !important;
+    max-width: none !important;
+    max-height: 300px !important;
+    overflow-y: auto !important;
+  }
+}
+
 @media (max-width: 480px) {
   .roleSwitcherDropdown {
-    position: fixed;
-    top: auto;
-    bottom: max(80px, env(safe-area-inset-bottom));
-    left: 16px;
-    right: 16px;
-    transform: translateY(8px) scale(0.95);
-    width: auto;
-    min-width: auto;
-    max-width: none;
+    position: absolute;
+    top: calc(100% + 8px);
+    left: 0;
+    right: auto;
+    bottom: auto;
+    transform: translateY(-8px) scale(0.95);
+    width: 100%;
+    min-width: 200px;
+    max-width: 280px;
+    max-height: 300px;
+    overflow-y: auto;
+  }
+
+  /* Override animation for mobile menu context */
+  :global([class*="appleMobileAction"]) .roleSwitcherDropdown {
+    max-height: 250px !important;
   }
 
   @keyframes appleDropdownIn {

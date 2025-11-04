@@ -293,9 +293,9 @@
 .mobileToggle {
   display: none;
   position: fixed;
-  top: 16px;
+  top: 84px; /* Position below the 70px navigation bar with some spacing */
   left: 16px;
-  z-index: 1200;
+  z-index: 900; /* Below navigation (1000) to avoid conflicts */
   width: 44px;
   height: 44px;
   background: var(--glass-bg);
@@ -345,7 +345,7 @@
   box-shadow: 4px 0 24px rgba(0, 0, 0, 0.12);
   transform: translateX(-100%);
   transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  z-index: 1100;
+  z-index: 950; /* Below Navigation mobile menu (999) and backdrop (998) */
   overflow-y: auto;
 }
 
@@ -559,7 +559,7 @@
   background: rgba(0, 0, 0, 0.5);
   backdrop-filter: blur(4px);
   -webkit-backdrop-filter: blur(4px);
-  z-index: 1050;
+  z-index: 940; /* Below sidebar mobile menu */
   animation: fadeIn 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
@@ -574,23 +574,23 @@
 
 /* ===== RESPONSIVE DESIGN ===== */
 
-/* Hide desktop sidebar on mobile, show mobile menu */
+/* Hide desktop sidebar on mobile - mobile menu is now in Navigation component */
 @media (max-width: 1023px) {
   .sidebar {
     display: none;
   }
 
+  /* Hide mobile toggle - unified menu is now in Navigation */
   .mobileToggle {
-    display: flex;
+    display: none;
   }
 
   .mobileSidebar {
-    display: flex;
-    flex-direction: column;
+    display: none;
   }
 
   .mobileBackdrop {
-    display: block;
+    display: none;
   }
 }
 

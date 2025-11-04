@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { useTheme } from '../../contexts/ThemeContext';
 import RoleSwitcher from '../RoleSwitcher/RoleSwitcher';
 import Logo from '../Logo';
@@ -8,10 +8,62 @@ import styles from './Navigation.module.css';
 function Navigation({ user, availableRoles, currentRole, onRoleChange, onLogout }) {
   const { theme, toggleTheme } = useTheme();
   const [mobileMenuOpen, setMobileMenuOpen] = React.useState(false);
+  const location = useLocation();
 
   const activeRole = currentRole || user?.role;
+  const isRenter = activeRole?.toLowerCase() === 'renter';
+  const isAdmin = activeRole?.toLowerCase() === 'admin';
+  const isPropertyOwner = activeRole?.toLowerCase() === 'propertyowner';
+
+  // Navigation items configuration based on role (from Sidebar)
+  const getNavItems = () => {
+    if (isRenter) {
+      return [
+        { path: '/', label: 'Dashboard', icon: '📊', description: 'Overview' },
+        { path: '/my-rental', label: 'My Rental', icon: '🏠', description: 'Property details' },
+        { path: '/payment-history', label: 'Payments', icon: '💳', description: 'Payment history' },
+        { path: '/maintenance', label: 'Maintenance', icon: '🔧', description: 'Service requests' },
+        { path: '/documents', label: 'Documents', icon: '📄', description: 'Lease documents' }
+      ];
+    } else if (isPropertyOwner) {
+      return [
+        { path: '/', label: 'Dashboard', icon: '📊', description: 'Overview' },
+        { path: '/properties', label: 'Properties', icon: '🏢', description: 'Manage properties' },
+        { path: '/tenants', label: 'Tenants', icon: '👥', description: 'Manage tenants' },
+        { path: '/payments', label: 'Payments', icon: '💳', description: 'Track payments' },
+        { path: '/reports', label: 'Reports', icon: '📈', description: 'Financial reports' },
+        { path: '/maintenance', label: 'Maintenance', icon: '🔧', description: 'Service requests' }
+      ];
+    } else if (isAdmin) {
+      return [
+        { path: '/', label: 'Dashboard', icon: '📊', description: 'Overview' },
+        { path: '/properties', label: 'Properties', icon: '🏢', description: 'Manage properties' },
+        { path: '/tenants', label: 'Tenants', icon: '👥', description: 'Manage tenants' },
+        { path: '/payments', label: 'Payments', icon: '💳', description: 'Track payments' },
+        { path: '/reports', label: 'Reports', icon: '📈', description: 'Analytics & reports' },
+        { path: '/user-management', label: 'Users', icon: '👤', description: 'User management' },
+        { path: '/system-settings', label: 'System', icon: '🖥️', description: 'System settings' }
+      ];
+    }
+    return [];
+  };
+
+  const navItems = getNavItems();
+
+  const isActive = (path) => {
+    if (path === '/') {
+      return location.pathname === '/';
+    }
+    return location.pathname.startsWith(path);
+  };
+
+  // Close menu on route change
+  React.useEffect(() => {
+    setMobileMenuOpen(false);
+  }, [location.pathname]);
 
   return (
+    <>
     <nav className={styles.appleNav}>
       <div className={styles.appleNavContainer}>
         {/* Brand Section */}
@@ -77,10 +129,19 @@ function Navigation({ user, availableRoles, currentRole, onRoleChange, onLogout 
         </button>
       </div>
 
-      {/* Mobile Navigation Menu */}
-      <div className={`${styles.appleNavMobile} ${mobileMenuOpen ? styles.open : ''}`}>
+      </nav>
+
+      {/* Mobile Navigation Menu - Outside nav to avoid stacking context issues */}
+      <div
+        className={`${styles.appleNavMobile} ${mobileMenuOpen ? styles.open : ''}`}
+        style={mobileMenuOpen ? {
+          display: 'block',
+          transform: 'translateX(0)',
+          zIndex: 1100
+        } : {}}
+      >
         <div className={styles.appleMobileContent}>
-          {/* User Info on Mobile */}
+          {/* Section 1: User Identity */}
           <div className={styles.appleMobileUser}>
             <div className={`${styles.appleUserAvatar} ${styles.large}`}>
               {user?.name?.charAt(0).toUpperCase()}
@@ -89,11 +150,37 @@ function Navigation({ user, availableRoles, currentRole, onRoleChange, onLogout 
             <div className={styles.appleMobileUserRole}>{activeRole}</div>
           </div>
 
-          {/* Mobile Actions */}
+          {/* Section 2: Primary Navigation */}
+          <div className={styles.appleMobileNavLinks}>
+            {navItems.map((item) => (
+              <Link
+                key={item.path}
+                to={item.path}
+                className={`${styles.appleMobileNavLink} ${isActive(item.path) ? styles.active : ''}`}
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                <span className={styles.mobileNavIcon}>{item.icon}</span>
+                <span className={styles.mobileNavContent}>
+                  <span className={styles.mobileNavLabel}>{item.label}</span>
+                  <span className={styles.mobileNavDescription}>{item.description}</span>
+                </span>
+                {isActive(item.path) && (
+                  <span className={styles.mobileNavArrow}>›</span>
+                )}
+              </Link>
+            ))}
+          </div>
+
+          {/* Section 3: Settings & Preferences */}
           <div className={styles.appleMobileActions}>
             {/* Role Switcher on Mobile */}
             {availableRoles && availableRoles.length > 1 && (
-              <div className={styles.appleMobileAction}>
+              <div
+                className={styles.appleMobileAction}
+                style={{
+                  '--show-role-label': 'block'
+                }}
+              >
                 <RoleSwitcher
                   availableRoles={availableRoles}
                   currentRole={activeRole}
@@ -146,7 +233,7 @@ function Navigation({ user, availableRoles, currentRole, onRoleChange, onLogout 
           aria-hidden="true"
         />
       )}
-    </nav>
+    </>
   );
 }
 
