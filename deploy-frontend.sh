@@ -1,9 +1,22 @@
 #!/bin/bash
 
 # Scaleway Frontend Deployment Script using AWS CLI
-# Usage: ./deploy-frontend.sh <bucket-name> [region]
+# Usage: ./deploy-frontend.sh [--no-build] [bucket-name] [region]
+#
+# Examples:
+#   ./deploy-frontend.sh                    # Build and deploy to default bucket
+#   ./deploy-frontend.sh --no-build         # Deploy existing build (skip rebuild)
+#   ./deploy-frontend.sh my-bucket          # Build and deploy to custom bucket
+#   ./deploy-frontend.sh --no-build my-bucket fr-par  # Skip build, custom bucket and region
 
 set -e
+
+# Parse arguments for --no-build flag
+NO_BUILD=false
+if [ "$1" = "--no-build" ]; then
+    NO_BUILD=true
+    shift  # Remove --no-build from arguments
+fi
 
 # Configuration
 AWS_CLI="$HOME/.local/bin/aws"
@@ -18,10 +31,39 @@ echo "🌍 Region: $REGION"
 echo "🔗 Endpoint: $ENDPOINT_URL"
 echo ""
 
+# Build step (unless --no-build flag is set)
+if [ "$NO_BUILD" = false ]; then
+    echo "🔨 Building frontend..."
+    echo "   Running: npm run build in frontend/"
+
+    # Check if frontend directory exists
+    if [ ! -d "frontend" ]; then
+        echo "❌ Frontend directory not found!"
+        echo "   Make sure you're running this from the project root."
+        exit 1
+    fi
+
+    # Build the frontend
+    cd frontend
+    npm run build
+    cd ..
+
+    echo "✅ Build complete!"
+    echo ""
+else
+    echo "⏭️  Skipping build (--no-build flag set)"
+    echo ""
+fi
+
 # Check if build directory exists
 if [ ! -d "$BUILD_DIR" ]; then
     echo "❌ Build directory not found: $BUILD_DIR"
-    echo "Run 'npm run build:frontend' first"
+    if [ "$NO_BUILD" = true ]; then
+        echo "   You used --no-build but no build exists."
+        echo "   Run without --no-build to create a fresh build first."
+    else
+        echo "   Build failed or directory was not created."
+    fi
     exit 1
 fi
 
