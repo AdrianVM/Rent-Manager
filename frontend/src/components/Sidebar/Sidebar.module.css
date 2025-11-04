@@ -21,8 +21,8 @@
 }
 
 [data-theme="dark"] .sidebar {
-  background: rgba(18, 24, 33, 0.85);
-  border-right: 1px solid rgba(255, 255, 255, 0.1);
+  background: var(--glass-bg);
+  border-right: 1px solid var(--glass-border);
 }
 
 /* Collapsed State */
@@ -37,10 +37,10 @@
   right: -14px;
   width: 28px;
   height: 28px;
-  background: rgba(255, 255, 255, 0.95);
+  background: var(--dropdown-bg);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
-  border: 1.5px solid rgba(31, 78, 121, 0.2);
+  border: 1.5px solid var(--border-light);
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -48,25 +48,25 @@
   cursor: pointer;
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   z-index: 10;
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.12);
+  box-shadow: var(--shadow-base);
 }
 
 [data-theme="dark"] .collapseToggle {
-  background: rgba(30, 36, 48, 0.95);
-  border-color: rgba(71, 140, 249, 0.3);
+  background: var(--dropdown-bg);
+  border-color: var(--border-light);
 }
 
 .collapseToggle:hover {
   transform: scale(1.15);
-  box-shadow: 0 4px 16px rgba(31, 78, 121, 0.25);
-  background: rgba(255, 255, 255, 1);
-  border-color: rgba(31, 78, 121, 0.4);
+  box-shadow: var(--shadow-md);
+  background: var(--bg-primary);
+  border-color: var(--border-strong);
 }
 
 [data-theme="dark"] .collapseToggle:hover {
-  box-shadow: 0 4px 16px rgba(71, 140, 249, 0.3);
-  background: rgba(30, 36, 48, 1);
-  border-color: rgba(71, 140, 249, 0.5);
+  box-shadow: var(--shadow-md);
+  background: var(--bg-primary);
+  border-color: var(--border-strong);
 }
 
 .toggleIcon {
@@ -134,24 +134,24 @@
 }
 
 .navLink:hover {
-  background: rgba(31, 78, 121, 0.08);
+  background: var(--bg-overlay-hover);
   color: var(--text-primary);
   transform: translateX(2px);
 }
 
 [data-theme="dark"] .navLink:hover {
-  background: rgba(28, 169, 163, 0.1);
+  background: var(--active-bg-light);
 }
 
 /* Active Link */
 .navLink.active {
-  background: linear-gradient(135deg, rgba(31, 78, 121, 0.12), rgba(28, 169, 163, 0.12));
+  background: linear-gradient(135deg, var(--active-bg-light), var(--active-bg-medium));
   color: var(--avm-royal-blue);
   font-weight: 600;
 }
 
 [data-theme="dark"] .navLink.active {
-  background: linear-gradient(135deg, rgba(71, 140, 249, 0.15), rgba(28, 169, 163, 0.15));
+  background: linear-gradient(135deg, var(--active-bg-medium), var(--active-bg-medium));
   color: var(--color-primary);
 }
 
@@ -248,15 +248,15 @@
 /* Sidebar Footer */
 .sidebarFooter {
   padding: var(--space-lg);
-  border-top: 1px solid var(--border-color);
-  background: rgba(255, 255, 255, 0.3);
+  border-top: 1px solid var(--border-light);
+  background: var(--bg-overlay);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
 }
 
 [data-theme="dark"] .sidebarFooter {
-  background: rgba(0, 0, 0, 0.2);
-  border-top-color: rgba(255, 255, 255, 0.05);
+  background: var(--bg-overlay);
+  border-top-color: var(--border-light);
 }
 
 .roleInfo {
@@ -278,13 +278,13 @@
   font-weight: 600;
   color: var(--text-primary);
   padding: var(--space-xs) var(--space-sm);
-  background: linear-gradient(135deg, rgba(31, 78, 121, 0.1), rgba(28, 169, 163, 0.1));
+  background: linear-gradient(135deg, var(--active-bg-light), var(--active-bg-light));
   border-radius: var(--radius-md);
   text-align: center;
 }
 
 [data-theme="dark"] .roleName {
-  background: linear-gradient(135deg, rgba(71, 140, 249, 0.15), rgba(28, 169, 163, 0.15));
+  background: linear-gradient(135deg, var(--active-bg-medium), var(--active-bg-medium));
 }
 
 /* ===== MOBILE SIDEBAR ===== */
@@ -309,12 +309,12 @@
   gap: 5px;
   cursor: pointer;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  box-shadow: var(--shadow-base);
 }
 
 [data-theme="dark"] .mobileToggle {
-  background: rgba(18, 24, 33, 0.95);
-  border-color: rgba(255, 255, 255, 0.15);
+  background: var(--glass-bg);
+  border-color: var(--glass-border);
 }
 
 .mobileToggle:active {
@@ -342,7 +342,7 @@
   backdrop-filter: blur(40px) saturate(180%);
   -webkit-backdrop-filter: blur(40px) saturate(180%);
   border-right: 1px solid var(--glass-border);
-  box-shadow: 4px 0 24px rgba(0, 0, 0, 0.12);
+  box-shadow: var(--shadow-lg);
   transform: translateX(-100%);
   transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   z-index: 950; /* Below Navigation mobile menu (999) and backdrop (998) */
@@ -350,8 +350,8 @@
 }
 
 [data-theme="dark"] .mobileSidebar {
-  background: rgba(18, 24, 33, 0.95);
-  border-right-color: rgba(255, 255, 255, 0.1);
+  background: var(--glass-bg);
+  border-right-color: var(--glass-border);
 }
 
 .mobileSidebar.open {
@@ -364,15 +364,15 @@
   align-items: center;
   justify-content: space-between;
   padding: var(--space-lg);
-  border-bottom: 1px solid var(--border-color);
-  background: rgba(255, 255, 255, 0.5);
+  border-bottom: 1px solid var(--border-light);
+  background: var(--bg-overlay);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
 }
 
 [data-theme="dark"] .mobileHeader {
-  background: rgba(0, 0, 0, 0.3);
-  border-bottom-color: rgba(255, 255, 255, 0.05);
+  background: var(--bg-overlay);
+  border-bottom-color: var(--border-light);
 }
 
 .mobileLogo {
@@ -403,7 +403,7 @@
   align-items: center;
   justify-content: center;
   border: none;
-  background: rgba(0, 0, 0, 0.05);
+  background: var(--bg-overlay);
   border-radius: var(--radius-md);
   cursor: pointer;
   color: var(--text-secondary);
@@ -412,16 +412,16 @@
 }
 
 [data-theme="dark"] .mobileClose {
-  background: rgba(255, 255, 255, 0.08);
+  background: var(--bg-overlay-hover);
 }
 
 .mobileClose:hover {
-  background: rgba(0, 0, 0, 0.1);
+  background: var(--bg-overlay-hover);
   transform: scale(1.05);
 }
 
 [data-theme="dark"] .mobileClose:hover {
-  background: rgba(255, 255, 255, 0.15);
+  background: var(--active-bg-medium);
 }
 
 /* Mobile Navigation */
@@ -454,23 +454,23 @@
 
 .mobileNavLink:hover,
 .mobileNavLink:active {
-  background: rgba(31, 78, 121, 0.08);
+  background: var(--bg-overlay-hover);
   color: var(--text-primary);
 }
 
 [data-theme="dark"] .mobileNavLink:hover,
 [data-theme="dark"] .mobileNavLink:active {
-  background: rgba(28, 169, 163, 0.1);
+  background: var(--active-bg-light);
 }
 
 .mobileNavLink.active {
-  background: linear-gradient(135deg, rgba(31, 78, 121, 0.15), rgba(28, 169, 163, 0.15));
+  background: linear-gradient(135deg, var(--active-bg-medium), var(--active-bg-medium));
   color: var(--avm-royal-blue);
   font-weight: 600;
 }
 
 [data-theme="dark"] .mobileNavLink.active {
-  background: linear-gradient(135deg, rgba(71, 140, 249, 0.2), rgba(28, 169, 163, 0.2));
+  background: linear-gradient(135deg, var(--active-bg-hover), var(--active-bg-hover));
   color: var(--color-primary);
 }
 
@@ -508,16 +508,16 @@
 /* Mobile Footer */
 .mobileFooter {
   padding: var(--space-lg);
-  border-top: 1px solid var(--border-color);
-  background: rgba(255, 255, 255, 0.3);
+  border-top: 1px solid var(--border-light);
+  background: var(--bg-overlay);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
   margin-top: auto;
 }
 
 [data-theme="dark"] .mobileFooter {
-  background: rgba(0, 0, 0, 0.2);
-  border-top-color: rgba(255, 255, 255, 0.05);
+  background: var(--bg-overlay);
+  border-top-color: var(--border-light);
 }
 
 .mobileRoleInfo {
@@ -539,13 +539,13 @@
   font-weight: 600;
   color: var(--text-primary);
   padding: var(--space-sm) var(--space-md);
-  background: linear-gradient(135deg, rgba(31, 78, 121, 0.12), rgba(28, 169, 163, 0.12));
+  background: linear-gradient(135deg, var(--active-bg-light), var(--active-bg-medium));
   border-radius: var(--radius-md);
   text-align: center;
 }
 
 [data-theme="dark"] .mobileRoleName {
-  background: linear-gradient(135deg, rgba(71, 140, 249, 0.15), rgba(28, 169, 163, 0.15));
+  background: linear-gradient(135deg, var(--active-bg-medium), var(--active-bg-medium));
 }
 
 /* Mobile Backdrop */
@@ -556,7 +556,7 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.5);
+  background: var(--backdrop-bg);
   backdrop-filter: blur(4px);
   -webkit-backdrop-filter: blur(4px);
   z-index: 940; /* Below sidebar mobile menu */

@@ -11,19 +11,19 @@
   right: 0;
   z-index: 1000;
   width: 100%;
-  background: rgba(255, 255, 255, 0.72);
+  background: var(--glass-bg);
   backdrop-filter: saturate(180%) blur(20px);
   -webkit-backdrop-filter: saturate(180%) blur(20px);
-  border-bottom: 0.5px solid rgba(0, 0, 0, 0.08);
-  box-shadow: 0 1px 0 0 rgba(255, 255, 255, 0.44) inset;
+  border-bottom: 0.5px solid var(--border-light);
+  box-shadow: var(--inset-shadow-top);
   transition: all 0.3s cubic-bezier(0.28, 0.11, 0.32, 1);
   overflow: visible; /* Ensure mobile menu is not clipped */
 }
 
 [data-theme="dark"] .appleNav {
-  background: rgba(29, 29, 31, 0.72);
-  border-bottom: 0.5px solid rgba(255, 255, 255, 0.12);
-  box-shadow: 0 1px 0 0 rgba(255, 255, 255, 0.03) inset;
+  background: var(--glass-bg);
+  border-bottom: 0.5px solid var(--border-light);
+  box-shadow: var(--inset-shadow-top);
 }
 
 .appleNavContainer {
@@ -91,11 +91,11 @@
 }
 
 .appleBrandLink:hover {
-  background-color: rgba(0, 0, 0, 0.04);
+  background-color: var(--bg-overlay);
 }
 
 [data-theme="dark"] .appleBrandLink:hover {
-  background-color: rgba(255, 255, 255, 0.06);
+  background-color: var(--bg-overlay);
 }
 
 .appleBrandIcon {
@@ -159,12 +159,12 @@
 }
 
 .appleNavIconBtn:hover {
-  background-color: rgba(0, 0, 0, 0.04);
+  background-color: var(--bg-overlay);
   transform: scale(1.05);
 }
 
 [data-theme="dark"] .appleNavIconBtn:hover {
-  background-color: rgba(255, 255, 255, 0.06);
+  background-color: var(--bg-overlay);
 }
 
 .appleNavIconBtn:active {
@@ -187,21 +187,21 @@
   gap: 10px;
   padding: 4px 4px 4px 10px;
   border-radius: 20px;
-  background-color: rgba(0, 0, 0, 0.04);
+  background-color: var(--bg-overlay);
   transition: all 0.2s cubic-bezier(0.28, 0.11, 0.32, 1);
   cursor: pointer;
 }
 
 [data-theme="dark"] .appleNavUser {
-  background-color: rgba(255, 255, 255, 0.06);
+  background-color: var(--bg-overlay);
 }
 
 .appleNavUser:hover {
-  background-color: rgba(0, 0, 0, 0.06);
+  background-color: var(--bg-overlay-hover);
 }
 
 [data-theme="dark"] .appleNavUser:hover {
-  background-color: rgba(255, 255, 255, 0.08);
+  background-color: var(--bg-overlay-hover);
 }
 
 .appleNavUser:hover .appleUserInfo {
@@ -236,15 +236,12 @@
   top: calc(100% + 8px);
   right: 0;
   min-width: 200px;
-  background: rgba(255, 255, 255, 0.95);
+  background: var(--dropdown-bg);
   backdrop-filter: saturate(180%) blur(20px);
   -webkit-backdrop-filter: saturate(180%) blur(20px);
   border-radius: 12px;
   padding: 12px;
-  box-shadow:
-    0 0 0 0.5px rgba(0, 0, 0, 0.08),
-    0 8px 20px rgba(0, 0, 0, 0.12),
-    0 20px 40px rgba(0, 0, 0, 0.08);
+  box-shadow: var(--dropdown-shadow);
   opacity: 0;
   visibility: hidden;
   transform: translateY(-8px) scale(0.95);
@@ -253,11 +250,8 @@
 }
 
 [data-theme="dark"] .appleUserInfo {
-  background: rgba(44, 44, 46, 0.95);
-  box-shadow:
-    0 0 0 0.5px rgba(255, 255, 255, 0.12),
-    0 8px 20px rgba(0, 0, 0, 0.4),
-    0 20px 40px rgba(0, 0, 0, 0.3);
+  background: var(--dropdown-bg);
+  box-shadow: var(--dropdown-shadow);
 }
 
 .appleUserName {
@@ -265,13 +259,13 @@
   font-weight: 600;
   color: var(--text-primary);
   padding: 8px 12px;
-  border-bottom: 0.5px solid rgba(0, 0, 0, 0.1);
+  border-bottom: 0.5px solid var(--divider-light);
   margin-bottom: 8px;
   letter-spacing: -0.1px;
 }
 
 [data-theme="dark"] .appleUserName {
-  border-bottom: 0.5px solid rgba(255, 255, 255, 0.12);
+  border-bottom: 0.5px solid var(--divider-light);
 }
 
 .appleSettingsLink {
@@ -290,11 +284,11 @@
 }
 
 .appleSettingsLink:hover {
-  background-color: rgba(0, 0, 0, 0.04);
+  background-color: var(--bg-overlay);
 }
 
 [data-theme="dark"] .appleSettingsLink:hover {
-  background-color: rgba(255, 255, 255, 0.08);
+  background-color: var(--bg-overlay-hover);
 }
 
 .appleLogoutBtn {
@@ -305,14 +299,14 @@
   border-radius: 6px;
   font-size: 13px;
   font-weight: 500;
-  color: #ff3b30;
+  color: var(--color-danger);
   cursor: pointer;
   text-align: left;
   transition: all 0.2s ease;
 }
 
 .appleLogoutBtn:hover {
-  background-color: rgba(255, 59, 48, 0.08);
+  background-color: var(--color-danger-bg);
 }
 
 /* ===================================
@@ -336,11 +330,11 @@
 }
 
 .appleMobileToggle:hover {
-  background-color: rgba(0, 0, 0, 0.04);
+  background-color: var(--bg-overlay);
 }
 
 [data-theme="dark"] .appleMobileToggle:hover {
-  background-color: rgba(255, 255, 255, 0.06);
+  background-color: var(--bg-overlay);
 }
 
 .hamburgerLine {
@@ -375,10 +369,10 @@
   bottom: 0 !important;
   width: 100% !important;
   max-width: 375px !important;
-  background: rgba(255, 255, 255, 0.95) !important;
+  background: var(--dropdown-bg) !important;
   backdrop-filter: saturate(180%) blur(20px);
   -webkit-backdrop-filter: saturate(180%) blur(20px);
-  box-shadow: -2px 0 20px rgba(0, 0, 0, 0.1) !important;
+  box-shadow: -2px 0 20px var(--shadow-md) !important;
   transform: translateX(100%) !important;
   transition: transform 0.4s cubic-bezier(0.28, 0.11, 0.32, 1);
   overflow-y: auto !important;
@@ -388,8 +382,8 @@
 }
 
 [data-theme="dark"] .appleNavMobile {
-  background: rgba(29, 29, 31, 0.95) !important;
-  box-shadow: -2px 0 20px rgba(0, 0, 0, 0.5) !important;
+  background: var(--dropdown-bg) !important;
+  box-shadow: -2px 0 20px var(--shadow-md) !important;
 }
 
 .appleNavMobile.open {
@@ -410,12 +404,12 @@
   flex-direction: column;
   align-items: center;
   padding: 24px 0;
-  border-bottom: 0.5px solid rgba(0, 0, 0, 0.1);
+  border-bottom: 0.5px solid var(--divider-light);
   margin-bottom: 24px;
 }
 
 [data-theme="dark"] .appleMobileUser {
-  border-bottom: 0.5px solid rgba(255, 255, 255, 0.12);
+  border-bottom: 0.5px solid var(--divider-light);
 }
 
 .appleMobileUserName {
@@ -442,12 +436,12 @@
   padding: 0 20px;
   margin-top: 24px;
   margin-bottom: 24px;
-  border-top: 0.5px solid rgba(0, 0, 0, 0.1);
+  border-top: 0.5px solid var(--divider-light);
   padding-top: 24px;
 }
 
 [data-theme="dark"] .appleMobileNavLinks {
-  border-top: 0.5px solid rgba(255, 255, 255, 0.12);
+  border-top: 0.5px solid var(--divider-light);
 }
 
 .appleMobileNavLink {
@@ -455,7 +449,7 @@
   align-items: center;
   gap: 12px;
   padding: 14px 16px;
-  background: rgba(0, 0, 0, 0.02);
+  background: var(--bg-overlay);
   border-radius: 12px;
   text-decoration: none;
   color: var(--text-primary);
@@ -466,26 +460,26 @@
 }
 
 [data-theme="dark"] .appleMobileNavLink {
-  background: rgba(255, 255, 255, 0.04);
+  background: var(--bg-overlay);
 }
 
 .appleMobileNavLink:active {
   transform: scale(0.98);
-  background: rgba(0, 0, 0, 0.06);
+  background: var(--bg-overlay-hover);
 }
 
 [data-theme="dark"] .appleMobileNavLink:active {
-  background: rgba(255, 255, 255, 0.08);
+  background: var(--bg-overlay-hover);
 }
 
 .appleMobileNavLink.active {
-  background: rgba(28, 169, 163, 0.1);
+  background: var(--active-bg-light);
   color: var(--avm-teal);
   font-weight: 600;
 }
 
 [data-theme="dark"] .appleMobileNavLink.active {
-  background: rgba(28, 169, 163, 0.15);
+  background: var(--active-bg-medium);
 }
 
 .mobileNavIcon {
@@ -532,7 +526,7 @@
   align-items: center;
   gap: 12px;
   padding: 14px 16px;
-  background: rgba(0, 0, 0, 0.02);
+  background: var(--bg-overlay);
   border-radius: 12px;
   text-decoration: none;
   color: var(--text-primary);
@@ -543,26 +537,26 @@
 }
 
 [data-theme="dark"] .appleMobileLink {
-  background: rgba(255, 255, 255, 0.04);
+  background: var(--bg-overlay);
 }
 
 .appleMobileLink:active {
   transform: scale(0.98);
-  background: rgba(0, 0, 0, 0.06);
+  background: var(--bg-overlay-hover);
 }
 
 [data-theme="dark"] .appleMobileLink:active {
-  background: rgba(255, 255, 255, 0.08);
+  background: var(--bg-overlay-hover);
 }
 
 .appleMobileLink.active {
-  background: rgba(28, 169, 163, 0.1);
+  background: var(--active-bg-light);
   color: var(--avm-teal);
   font-weight: 600;
 }
 
 [data-theme="dark"] .appleMobileLink.active {
-  background: rgba(28, 169, 163, 0.15);
+  background: var(--active-bg-medium);
 }
 
 .mobileLinkIcon {
@@ -587,11 +581,11 @@
   flex-direction: column;
   gap: 8px;
   padding-top: 24px;
-  border-top: 0.5px solid rgba(0, 0, 0, 0.1);
+  border-top: 0.5px solid var(--divider-light);
 }
 
 [data-theme="dark"] .appleMobileActions {
-  border-top: 0.5px solid rgba(255, 255, 255, 0.12);
+  border-top: 0.5px solid var(--divider-light);
 }
 
 .appleMobileAction {
@@ -623,7 +617,7 @@
 .appleMobileBtn {
   width: 100%;
   padding: 14px 16px;
-  background: rgba(0, 0, 0, 0.04);
+  background: var(--bg-overlay);
   border: none;
   border-radius: 12px;
   font-size: 15px;
@@ -639,26 +633,26 @@
 }
 
 [data-theme="dark"] .appleMobileBtn {
-  background: rgba(255, 255, 255, 0.06);
+  background: var(--bg-overlay);
 }
 
 .appleMobileBtn:active {
   transform: scale(0.98);
-  background: rgba(0, 0, 0, 0.08);
+  background: var(--bg-overlay-hover);
 }
 
 [data-theme="dark"] .appleMobileBtn:active {
-  background: rgba(255, 255, 255, 0.1);
+  background: var(--bg-overlay-hover);
 }
 
 .appleMobileBtn.logout {
-  color: #ff3b30;
-  background: rgba(255, 59, 48, 0.08);
+  color: var(--color-danger);
+  background: var(--color-danger-bg);
   margin-top: 8px;
 }
 
 .appleMobileBtn.logout:active {
-  background: rgba(255, 59, 48, 0.15);
+  background: var(--color-danger-bg-hover);
 }
 
 /* Mobile Menu Backdrop */
@@ -668,7 +662,7 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.3);
+  background: var(--backdrop-bg);
   backdrop-filter: blur(4px);
   -webkit-backdrop-filter: blur(4px);
   z-index: 1050; /* Just below the mobile menu (1100) */

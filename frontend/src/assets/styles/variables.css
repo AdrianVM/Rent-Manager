@@ -118,11 +118,31 @@
   --color-secondary-hover: #178e89;
   --color-accent: var(--avm-orange);
   --color-accent-hover: #e67d1f;
-  --color-danger: #dc3545;
-  --color-danger-hover: #c82333;
+  --color-danger: #ff3b30;
+  --color-danger-hover: #ff2d1f;
+  --color-danger-bg: rgba(255, 59, 48, 0.08);
+  --color-danger-bg-hover: rgba(255, 59, 48, 0.15);
   --color-success: var(--avm-teal);
   --color-warning: var(--avm-orange);
   --color-info: #3498db;
+
+  /* Active/Selected state colors */
+  --active-bg-light: rgba(28, 169, 163, 0.1);
+  --active-bg-medium: rgba(28, 169, 163, 0.15);
+  --active-bg-hover: rgba(28, 169, 163, 0.2);
+
+  /* Dropdown/Popover */
+  --dropdown-bg: rgba(255, 255, 255, 0.95);
+  --dropdown-shadow: 0 0 0 0.5px rgba(0, 0, 0, 0.08), 0 8px 20px rgba(0, 0, 0, 0.12), 0 20px 40px rgba(0, 0, 0, 0.08);
+
+  /* Backdrop */
+  --backdrop-bg: rgba(0, 0, 0, 0.3);
+
+  /* Inset shadows */
+  --inset-shadow-top: 0 1px 0 0 rgba(255, 255, 255, 0.44) inset;
+
+  /* Dividers */
+  --divider-light: rgba(0, 0, 0, 0.1);
 }
 
 /* ===== Dark Theme ===== */
@@ -170,6 +190,26 @@
   --color-accent-hover: #ffad5d;
   --color-danger: #ff6b6b;
   --color-danger-hover: #ff5252;
+  --color-danger-bg: rgba(255, 107, 107, 0.12);
+  --color-danger-bg-hover: rgba(255, 107, 107, 0.2);
   --color-success: #2eb8b1;
   --color-warning: #ff9d3d;
+
+  /* Active/Selected state colors */
+  --active-bg-light: rgba(28, 169, 163, 0.12);
+  --active-bg-medium: rgba(28, 169, 163, 0.15);
+  --active-bg-hover: rgba(28, 169, 163, 0.2);
+
+  /* Dropdown/Popover */
+  --dropdown-bg: rgba(44, 44, 46, 0.95);
+  --dropdown-shadow: 0 0 0 0.5px rgba(255, 255, 255, 0.12), 0 8px 20px rgba(0, 0, 0, 0.4), 0 20px 40px rgba(0, 0, 0, 0.3);
+
+  /* Backdrop */
+  --backdrop-bg: rgba(0, 0, 0, 0.5);
+
+  /* Inset shadows */
+  --inset-shadow-top: 0 1px 0 0 rgba(255, 255, 255, 0.03) inset;
+
+  /* Dividers */
+  --divider-light: rgba(255, 255, 255, 0.12);
 }
