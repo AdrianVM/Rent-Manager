@@ -1,9 +1,16 @@
 #!/bin/bash
 
 # Scaleway Backend Deployment Script
-# Usage: ./deploy-backend.sh [registry-endpoint] [namespace] [image-name] [region]
+# Usage: ./deploy-backend.sh [--no-cache] [registry-endpoint] [namespace] [image-name] [region]
 
 set -e
+
+# Parse arguments for --no-cache flag
+NO_CACHE=""
+if [ "$1" = "--no-cache" ]; then
+    NO_CACHE="--no-cache"
+    shift  # Remove --no-cache from arguments
+fi
 
 # Configuration
 REGISTRY_ENDPOINT="${1:-rg.fr-par.scw.cloud}"
@@ -37,7 +44,10 @@ set +a
 
 # Build Docker image
 echo "🔨 Building Docker image..."
-docker build \
+if [ -n "$NO_CACHE" ]; then
+    echo "   (Building without cache)"
+fi
+docker build $NO_CACHE \
     -t ${IMAGE_NAME}:${VERSION} \
     -t ${FULL_IMAGE_NAME} \
     -f backend/RentManager.API/Dockerfile \
