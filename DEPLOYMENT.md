@@ -32,10 +32,10 @@ The frontend is a React SPA deployed to Scaleway Object Storage as a static webs
 2. **Edit `frontend/.env.production.local`** with your production values:
    ```env
    REACT_APP_API_URL=https://your-backend-url.scw.cloud/api
-   REACT_APP_BASE_URL=https://rentflow.ro.s3-website.fr-par.scw.cloud
+   REACT_APP_BASE_URL=https://rentflow.ro
    REACT_APP_ZITADEL_AUTHORITY=https://rent-manager-txkjry.us1.zitadel.cloud
    REACT_APP_ZITADEL_CLIENT_ID=your-production-client-id
-   REACT_APP_REDIRECT_URI=https://rentflow.ro.s3-website.fr-par.scw.cloud/auth/callback
+   REACT_APP_REDIRECT_URI=https://rentflow.ro/auth/callback
    REACT_APP_STRIPE_PUBLISHABLE_KEY=your-stripe-publishable-key
    ```
 
@@ -53,7 +53,7 @@ The script will:
 - Set proper content types
 - Make the bucket publicly accessible
 
-**Frontend URL**: `https://rentflow.ro.s3-website.fr-par.scw.cloud`
+**Frontend URL**: `https://rentflow.ro`
 
 ## Backend Deployment
 
@@ -75,7 +75,7 @@ The backend is a .NET 9.0 API deployed as a Docker container to Scaleway Contain
    ```env
    ASPNETCORE_ENVIRONMENT=Production
    ASPNETCORE_URLS=http://+:8080
-   FrontendUrl=https://rentflow.ro.s3-website.fr-par.scw.cloud
+   FrontendUrl=https://rentflow.ro
    UsePostgres=true
    ConnectionStrings__DefaultConnection=Host=your-db-host;Port=5432;Database=rent-manager;Username=user;Password=pass
    Zitadel__Authority=https://rent-manager-txkjry.us1.zitadel.cloud
@@ -124,7 +124,7 @@ scw container container create \
   memory-limit=2048 \
   env-vars.ASPNETCORE_ENVIRONMENT=Production \
   env-vars.ASPNETCORE_URLS=http://+:8080 \
-  env-vars.FrontendUrl=https://rentflow.ro.s3-website.fr-par.scw.cloud \
+  env-vars.FrontendUrl=https://rentflow.ro \
   env-vars.UsePostgres=true \
   env-vars.ConnectionStrings__DefaultConnection="<your-connection-string>"
 
@@ -185,17 +185,17 @@ Use any PostgreSQL database and configure the connection string in `backend/.env
 | Variable | Description | Example |
 |----------|-------------|---------|
 | `REACT_APP_API_URL` | Backend API URL | `https://your-backend.scw.cloud/api` |
-| `REACT_APP_BASE_URL` | Frontend base URL | `https://rentflow.ro.s3-website.fr-par.scw.cloud` |
+| `REACT_APP_BASE_URL` | Frontend base URL | `https://rentflow.ro` |
 | `REACT_APP_ZITADEL_AUTHORITY` | Zitadel authority URL | `https://your-instance.zitadel.cloud` |
 | `REACT_APP_ZITADEL_CLIENT_ID` | Zitadel client ID | Your production client ID |
-| `REACT_APP_REDIRECT_URI` | OAuth redirect URI | `https://rentflow.ro.s3-website.fr-par.scw.cloud/auth/callback` |
+| `REACT_APP_REDIRECT_URI` | OAuth redirect URI | `https://rentflow.ro/auth/callback` |
 | `REACT_APP_STRIPE_PUBLISHABLE_KEY` | Stripe publishable key | `pk_live_...` |
 
 ### Backend (`.env.production.local`)
 
 | Variable | Description | Example |
 |----------|-------------|---------|
-| `FrontendUrl` | Frontend URL for CORS | `https://rentflow.ro.s3-website.fr-par.scw.cloud` |
+| `FrontendUrl` | Frontend URL for CORS | `https://rentflow.ro` |
 | `ConnectionStrings__DefaultConnection` | PostgreSQL connection string | `Host=...;Database=...` |
 | `Zitadel__Authority` | Zitadel authority URL | `https://your-instance.zitadel.cloud` |
 | `Zitadel__Audience` | Zitadel client ID | Your production client ID |
@@ -206,8 +206,8 @@ Use any PostgreSQL database and configure the connection string in `backend/.env
 ## Post-Deployment
 
 1. **Configure Zitadel redirect URIs**:
-   - Add `https://rentflow.ro.s3-website.fr-par.scw.cloud/auth/callback` to allowed redirect URIs
-   - Add `https://rentflow.ro.s3-website.fr-par.scw.cloud/logout` to post-logout redirect URIs
+   - Add `https://rentflow.ro/auth/callback` to allowed redirect URIs
+   - Add `https://rentflow.ro/logout` to post-logout redirect URIs
 
 2. **Configure Stripe webhooks** (if using Stripe):
    - Add webhook endpoint: `https://your-backend-url.scw.cloud/api/stripe/webhook`

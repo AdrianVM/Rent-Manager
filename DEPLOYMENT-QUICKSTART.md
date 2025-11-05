@@ -48,7 +48,7 @@ npm run build:frontend
 ./deploy-frontend.sh
 ```
 
-**URL**: https://rentflow.ro.s3-website.fr-par.scw.cloud
+**URL**: https://rentflow.ro
 
 ## Deploy Backend (First Time)
 
@@ -77,7 +77,7 @@ scw container container create \
   memory-limit=2048 \
   env-vars.ASPNETCORE_ENVIRONMENT=Production \
   env-vars.ASPNETCORE_URLS=http://+:8080 \
-  env-vars.FrontendUrl=https://rentflow.ro.s3-website.fr-par.scw.cloud \
+  env-vars.FrontendUrl=https://rentflow.ro \
   env-vars.UsePostgres=true \
   env-vars.ConnectionStrings__DefaultConnection="Host=your-db;Port=5432;Database=rent-manager;Username=user;Password=pass" \
   env-vars.Zitadel__Authority=https://rent-manager-txkjry.us1.zitadel.cloud \
@@ -152,10 +152,10 @@ dotnet ef database update --connection "Host=your-db;Port=5432;Database=rent-man
 1. Go to https://rent-manager-txkjry.us1.zitadel.cloud
 2. Navigate to your application
 3. Add redirect URIs:
-   - `https://rentflow.ro.s3-website.fr-par.scw.cloud/auth/callback`
-   - `https://rentflow.ro.s3-website.fr-par.scw.cloud/auth/silent-callback`
+   - `https://rentflow.ro/auth/callback`
+   - `https://rentflow.ro/auth/silent-callback`
 4. Add post-logout redirect URI:
-   - `https://rentflow.ro.s3-website.fr-par.scw.cloud/logout`
+   - `https://rentflow.ro/logout`
 
 ## Useful Commands
 

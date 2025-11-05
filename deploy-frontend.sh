@@ -113,7 +113,7 @@ $AWS_CLI s3api put-bucket-acl \
 echo ""
 echo "✅ Deployment complete!"
 echo "🌐 Your site is available at:"
-echo "   https://$BUCKET_NAME.s3-website.$REGION.scw.cloud"
+echo "   https://$BUCKET_NAME"
 echo ""
 echo "📊 Bucket contents:"
 $AWS_CLI s3 ls s3://$BUCKET_NAME/ --endpoint-url=$ENDPOINT_URL --human-readable --summarize
