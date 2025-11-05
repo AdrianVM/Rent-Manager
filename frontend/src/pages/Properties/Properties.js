@@ -398,7 +398,10 @@ function ContractsView({ property, onClose, onUpdate, onViewContract }) {
     <div className="modal">
       <div className="modal-content contracts-view-modal-content">
         <div className="modal-header">
-          <h2>Contracts for {property.name}</h2>
+          <h2 title={`Contracts for ${property.name}`}>
+            <span className="contracts-view-prefix">Contracts for </span>
+            <span className="contracts-view-property-name">{property.name}</span>
+          </h2>
           <button className="close-btn" onClick={onClose}>&times;</button>
         </div>
         <div className="contracts-view-content">
@@ -418,9 +421,9 @@ function ContractsView({ property, onClose, onUpdate, onViewContract }) {
                   className="contract-item"
                 >
                   <div className="contract-item-header">
-                    <div>
-                      <h4 className="contract-item-title">
-                        {contract.fileName}
+                    <div className="contract-item-info">
+                      <h4 className="contract-item-title" title={contract.fileName}>
+                        <span className="contract-item-filename">{contract.fileName}</span>
                       </h4>
                       <div className="contract-item-tenant">
                         Tenant: {getTenantName(contract.tenantId)}

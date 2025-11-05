@@ -237,7 +237,9 @@ function Documents() {
               </div>
               <div className="document-content">
                 <div className="document-header">
-                  <h3 className="document-name">{contract.fileName}</h3>
+                  <h3 className="document-name" title={contract.fileName}>
+                    <span className="document-name-text">{contract.fileName}</span>
+                  </h3>
                   {getStatusBadge(contract.status)}
                 </div>
 

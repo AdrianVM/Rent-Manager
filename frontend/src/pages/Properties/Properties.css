@@ -138,6 +138,8 @@
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  max-width: 100%;
+  overflow: hidden;
 }
 
 .contract-item:hover {
@@ -155,6 +157,16 @@
   justify-content: space-between;
   align-items: flex-start;
   margin-bottom: 8px;
+  max-width: 100%;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.contract-item-info {
+  flex: 1 1 0;
+  min-width: 0;
+  max-width: calc(100% - 100px);
+  overflow: hidden;
 }
 
 .contract-item-title {
@@ -162,6 +174,17 @@
   color: var(--text-primary);
   font-weight: 600;
   font-size: 16px;
+  cursor: help;
+  max-width: 100%;
+  overflow: hidden;
+}
+
+.contract-item-filename {
+  display: block;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .contract-item-tenant {
@@ -235,6 +258,35 @@
   max-width: 800px;
 }
 
+.contracts-view-modal-content .modal-header {
+  max-width: 100%;
+  overflow: hidden;
+}
+
+.contracts-view-modal-content .modal-header h2 {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  min-width: 0;
+  cursor: help;
+  overflow: hidden;
+  max-width: 100%;
+}
+
+.contracts-view-prefix {
+  flex-shrink: 0;
+}
+
+.contracts-view-property-name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  flex: 1;
+  min-width: 0;
+  max-width: calc(100% - 20px);
+  padding-right: 20px;
+}
+
 /* Responsive Design */
 @media (max-width: 768px) {
   .properties-page {
@@ -254,6 +306,10 @@
   .contract-item-header {
     flex-direction: column;
     gap: 8px;
+  }
+
+  .contract-item-info {
+    max-width: 100%;
   }
 
   .contract-item-footer {
@@ -290,8 +346,26 @@
     font-size: 20px;
   }
 
+  .contracts-view-content {
+    padding: 12px;
+  }
+
   .contracts-view-loading,
   .contracts-view-empty {
     padding: 30px 15px;
+  }
+
+  .contract-item {
+    padding: 12px;
+  }
+
+  .contracts-view-prefix {
+    display: none;
+  }
+
+  .contracts-view-property-name {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 }

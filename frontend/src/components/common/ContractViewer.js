@@ -163,7 +163,10 @@ function ContractViewer({ contract, onClose }) {
     <div className="modal">
       <div className="modal-content contract-viewer-modal">
         <div className="modal-header">
-          <h2>View Contract: {contract.fileName}</h2>
+          <h2 title={`View Contract: ${contract.fileName}`}>
+            <span className="contract-header-prefix">View Contract: </span>
+            <span className="contract-filename">{contract.fileName}</span>
+          </h2>
           <button className="close-btn" onClick={onClose}>&times;</button>
         </div>
         <div className="contract-viewer-content">

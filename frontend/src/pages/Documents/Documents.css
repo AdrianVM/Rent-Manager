@@ -171,6 +171,8 @@
   display: flex;
   gap: 1.5rem;
   transition: all 0.2s ease;
+  max-width: 100%;
+  overflow: hidden;
 }
 
 .document-card:hover {
@@ -196,6 +198,7 @@
   gap: 1rem;
   margin-bottom: 1rem;
   flex-wrap: wrap;
+  max-width: 100%;
 }
 
 .document-name {
@@ -203,7 +206,19 @@
   font-weight: 600;
   color: var(--text-primary);
   margin: 0;
-  word-break: break-word;
+  cursor: help;
+  max-width: calc(100% - 120px);
+  overflow: hidden;
+  flex: 1 1 0;
+  min-width: 0;
+}
+
+.document-name-text {
+  display: block;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 /* Status Badge */
@@ -387,6 +402,10 @@
     align-items: flex-start;
   }
 
+  .document-name {
+    max-width: 100%;
+  }
+
   .document-meta {
     flex-direction: column;
     gap: 0.5rem;
@@ -403,6 +422,10 @@
 }
 
 @media (max-width: 480px) {
+  .documents-page {
+    padding: 0.75rem;
+  }
+
   .documents-stats {
     grid-template-columns: 1fr;
   }
@@ -420,5 +443,9 @@
 
   .filter-select {
     width: 100%;
+  }
+
+  .document-card {
+    padding: 1rem;
   }
 }
