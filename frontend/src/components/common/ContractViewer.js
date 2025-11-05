@@ -7,7 +7,18 @@ function ContractViewer({ contract, onClose }) {
   const [loading, setLoading] = useState(true);
   const [contractData, setContractData] = useState(null);
   const [renderingDocx, setRenderingDocx] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
   const docxContainerRef = useRef(null);
+
+  useEffect(() => {
+    // Detect mobile device
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth <= 768 || /iPhone|iPad|iPod|Android/i.test(navigator.userAgent));
+    };
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   useEffect(() => {
     loadContractData();
@@ -29,6 +40,21 @@ function ContractViewer({ contract, onClose }) {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleDownload = () => {
+    if (!contractData || !contractData.fileContentBase64) return;
+
+    const mimeType = contractData.mimeType || 'application/octet-stream';
+    const blob = new Blob([Uint8Array.from(atob(contractData.fileContentBase64), c => c.charCodeAt(0))], { type: mimeType });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = contractData.fileName || 'contract';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
   };
 
   const renderDocxIfNeeded = async () => {
@@ -90,11 +116,21 @@ function ContractViewer({ contract, onClose }) {
       const url = URL.createObjectURL(blob);
 
       return (
-        <iframe
-          src={url}
-          className="contract-viewer-iframe"
-          title="Contract Viewer"
-        />
+        <div className="contract-viewer-pdf-wrapper">
+          {isMobile && (
+            <div className="contract-viewer-mobile-pdf-notice">
+              <p>For the best viewing experience on mobile, download the PDF.</p>
+              <button className="btn btn-primary" onClick={handleDownload}>
+                Download PDF
+              </button>
+            </div>
+          )}
+          <iframe
+            src={url}
+            className="contract-viewer-iframe"
+            title="Contract Viewer"
+          />
+        </div>
       );
     } else if (mimeType.includes('wordprocessingml') || mimeType.includes('msword') || contractData.fileName.toLowerCase().endsWith('.docx') || contractData.fileName.toLowerCase().endsWith('.doc')) {
       // Handle Word documents
