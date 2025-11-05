@@ -1,15 +1,20 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
-import App from './App';
+import AppWrapper from './AppWrapper';
 import { ThemeProvider } from './contexts/ThemeContext';
 import * as serviceWorkerRegistration from './serviceWorkerRegistration';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
+
+// Store registration globally for AppWrapper to access
+window.swRegistration = null;
+window.showUpdateNotification = null;
+
 root.render(
   <React.StrictMode>
     <ThemeProvider>
-      <App />
+      <AppWrapper />
     </ThemeProvider>
   </React.StrictMode>
 );
@@ -18,11 +23,10 @@ root.render(
 serviceWorkerRegistration.register({
   onSuccess: () => console.log('App is ready to work offline'),
   onUpdate: (registration) => {
-    console.log('New version available! Please refresh.');
-    // Optionally, you can show a notification to the user here
-    if (window.confirm('New version available! Reload to update?')) {
-      registration.waiting.postMessage({ type: 'SKIP_WAITING' });
-      window.location.reload();
+    console.log('New version available! Showing update notification...');
+    window.swRegistration = registration;
+    if (window.showUpdateNotification) {
+      window.showUpdateNotification(registration);
     }
   },
 });
