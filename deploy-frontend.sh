@@ -20,7 +20,7 @@ fi
 
 # Configuration
 AWS_CLI="$HOME/.local/bin/aws"
-BUCKET_NAME="${1:-rent-manager-fe}"
+BUCKET_NAME="${1:-rentflow.ro}"
 REGION="${2:-fr-par}"
 ENDPOINT_URL="https://s3.${REGION}.scw.cloud"
 BUILD_DIR="frontend/build"
