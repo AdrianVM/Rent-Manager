@@ -199,3 +199,11 @@ msbuild.wrn
 
 # Visual Studio 2015
 .vs/
+
+# Terraform
+**/.terraform/*
+*.tfstate
+*.tfstate.*
+terraform.tfvars
+*.tfvars
+.terraform.lock.hcl
