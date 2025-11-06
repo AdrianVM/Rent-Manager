@@ -7,3 +7,4 @@ export { default as RoleSwitcher } from '../RoleSwitcher';
 export { PrimaryButton, SecondaryButton, DangerButton } from './Button';
 export { MainContent } from '../MainContent';
 export { default as ContractViewer } from './ContractViewer';
+export { default as PropertyMap } from './PropertyMap';

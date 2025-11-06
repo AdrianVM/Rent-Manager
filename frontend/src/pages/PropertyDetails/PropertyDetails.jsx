@@ -1,25 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
-import 'leaflet/dist/leaflet.css';
-import L from 'leaflet';
 import apiService from '../../services/api';
+import { PropertyMap } from '../../components/common';
 import './PropertyDetails.css';
-
-// Fix for default marker icon in React-Leaflet
-delete L.Icon.Default.prototype._getIconUrl;
-L.Icon.Default.mergeOptions({
-  iconRetinaUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon-2x.png',
-  iconUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png',
-  shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
-});
 
 function PropertyDetails() {
   const [property, setProperty] = useState(null);
   const [tenant, setTenant] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [coordinates, setCoordinates] = useState(null);
-  const [geocoding, setGeocoding] = useState(false);
 
   useEffect(() => {
     loadPropertyData();
@@ -47,11 +35,6 @@ function PropertyDetails() {
       if (activeTenant.propertyId) {
         const propertyData = await apiService.getProperty(activeTenant.propertyId);
         setProperty(propertyData);
-
-        // Geocode the address
-        if (propertyData.address) {
-          await geocodeAddress(propertyData.address);
-        }
       } else {
         setError('No property assigned to your account.');
       }
@@ -60,28 +43,6 @@ function PropertyDetails() {
       setError('Failed to load property information');
     } finally {
       setLoading(false);
-    }
-  };
-
-  const geocodeAddress = async (address) => {
-    try {
-      setGeocoding(true);
-      // Using Nominatim API for OpenStreetMap geocoding
-      const response = await fetch(
-        `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(address)}&limit=1`
-      );
-      const data = await response.json();
-
-      if (data && data.length > 0) {
-        setCoordinates({
-          lat: parseFloat(data[0].lat),
-          lng: parseFloat(data[0].lon),
-        });
-      }
-    } catch (err) {
-      console.error('Error geocoding address:', err);
-    } finally {
-      setGeocoding(false);
     }
   };
 
@@ -287,38 +248,7 @@ function PropertyDetails() {
       {/* Map Section */}
       <div className="property-map-card">
         <h3 className="section-title">Location</h3>
-        {geocoding && (
-          <div className="map-loading">
-            <div className="loading-spinner"></div>
-            <p>Loading map...</p>
-          </div>
-        )}
-        {!geocoding && coordinates ? (
-          <div className="map-container">
-            <MapContainer
-              center={[coordinates.lat, coordinates.lng]}
-              zoom={15}
-              style={{ height: '400px', width: '100%', borderRadius: 'var(--radius-lg)' }}
-            >
-              <TileLayer
-                attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-                url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-              />
-              <Marker position={[coordinates.lat, coordinates.lng]}>
-                <Popup>
-                  <strong>{property.name}</strong>
-                  <br />
-                  {property.address}
-                </Popup>
-              </Marker>
-            </MapContainer>
-          </div>
-        ) : !geocoding && !coordinates ? (
-          <div className="map-error">
-            <p>Unable to display map for this address</p>
-            <p className="map-error-address">{property.address}</p>
-          </div>
-        ) : null}
+        <PropertyMap property={property} showAddressOverlay={false} />
       </div>
     </div>
   );

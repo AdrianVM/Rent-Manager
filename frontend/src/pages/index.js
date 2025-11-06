@@ -3,6 +3,7 @@ export { default as AdminDashboard } from './AdminDashboard';
 export { default as PropertyOwnerDashboard } from './PropertyOwnerDashboard';
 export { default as RenterDashboard } from './RenterDashboard';
 export { default as Properties } from './Properties';
+export { default as PropertyView } from './PropertyView';
 export { default as Tenants } from './Tenants';
 export { default as Payments } from './Payments';
 export { default as UserManagement } from './UserManagement';

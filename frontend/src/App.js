@@ -10,6 +10,7 @@ import {
   PropertyOwnerDashboard,
   RenterDashboard,
   Properties,
+  PropertyView,
   Tenants,
   Payments,
   UserManagement,
@@ -175,6 +176,7 @@ function App() {
                   {canAccessPropertyOwnerFeatures && (
                     <>
                       <Route path="/properties" element={<Properties />} />
+                      <Route path="/properties/:id/view" element={<PropertyView />} />
                       <Route path="/tenants" element={<Tenants />} />
                       <Route path="/payments" element={<Payments />} />
 

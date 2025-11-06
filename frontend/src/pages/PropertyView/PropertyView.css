@@ -1,0 +1,683 @@
+/* ===== PROPERTY VIEW PAGE - APPLE-INSPIRED DESIGN ===== */
+
+/* Container */
+.property-view-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: var(--space-xl);
+}
+
+/* Header */
+.property-view-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--space-xl);
+  gap: var(--space-md);
+}
+
+.property-view-back-btn {
+  font-size: 14px;
+}
+
+.property-view-header-actions {
+  display: flex;
+  gap: var(--space-sm);
+}
+
+/* Section Spacing */
+.property-view-section {
+  margin-bottom: var(--space-xl);
+}
+
+/* Card Base */
+.property-view-card {
+  background: var(--card-bg);
+  backdrop-filter: var(--card-backdrop-blur);
+  -webkit-backdrop-filter: var(--card-backdrop-blur);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius-2xl);
+  padding: var(--space-xl);
+  box-shadow: var(--card-shadow);
+  transition: all var(--transition-base);
+}
+
+.property-view-card:hover {
+  box-shadow: var(--card-shadow-hover);
+}
+
+/* Section Title */
+.property-view-section-title {
+  font-size: 24px;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  background: linear-gradient(135deg, var(--avm-royal-blue) 0%, var(--avm-teal) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin: 0 0 var(--space-lg) 0;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-sm);
+}
+
+[data-theme="dark"] .property-view-section-title {
+  background: linear-gradient(135deg, var(--color-primary) 0%, var(--avm-teal) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* ===== PROPERTY OVERVIEW CARD ===== */
+.property-overview-card {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xl);
+  background: var(--card-bg);
+  backdrop-filter: var(--card-backdrop-blur);
+  -webkit-backdrop-filter: var(--card-backdrop-blur);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius-2xl);
+  padding: var(--space-xl);
+  box-shadow: var(--card-shadow);
+  transition: all var(--transition-base);
+}
+
+.property-overview-card:hover {
+  box-shadow: var(--card-shadow-hover);
+}
+
+.property-overview-icon {
+  font-size: 80px;
+  flex-shrink: 0;
+}
+
+.property-overview-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.property-overview-name {
+  font-size: 36px;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  background: linear-gradient(135deg, var(--avm-royal-blue) 0%, var(--avm-teal) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin: 0 0 var(--space-sm) 0;
+}
+
+[data-theme="dark"] .property-overview-name {
+  background: linear-gradient(135deg, var(--color-primary) 0%, var(--avm-teal) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.property-overview-address {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  font-size: 16px;
+  color: var(--text-secondary);
+  margin-bottom: var(--space-md);
+}
+
+.property-overview-location-icon {
+  font-size: 18px;
+}
+
+.property-overview-type {
+  margin-top: var(--space-sm);
+}
+
+.property-type-badge {
+  display: inline-block;
+  padding: 6px 16px;
+  background: rgba(31, 78, 121, 0.1);
+  color: var(--avm-royal-blue);
+  border: 1px solid rgba(31, 78, 121, 0.2);
+  border-radius: var(--radius-full);
+  font-size: 14px;
+  font-weight: 600;
+  text-transform: capitalize;
+  letter-spacing: 0.02em;
+}
+
+[data-theme="dark"] .property-type-badge {
+  background: rgba(74, 123, 167, 0.15);
+  color: var(--color-primary);
+  border-color: rgba(74, 123, 167, 0.3);
+}
+
+/* ===== PROPERTY DETAILS GRID ===== */
+.property-details-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: var(--space-md);
+}
+
+.property-detail-card {
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-lg);
+  padding: var(--space-lg);
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  transition: all var(--transition-base);
+}
+
+.property-detail-card:hover {
+  background: var(--bg-secondary);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.property-detail-icon {
+  font-size: 32px;
+  flex-shrink: 0;
+}
+
+.property-detail-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.property-detail-label {
+  font-size: 12px;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.property-detail-value {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+/* ===== DESCRIPTION SECTION ===== */
+.property-view-description {
+  font-size: 16px;
+  line-height: 1.6;
+  color: var(--text-primary);
+  margin: 0;
+  white-space: pre-wrap;
+}
+
+/* ===== LEASE INFO SECTION ===== */
+.property-lease-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: var(--space-lg);
+}
+
+.property-lease-item {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+}
+
+.property-lease-label {
+  font-size: 12px;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-weight: 600;
+}
+
+.property-lease-value {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--text-primary);
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  flex-wrap: wrap;
+}
+
+.property-lease-status-badge {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: var(--radius-full);
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: capitalize;
+  letter-spacing: 0.02em;
+}
+
+.property-lease-status-badge.active {
+  background: rgba(34, 197, 94, 0.15);
+  color: #16A34A;
+  border: 1px solid rgba(34, 197, 94, 0.3);
+}
+
+.property-lease-status-badge.inactive {
+  background: rgba(108, 117, 125, 0.15);
+  color: #6c757d;
+  border: 1px solid rgba(108, 117, 125, 0.3);
+}
+
+.property-lease-footer {
+  margin-top: var(--space-lg);
+  padding-top: var(--space-lg);
+  border-top: 1px solid var(--border-light);
+}
+
+.property-lease-link {
+  color: var(--color-primary);
+  text-decoration: none;
+  font-weight: 600;
+  transition: color var(--transition-fast);
+}
+
+.property-lease-link:hover {
+  color: var(--color-primary-hover);
+  text-decoration: underline;
+}
+
+/* ===== CONTRACTS SECTION ===== */
+.property-contracts-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--space-lg);
+  gap: var(--space-md);
+  flex-wrap: wrap;
+}
+
+.contracts-count-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(31, 78, 121, 0.1);
+  color: var(--avm-royal-blue);
+  border: 1px solid rgba(31, 78, 121, 0.2);
+  border-radius: var(--radius-full);
+  font-size: 14px;
+  font-weight: 700;
+  padding: 4px 12px;
+  min-width: 28px;
+  height: 28px;
+}
+
+[data-theme="dark"] .contracts-count-badge {
+  background: rgba(74, 123, 167, 0.15);
+  color: var(--color-primary);
+  border-color: rgba(74, 123, 167, 0.3);
+}
+
+/* Empty State */
+.property-contracts-empty {
+  text-align: center;
+  padding: var(--space-3xl) var(--space-xl);
+}
+
+.property-contracts-empty-icon {
+  font-size: 64px;
+  margin-bottom: var(--space-md);
+  opacity: 0.5;
+}
+
+.property-contracts-empty-text {
+  font-size: 16px;
+  color: var(--text-secondary);
+  margin-bottom: var(--space-lg);
+}
+
+/* Contracts List */
+.property-contracts-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+}
+
+.property-contract-item {
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-lg);
+  padding: var(--space-lg);
+  background: var(--bg-tertiary);
+  transition: all var(--transition-base);
+}
+
+.property-contract-item:hover {
+  background: var(--bg-secondary);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.property-contract-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: var(--space-sm);
+  gap: var(--space-md);
+  flex-wrap: wrap;
+}
+
+.property-contract-info {
+  flex: 1 1 0;
+  min-width: 0;
+  max-width: calc(100% - 100px);
+}
+
+.property-contract-title {
+  margin: 0 0 4px 0;
+  color: var(--text-primary);
+  font-weight: 600;
+  font-size: 16px;
+  cursor: help;
+  overflow: hidden;
+}
+
+.property-contract-filename {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.property-contract-tenant {
+  font-size: 14px;
+  color: var(--text-secondary);
+}
+
+.property-contract-notes {
+  font-size: 14px;
+  color: var(--text-secondary);
+  margin-bottom: var(--space-sm);
+}
+
+.property-contract-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--space-md);
+  flex-wrap: wrap;
+  margin-top: var(--space-sm);
+}
+
+.property-contract-meta {
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+.property-contract-actions {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+
+.property-contract-action-btn {
+  padding: 6px 8px;
+  font-size: 14px;
+  min-width: 32px;
+}
+
+/* Contract Status Badges (reuse from Properties.css) */
+.contract-status-badge {
+  display: inline-block;
+  padding: 4px 8px;
+  border-radius: var(--radius-md);
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: capitalize;
+  letter-spacing: 0.02em;
+  flex-shrink: 0;
+}
+
+.contract-status-badge.draft {
+  background: rgba(108, 117, 125, 0.15);
+  color: #6c757d;
+  border: 1px solid rgba(108, 117, 125, 0.3);
+}
+
+.contract-status-badge.pending {
+  background: rgba(251, 191, 36, 0.15);
+  color: #D97706;
+  border: 1px solid rgba(251, 191, 36, 0.3);
+}
+
+.contract-status-badge.signed {
+  background: rgba(34, 197, 94, 0.15);
+  color: #16A34A;
+  border: 1px solid rgba(34, 197, 94, 0.3);
+}
+
+.contract-status-badge.terminated {
+  background: rgba(239, 68, 68, 0.15);
+  color: #DC2626;
+  border: 1px solid rgba(239, 68, 68, 0.3);
+}
+
+/* ===== LOADING & ERROR STATES ===== */
+.property-view-loading,
+.property-view-error {
+  text-align: center;
+  padding: var(--space-3xl) var(--space-xl);
+}
+
+.property-view-loading {
+  color: var(--text-secondary);
+  font-size: 18px;
+}
+
+.property-view-error {
+  color: var(--text-primary);
+}
+
+.property-view-error h3 {
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--color-danger);
+  margin-bottom: var(--space-md);
+}
+
+.property-view-error p {
+  font-size: 16px;
+  color: var(--text-secondary);
+  margin-bottom: var(--space-lg);
+}
+
+/* ===== PLACEHOLDER FOR PHASE 2 ===== */
+.property-view-placeholder {
+  text-align: center;
+  padding: var(--space-xl);
+  color: var(--text-secondary);
+  font-size: 16px;
+  font-style: italic;
+}
+
+/* ===== RESPONSIVE DESIGN ===== */
+
+/* Tablet (768px - 1024px) */
+@media (max-width: 1024px) {
+  .property-overview-name {
+    font-size: 32px;
+  }
+
+  .property-overview-icon {
+    font-size: 64px;
+  }
+}
+
+/* Mobile (< 768px) */
+@media (max-width: 768px) {
+  .property-view-container {
+    padding: var(--space-lg);
+  }
+
+  .property-view-header {
+    flex-direction: column;
+    align-items: stretch;
+    gap: var(--space-md);
+  }
+
+  .property-view-back-btn {
+    width: 100%;
+  }
+
+  .property-view-header-actions {
+    flex-direction: column;
+    gap: var(--space-sm);
+  }
+
+  .property-view-header-actions button {
+    width: 100%;
+  }
+
+  /* Overview Card - Stack vertically */
+  .property-overview-card {
+    flex-direction: column;
+    text-align: center;
+    gap: var(--space-lg);
+  }
+
+  .property-overview-icon {
+    font-size: 72px;
+  }
+
+  .property-overview-name {
+    font-size: 28px;
+  }
+
+  .property-overview-address {
+    justify-content: center;
+  }
+
+  /* Details Grid - Single column */
+  .property-details-grid {
+    grid-template-columns: 1fr;
+  }
+
+  /* Lease Grid - Single column */
+  .property-lease-grid {
+    grid-template-columns: 1fr;
+  }
+
+  /* Contracts Header - Stack */
+  .property-contracts-header {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .property-contracts-header button {
+    width: 100%;
+  }
+
+  /* Contract Items - Stack footer */
+  .property-contract-header {
+    flex-direction: column;
+    gap: var(--space-sm);
+  }
+
+  .property-contract-info {
+    max-width: 100%;
+  }
+
+  .property-contract-footer {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .property-contract-actions {
+    width: 100%;
+  }
+
+  .property-contract-action-btn {
+    flex: 1;
+  }
+}
+
+/* Extra Small Mobile (< 480px) */
+@media (max-width: 480px) {
+  .property-view-container {
+    padding: var(--space-md);
+  }
+
+  .property-view-section-title {
+    font-size: 20px;
+  }
+
+  .property-overview-name {
+    font-size: 24px;
+  }
+
+  .property-overview-icon {
+    font-size: 56px;
+  }
+
+  .property-view-card {
+    padding: var(--space-lg);
+  }
+
+  .property-detail-card {
+    padding: var(--space-md);
+  }
+
+  .property-detail-icon {
+    font-size: 24px;
+  }
+
+  .property-detail-value {
+    font-size: 18px;
+  }
+
+  .property-contracts-empty {
+    padding: var(--space-2xl) var(--space-md);
+  }
+
+  .property-contracts-empty-icon {
+    font-size: 48px;
+  }
+
+  .property-contract-item {
+    padding: var(--space-md);
+  }
+}
+
+/* ===== DARK MODE SPECIFIC ADJUSTMENTS ===== */
+[data-theme="dark"] .property-detail-card:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+[data-theme="dark"] .property-contract-item:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+/* ===== TOUCH-FRIENDLY ADJUSTMENTS ===== */
+@media (hover: none) and (pointer: coarse) {
+  /* Ensure minimum touch target size of 44px */
+  .property-view-back-btn,
+  .property-contract-action-btn {
+    min-height: 44px;
+  }
+
+  /* Remove hover effects on touch devices */
+  .property-detail-card:hover,
+  .property-contract-item:hover {
+    transform: none;
+  }
+}
+
+/* ===== PRINT STYLES ===== */
+@media print {
+  .property-view-header-actions,
+  .property-contracts-header button,
+  .property-contract-actions {
+    display: none;
+  }
+
+  .property-view-card {
+    box-shadow: none;
+    border: 1px solid #ccc;
+  }
+
+  .property-overview-card {
+    break-inside: avoid;
+  }
+}

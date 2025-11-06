@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import apiService from '../../services/api';
-import { PrimaryButton, SecondaryButton, DangerButton, Table, ContractViewer } from '../../components/common';
+import { PrimaryButton, SecondaryButton, Table } from '../../components/common';
 import './Properties.css';
 
 function PropertyForm({ property, onSave, onCancel }) {
@@ -193,303 +194,16 @@ function PropertyForm({ property, onSave, onCancel }) {
   );
 }
 
-function ContractUpload({ property, tenants, onClose, onUpload }) {
-  const [file, setFile] = useState(null);
-  const [tenantId, setTenantId] = useState('');
-  const [status, setStatus] = useState('draft');
-  const [notes, setNotes] = useState('');
-  const [uploading, setUploading] = useState(false);
-
-  const propertyTenants = tenants.filter(t => t.propertyId === property.id);
-
-  const handleFileChange = (e) => {
-    const selectedFile = e.target.files[0];
-    if (selectedFile) {
-      if (selectedFile.size > 10 * 1024 * 1024) {
-        alert('File size must be less than 10MB');
-        return;
-      }
-      setFile(selectedFile);
-    }
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    if (!file || !tenantId) {
-      alert('Please select a file and tenant');
-      return;
-    }
-
-    setUploading(true);
-    try {
-      const reader = new FileReader();
-      reader.onload = async () => {
-        const base64 = reader.result.split(',')[1];
-        const contractData = {
-          propertyId: property.id,
-          tenantId,
-          fileName: file.name,
-          fileContentBase64: base64,
-          mimeType: file.type,
-          fileSizeBytes: file.size,
-          status,
-          notes
-        };
-
-        await apiService.uploadContract(contractData);
-        onUpload();
-        onClose();
-      };
-      reader.readAsDataURL(file);
-    } catch (err) {
-      alert('Failed to upload contract. Please try again.');
-      console.error('Error uploading contract:', err);
-    } finally {
-      setUploading(false);
-    }
-  };
-
-  return (
-    <div className="modal">
-      <div className="modal-content">
-        <div className="modal-header">
-          <h2>Upload Contract for {property.name}</h2>
-          <button className="close-btn" onClick={onClose}>&times;</button>
-        </div>
-        <form onSubmit={handleSubmit}>
-          <div className="form-group">
-            <label>Contract File *</label>
-            <input
-              type="file"
-              accept=".pdf,.doc,.docx"
-              onChange={handleFileChange}
-              className="form-control"
-              required
-            />
-            <small className="contract-upload-hint">
-              Supported formats: PDF, DOC, DOCX (Max 10MB)
-            </small>
-          </div>
-          <div className="form-group">
-            <label>Tenant *</label>
-            <select
-              value={tenantId}
-              onChange={(e) => setTenantId(e.target.value)}
-              className="form-control"
-              required
-            >
-              <option value="">Select a tenant</option>
-              {propertyTenants.map(tenant => (
-                <option key={tenant.id} value={tenant.id}>
-                  {tenant.name}
-                </option>
-              ))}
-            </select>
-          </div>
-          <div className="form-group">
-            <label>Status</label>
-            <select
-              value={status}
-              onChange={(e) => setStatus(e.target.value)}
-              className="form-control"
-            >
-              <option value="draft">Draft</option>
-              <option value="pending">Pending</option>
-              <option value="signed">Signed</option>
-            </select>
-          </div>
-          <div className="form-group">
-            <label>Notes</label>
-            <textarea
-              value={notes}
-              onChange={(e) => setNotes(e.target.value)}
-              className="form-control"
-              rows="3"
-              placeholder="Optional notes about the contract"
-            />
-          </div>
-          <div className="property-form-actions">
-            <SecondaryButton type="button" onClick={onClose}>Cancel</SecondaryButton>
-            <PrimaryButton type="submit" disabled={uploading}>
-              {uploading ? 'Uploading...' : 'Upload Contract'}
-            </PrimaryButton>
-          </div>
-        </form>
-      </div>
-    </div>
-  );
-}
-
-function ContractsView({ property, onClose, onUpdate, onViewContract }) {
-  const [contracts, setContracts] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [tenants, setTenants] = useState([]);
-
-  useEffect(() => {
-    loadContracts();
-    loadTenants();
-  }, [property.id]); // eslint-disable-line react-hooks/exhaustive-deps
-
-  const loadContracts = async () => {
-    try {
-      setLoading(true);
-      const data = await apiService.getContractsByProperty(property.id);
-      setContracts(data || []);
-    } catch (err) {
-      console.error('Error loading contracts:', err);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const loadTenants = async () => {
-    try {
-      const data = await apiService.getTenants();
-      setTenants(data || []);
-    } catch (err) {
-      console.error('Error loading tenants:', err);
-    }
-  };
-
-  const getTenantName = (tenantId) => {
-    const tenant = tenants.find(t => t.id === tenantId);
-    return tenant ? tenant.name : 'Unknown Tenant';
-  };
-
-  const getStatusBadge = (status) => {
-    return (
-      <span className={`contract-status-badge ${status}`}>
-        {status}
-      </span>
-    );
-  };
-
-  const handleDownload = async (contract) => {
-    try {
-      const response = await apiService.downloadContract(contract.id);
-      const blob = await response.blob();
-      const url = window.URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = contract.fileName;
-      document.body.appendChild(a);
-      a.click();
-      window.URL.revokeObjectURL(url);
-      document.body.removeChild(a);
-    } catch (err) {
-      alert('Failed to download contract');
-      console.error('Error downloading contract:', err);
-    }
-  };
-
-  const handleDelete = async (contractId) => {
-    if (window.confirm('Are you sure you want to delete this contract?')) {
-      try {
-        await apiService.deleteContract(contractId);
-        loadContracts();
-      } catch (err) {
-        alert('Failed to delete contract');
-        console.error('Error deleting contract:', err);
-      }
-    }
-  };
-
-  return (
-    <div className="modal">
-      <div className="modal-content contracts-view-modal-content">
-        <div className="modal-header">
-          <h2 title={`Contracts for ${property.name}`}>
-            <span className="contracts-view-prefix">Contracts for </span>
-            <span className="contracts-view-property-name">{property.name}</span>
-          </h2>
-          <button className="close-btn" onClick={onClose}>&times;</button>
-        </div>
-        <div className="contracts-view-content">
-          {loading ? (
-            <div className="contracts-view-loading">
-              Loading contracts...
-            </div>
-          ) : contracts.length === 0 ? (
-            <div className="contracts-view-empty">
-              <p>No contracts uploaded for this property</p>
-            </div>
-          ) : (
-            <div className="contracts-list">
-              {contracts.map(contract => (
-                <div
-                  key={contract.id}
-                  className="contract-item"
-                >
-                  <div className="contract-item-header">
-                    <div className="contract-item-info">
-                      <h4 className="contract-item-title" title={contract.fileName}>
-                        <span className="contract-item-filename">{contract.fileName}</span>
-                      </h4>
-                      <div className="contract-item-tenant">
-                        Tenant: {getTenantName(contract.tenantId)}
-                      </div>
-                    </div>
-                    {getStatusBadge(contract.status)}
-                  </div>
-                  {contract.notes && (
-                    <div className="contract-item-notes">
-                      Notes: {contract.notes}
-                    </div>
-                  )}
-                  <div className="contract-item-footer">
-                    <span>
-                      Uploaded: {new Date(contract.uploadedAt).toLocaleDateString()}
-                      {contract.signedAt && ` • Signed: ${new Date(contract.signedAt).toLocaleDateString()}`}
-                    </span>
-                    <div className="contract-actions">
-                      <SecondaryButton
-                        className="contract-action-btn"
-                        onClick={() => onViewContract(contract)}
-                        title="View Contract"
-                      >
-                        👁️
-                      </SecondaryButton>
-                      <PrimaryButton
-                        className="contract-action-btn"
-                        onClick={() => handleDownload(contract)}
-                        title="Download Contract"
-                      >
-                        ⬇️
-                      </PrimaryButton>
-                      <DangerButton
-                        className="contract-action-btn"
-                        onClick={() => handleDelete(contract.id)}
-                        title="Delete Contract"
-                      >
-                        🗑️
-                      </DangerButton>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
-      </div>
-    </div>
-  );
-}
-
 function Properties() {
+  const navigate = useNavigate();
   const [properties, setProperties] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [showForm, setShowForm] = useState(false);
   const [editingProperty, setEditingProperty] = useState(null);
-  const [showContractUpload, setShowContractUpload] = useState(false);
-  const [showContractsView, setShowContractsView] = useState(false);
-  const [selectedProperty, setSelectedProperty] = useState(null);
-  const [tenants, setTenants] = useState([]);
-  const [viewingContract, setViewingContract] = useState(null);
 
   useEffect(() => {
     loadProperties();
-    loadTenants();
   }, []);
 
   const loadProperties = async () => {
@@ -503,15 +217,6 @@ function Properties() {
       console.error('Error loading properties:', err);
     } finally {
       setLoading(false);
-    }
-  };
-
-  const loadTenants = async () => {
-    try {
-      const data = await apiService.getTenants();
-      setTenants(data || []);
-    } catch (err) {
-      console.error('Error loading tenants:', err);
     }
   };
 
@@ -541,41 +246,13 @@ function Properties() {
     }
   };
 
-  const handleDeleteProperty = async (id) => {
-    if (window.confirm('Are you sure you want to delete this property?')) {
-      try {
-        await apiService.deleteProperty(id);
-        await loadProperties(); // Reload data from server
-      } catch (err) {
-        alert('Failed to delete property. Please try again.');
-        console.error('Error deleting property:', err);
-      }
-    }
-  };
-
   const handleCancel = () => {
     setShowForm(false);
     setEditingProperty(null);
   };
 
-  const handleUploadContract = (property) => {
-    setSelectedProperty(property);
-    setShowContractUpload(true);
-  };
-
-  const handleViewContracts = (property) => {
-    setSelectedProperty(property);
-    setShowContractsView(true);
-  };
-
-  const handleContractUploadComplete = () => {
-    setShowContractUpload(false);
-    setSelectedProperty(null);
-  };
-
-  const handleContractsViewClose = () => {
-    setShowContractsView(false);
-    setSelectedProperty(null);
+  const handleViewProperty = (propertyId) => {
+    navigate(`/properties/${propertyId}/view`);
   };
 
   return (
@@ -648,6 +325,13 @@ function Properties() {
                 header: 'Actions',
                 render: (property) => (
                   <div className="properties-action-buttons">
+                    <SecondaryButton
+                      onClick={() => handleViewProperty(property.id)}
+                      title="View Property Details"
+                      className="property-action-btn"
+                    >
+                      👁️
+                    </SecondaryButton>
                     <PrimaryButton
                       onClick={() => handleEditProperty(property)}
                       title="Edit Property"
@@ -655,27 +339,6 @@ function Properties() {
                     >
                       ✏️
                     </PrimaryButton>
-                    <SecondaryButton
-                      onClick={() => handleUploadContract(property)}
-                      title="Upload Contract"
-                      className="property-action-btn"
-                    >
-                      📤
-                    </SecondaryButton>
-                    <SecondaryButton
-                      onClick={() => handleViewContracts(property)}
-                      title="View Contracts"
-                      className="property-action-btn"
-                    >
-                      👁️
-                    </SecondaryButton>
-                    <DangerButton
-                      onClick={() => handleDeleteProperty(property.id)}
-                      title="Delete Property"
-                      className="property-action-btn"
-                    >
-                      🗑️
-                    </DangerButton>
                   </div>
                 )
               }
@@ -724,34 +387,20 @@ function Properties() {
                   </div>
                 </div>
                 <div className="card-item-actions properties-mobile-actions">
+                  <SecondaryButton
+                    onClick={() => handleViewProperty(property.id)}
+                    title="View Property Details"
+                    className="properties-mobile-action-btn"
+                  >
+                    👁️ View
+                  </SecondaryButton>
                   <PrimaryButton
                     onClick={() => handleEditProperty(property)}
                     title="Edit Property"
                     className="properties-mobile-action-btn"
                   >
-                    ✏️
+                    ✏️ Edit
                   </PrimaryButton>
-                  <SecondaryButton
-                    onClick={() => handleUploadContract(property)}
-                    title="Upload Contract"
-                    className="properties-mobile-action-btn"
-                  >
-                    📤
-                  </SecondaryButton>
-                  <SecondaryButton
-                    onClick={() => handleViewContracts(property)}
-                    title="View Contracts"
-                    className="properties-mobile-action-btn"
-                  >
-                    👁️
-                  </SecondaryButton>
-                  <DangerButton
-                    onClick={() => handleDeleteProperty(property.id)}
-                    title="Delete Property"
-                    className="properties-mobile-action-btn"
-                  >
-                    🗑️
-                  </DangerButton>
                 </div>
               </>
             )}
@@ -764,31 +413,6 @@ function Properties() {
           property={editingProperty}
           onSave={handleSaveProperty}
           onCancel={handleCancel}
-        />
-      )}
-
-      {showContractUpload && selectedProperty && (
-        <ContractUpload
-          property={selectedProperty}
-          tenants={tenants}
-          onClose={handleContractUploadComplete}
-          onUpload={handleContractUploadComplete}
-        />
-      )}
-
-      {showContractsView && selectedProperty && (
-        <ContractsView
-          property={selectedProperty}
-          onClose={handleContractsViewClose}
-          onUpdate={handleContractsViewClose}
-          onViewContract={setViewingContract}
-        />
-      )}
-
-      {viewingContract && (
-        <ContractViewer
-          contract={viewingContract}
-          onClose={() => setViewingContract(null)}
         />
       )}
     </>
