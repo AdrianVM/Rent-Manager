@@ -84,11 +84,27 @@ echo "🚀 Deploying to Scaleway Container..."
 echo "📦 Container ID: ${CONTAINER_ID}"
 echo ""
 
-# Update container with new image
-echo "🔄 Updating container with new image..."
+# Update container with new image and environment variables
+echo "🔄 Updating container with new image and environment variables..."
 scw container container update ${CONTAINER_ID} \
   registry-image=${FULL_IMAGE_NAME} \
-  region=${REGION}
+  region=${REGION} \
+  environment-variables.ScalewayEmail__SecretKey="${ScalewayEmail__SecretKey}" \
+  environment-variables.ScalewayEmail__ProjectId="${ScalewayEmail__ProjectId}" \
+  environment-variables.ScalewayEmail__Region="${ScalewayEmail__Region}" \
+  environment-variables.ScalewayEmail__DefaultFromEmail="${ScalewayEmail__DefaultFromEmail}" \
+  environment-variables.ScalewayEmail__DefaultFromName="${ScalewayEmail__DefaultFromName}" \
+  environment-variables.ConnectionStrings__DefaultConnection="${ConnectionStrings__DefaultConnection}" \
+  environment-variables.FrontendUrl="${FrontendUrl}" \
+  environment-variables.Zitadel__Authority="${Zitadel__Authority}" \
+  environment-variables.Zitadel__Audience="${Zitadel__Audience}" \
+  environment-variables.Stripe__SecretKey="${Stripe__SecretKey}" \
+  environment-variables.Stripe__PublishableKey="${Stripe__PublishableKey}" \
+  environment-variables.Stripe__WebhookSecret="${Stripe__WebhookSecret}" \
+  environment-variables.Stripe__Currency="${Stripe__Currency}" \
+  environment-variables.Stripe__EnableTestMode="${Stripe__EnableTestMode}" \
+  environment-variables.UsePostgres="${UsePostgres}" \
+  environment-variables.ASPNETCORE_ENVIRONMENT="${ASPNETCORE_ENVIRONMENT}"
 
 # Deploy the container
 echo "🚀 Deploying container..."
