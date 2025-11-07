@@ -43,6 +43,12 @@ builder.Services.Configure<RentManager.API.Services.PaymentGateway.StripeSetting
 builder.Services.AddScoped<RentManager.API.Services.PaymentGateway.IPaymentGateway, RentManager.API.Services.PaymentGateway.StripePaymentGateway>();
 builder.Services.AddScoped<IPaymentService, PaymentService>();
 
+// Configure Email Service
+builder.Services.AddHttpClient(); // Required for ScalewayEmailService
+builder.Services.Configure<RentManager.API.Services.Email.ScalewayEmailSettings>(
+    builder.Configuration.GetSection("ScalewayEmail"));
+builder.Services.AddScoped<RentManager.API.Services.Email.IEmailService, RentManager.API.Services.Email.ScalewayEmailService>();
+
 builder.Services.AddScoped<SeedDataService>();
 
 // Zitadel OAuth Configuration
