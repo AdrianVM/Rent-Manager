@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Tenant Invitation - AVM Property Management</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Inter', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
+            background-color: #f9fafb;
+            color: #111827;
+        }
+        .email-container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #ffffff;
+        }
+        .header {
+            background: linear-gradient(135deg, #1F4E79 0%, #1CA9A3 100%);
+            padding: 32px 40px;
+            text-align: center;
+        }
+        .header-logo {
+            font-size: 36px;
+            font-weight: 700;
+            letter-spacing: 0.05em;
+            color: #ffffff;
+            text-decoration: none;
+        }
+        .content {
+            padding: 40px;
+        }
+        .welcome-icon {
+            text-align: center;
+            font-size: 48px;
+            margin-bottom: 24px;
+        }
+        .greeting {
+            font-size: 18px;
+            font-weight: 600;
+            color: #111827;
+            margin-bottom: 16px;
+        }
+        .intro-text {
+            font-size: 16px;
+            color: #4b5563;
+            line-height: 1.6;
+            margin-bottom: 24px;
+        }
+        .property-card {
+            background-color: #f9fafb;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            padding: 24px;
+            margin-bottom: 32px;
+        }
+        .property-detail {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 12px;
+            font-size: 16px;
+        }
+        .property-detail:last-child {
+            margin-bottom: 0;
+        }
+        .property-icon {
+            margin-right: 12px;
+            font-size: 20px;
+        }
+        .property-label {
+            font-weight: 600;
+            color: #374151;
+        }
+        .property-value {
+            color: #4b5563;
+        }
+        .cta-button {
+            display: block;
+            width: 100%;
+            max-width: 400px;
+            margin: 0 auto 32px;
+            padding: 16px 48px;
+            background: linear-gradient(135deg, #1F4E79 0%, #1CA9A3 100%);
+            color: #ffffff;
+            text-align: center;
+            text-decoration: none;
+            font-size: 16px;
+            font-weight: 600;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(31, 78, 121, 0.25);
+        }
+        .cta-button:hover {
+            background: linear-gradient(135deg, #1A4269 0%, #189691 100%);
+        }
+        .expiration-notice {
+            text-align: center;
+            font-size: 14px;
+            color: #6b7280;
+            margin-bottom: 32px;
+        }
+        .info-section {
+            margin-bottom: 32px;
+        }
+        .info-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #111827;
+            margin-bottom: 12px;
+        }
+        .info-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        .info-list li {
+            font-size: 15px;
+            color: #4b5563;
+            padding-left: 24px;
+            position: relative;
+            margin-bottom: 8px;
+        }
+        .info-list li:before {
+            content: "•";
+            position: absolute;
+            left: 8px;
+            color: #1CA9A3;
+            font-weight: bold;
+        }
+        .contact-section {
+            background-color: #f9fafb;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 32px;
+        }
+        .contact-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: #6b7280;
+            margin-bottom: 8px;
+        }
+        .contact-info {
+            font-size: 15px;
+            color: #1F4E79;
+            text-decoration: none;
+        }
+        .footer {
+            background-color: #f9fafb;
+            padding: 32px 40px;
+            text-align: center;
+            border-top: 1px solid #e5e7eb;
+        }
+        .footer-text {
+            font-size: 14px;
+            color: #6b7280;
+            margin-bottom: 8px;
+        }
+        .footer-link {
+            color: #1F4E79;
+            text-decoration: none;
+            font-size: 14px;
+        }
+        .footer-company {
+            font-size: 12px;
+            color: #9ca3af;
+            margin-top: 16px;
+        }
+        @media only screen and (max-width: 600px) {
+            .content {
+                padding: 24px 20px;
+            }
+            .header {
+                padding: 24px 20px;
+            }
+            .footer {
+                padding: 24px 20px;
+            }
+            .property-card {
+                padding: 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="email-container">
+        <!-- Header -->
+        <div class="header">
+            <a href="{{FrontendUrl}}" class="header-logo">AVM</a>
+        </div>
+
+        <!-- Content -->
+        <div class="content">
+            <div class="welcome-icon">🏠</div>
+
+            <div class="greeting">Hi {{TenantFirstName}},</div>
+
+            <p class="intro-text">
+                Great news! <strong>{{OwnerName}}</strong> has invited you to become a tenant at:
+            </p>
+
+            <!-- Property Details Card -->
+            <div class="property-card">
+                <div class="property-detail">
+                    <span class="property-icon">📍</span>
+                    <div>
+                        <div class="property-label">{{PropertyName}}</div>
+                        <div class="property-value">{{PropertyAddress}}</div>
+                    </div>
+                </div>
+
+                <div class="property-detail">
+                    <span class="property-icon">💰</span>
+                    <div>
+                        <span class="property-label">Monthly Rent:</span>
+                        <span class="property-value">{{RentAmount}} RON</span>
+                    </div>
+                </div>
+
+                <div class="property-detail">
+                    <span class="property-icon">📅</span>
+                    <div>
+                        <span class="property-label">Move-in Date:</span>
+                        <span class="property-value">{{LeaseStartDate}}</span>
+                    </div>
+                </div>
+
+                <div class="property-detail">
+                    <span class="property-icon">🏠</span>
+                    <div>
+                        <span class="property-label">Property Type:</span>
+                        <span class="property-value">{{PropertyType}}</span>
+                    </div>
+                </div>
+            </div>
+
+            <p class="intro-text">
+                To get started, complete your tenant onboarding in just 5 easy steps. The process takes about 10 minutes.
+            </p>
+
+            <!-- CTA Button -->
+            <a href="{{OnboardingUrl}}" class="cta-button">
+                Complete Your Onboarding →
+            </a>
+
+            <div class="expiration-notice">
+                This invitation expires on <strong>{{ExpirationDate}}</strong>
+            </div>
+
+            <!-- What to Expect Section -->
+            <div class="info-section">
+                <div class="info-title">What to expect:</div>
+                <ul class="info-list">
+                    <li>Enter your personal information</li>
+                    <li>Provide emergency contact details</li>
+                    <li>Review lease terms</li>
+                    <li>Set up your tenant portal account</li>
+                    <li>Accept terms and conditions</li>
+                </ul>
+            </div>
+
+            <!-- Contact Section -->
+            <div class="contact-section">
+                <div class="contact-title">Questions? Contact your property owner:</div>
+                <div>
+                    <a href="mailto:{{OwnerEmail}}" class="contact-info">{{OwnerEmail}}</a>
+                </div>
+                {{#if OwnerPhone}}
+                <div>
+                    <span class="contact-info">{{OwnerPhone}}</span>
+                </div>
+                {{/if}}
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+            <p class="footer-text">
+                Need help? <a href="mailto:support@rentflow.ro" class="footer-link">Contact AVM Support</a>
+            </p>
+            <p class="footer-text">
+                <a href="{{FrontendUrl}}" class="footer-link">Visit AVM Portal</a>
+            </p>
+            <p class="footer-company">
+                &copy; 2025 AVM Property Management<br>
+                Professional Property Management Platform
+            </p>
+        </div>
+    </div>
+</body>
+</html>

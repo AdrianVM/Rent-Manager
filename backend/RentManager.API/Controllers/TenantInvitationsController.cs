@@ -1,6 +1,8 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using RentManager.API.Models;
+using RentManager.API.Services;
+using RentManager.API.Services.Email;
 
 namespace RentManager.API.Controllers
 {
@@ -10,43 +12,117 @@ namespace RentManager.API.Controllers
     {
         private static readonly List<TenantInvitation> _invitations = new();
         private readonly IConfiguration _configuration;
+        private readonly IDataService _dataService;
+        private readonly IEmailService _emailService;
+        private readonly IEmailTemplateService _emailTemplateService;
+        private readonly ILogger<TenantInvitationsController> _logger;
 
-        public TenantInvitationsController(IConfiguration configuration)
+        public TenantInvitationsController(
+            IConfiguration configuration,
+            IDataService dataService,
+            IEmailService emailService,
+            IEmailTemplateService emailTemplateService,
+            ILogger<TenantInvitationsController> logger)
         {
             _configuration = configuration;
+            _dataService = dataService;
+            _emailService = emailService;
+            _emailTemplateService = emailTemplateService;
+            _logger = logger;
         }
 
         // Property owners and admins can create invitations
         [HttpPost]
         [Authorize(Roles = "Admin,PropertyOwner")]
-        public IActionResult CreateInvitation([FromBody] CreateInvitationRequest request)
+        public async Task<IActionResult> CreateInvitation([FromBody] CreateInvitationRequest request)
         {
-            var invitation = new TenantInvitation
+            try
             {
-                PropertyId = request.PropertyId,
-                Email = request.Email,
-                RentAmount = request.RentAmount,
-                LeaseStart = request.LeaseStart,
-                LeaseEnd = request.LeaseEnd,
-                Deposit = request.Deposit,
-                InvitedByUserId = User.FindFirst("sub")?.Value ?? User.Identity?.Name
-            };
+                // Fetch property details
+                var property = await _dataService.GetPropertyAsync(request.PropertyId);
+                if (property == null)
+                {
+                    return NotFound(new { message = "Property not found" });
+                }
 
-            _invitations.Add(invitation);
+                // Get current user info for owner details
+                var userId = User.FindFirst("sub")?.Value ?? User.Identity?.Name;
+                var ownerName = User.FindFirst("name")?.Value ?? "Property Owner";
+                var ownerEmail = User.FindFirst("email")?.Value ?? _configuration["ScalewayEmail:DefaultFromEmail"] ?? "noreply@rentflow.ro";
 
-            // Get frontend URL from configuration
-            var frontendUrl = _configuration["FrontendUrl"] ?? "http://localhost:3000";
-            var invitationLink = $"{frontendUrl}/onboard?token={invitation.InvitationToken}";
+                var invitation = new TenantInvitation
+                {
+                    PropertyId = request.PropertyId,
+                    Email = request.Email,
+                    RentAmount = request.RentAmount,
+                    LeaseStart = request.LeaseStart,
+                    LeaseEnd = request.LeaseEnd,
+                    Deposit = request.Deposit,
+                    InvitedByUserId = userId
+                };
 
-            return Ok(new
+                _invitations.Add(invitation);
+
+                // Get frontend URL from configuration
+                var frontendUrl = _configuration["FrontendUrl"] ?? "http://localhost:3000";
+                var invitationLink = $"{frontendUrl}/onboard?token={invitation.InvitationToken}";
+
+                // Extract tenant first name from email (before @)
+                var tenantFirstName = request.Email.Split('@')[0];
+
+                // Format property type for display
+                var propertyTypeDisplay = property.Type.ToString();
+                if (property.Type == PropertyType.Apartment && property.Bedrooms.HasValue)
+                {
+                    propertyTypeDisplay = $"{property.Bedrooms} Bedroom Apartment";
+                }
+                else if (property.Type == PropertyType.House && property.Bedrooms.HasValue)
+                {
+                    propertyTypeDisplay = $"{property.Bedrooms} Bedroom House";
+                }
+
+                // Prepare email data
+                var emailData = new TenantInvitationEmailData
+                {
+                    TenantFirstName = tenantFirstName,
+                    TenantEmail = request.Email,
+                    OwnerName = ownerName,
+                    OwnerEmail = ownerEmail,
+                    PropertyName = property.Name,
+                    PropertyAddress = property.Address,
+                    PropertyType = propertyTypeDisplay,
+                    RentAmount = request.RentAmount ?? property.RentAmount,
+                    LeaseStartDate = request.LeaseStart?.ToString("dd.MM.yyyy") ?? "To be determined",
+                    OnboardingUrl = invitationLink,
+                    ExpirationDate = invitation.ExpiresAt.ToString("dd.MM.yyyy"),
+                    FrontendUrl = frontendUrl
+                };
+
+                // Render email template
+                var (htmlBody, textBody) = await _emailTemplateService.RenderTenantInvitationEmailAsync(emailData);
+
+                // Send email
+                var emailSubject = $"You're invited to {property.Name} - Complete Your Tenant Onboarding";
+                await _emailService.SendHtmlEmailAsync(request.Email, emailSubject, htmlBody, textBody);
+
+                _logger.LogInformation("Tenant invitation email sent successfully to {Email} for property {PropertyId}", request.Email, request.PropertyId);
+
+                return Ok(new
+                {
+                    id = invitation.Id,
+                    invitationToken = invitation.InvitationToken,
+                    invitationLink = invitationLink,
+                    email = invitation.Email,
+                    expiresAt = invitation.ExpiresAt,
+                    status = invitation.Status.ToString(),
+                    emailSent = true
+                });
+            }
+            catch (Exception ex)
             {
-                id = invitation.Id,
-                invitationToken = invitation.InvitationToken,
-                invitationLink = invitationLink,
-                email = invitation.Email,
-                expiresAt = invitation.ExpiresAt,
-                status = invitation.Status.ToString()
-            });
+                _logger.LogError(ex, "Error creating invitation and sending email for property {PropertyId}", request.PropertyId);
+                return StatusCode(500, new { message = "Failed to create invitation", error = ex.Message });
+            }
         }
 
         // Get all invitations (property owners and admins)
@@ -123,32 +199,92 @@ namespace RentManager.API.Controllers
         // Resend invitation
         [HttpPost("{id}/resend")]
         [Authorize(Roles = "Admin,PropertyOwner")]
-        public IActionResult ResendInvitation(string id)
+        public async Task<IActionResult> ResendInvitation(string id)
         {
-            var invitation = _invitations.FirstOrDefault(i => i.Id == id);
-
-            if (invitation == null)
+            try
             {
-                return NotFound(new { message = "Invitation not found" });
+                var invitation = _invitations.FirstOrDefault(i => i.Id == id);
+
+                if (invitation == null)
+                {
+                    return NotFound(new { message = "Invitation not found" });
+                }
+
+                // Fetch property details
+                var property = await _dataService.GetPropertyAsync(invitation.PropertyId);
+                if (property == null)
+                {
+                    return NotFound(new { message = "Property not found" });
+                }
+
+                // Get current user info for owner details
+                var ownerName = User.FindFirst("name")?.Value ?? "Property Owner";
+                var ownerEmail = User.FindFirst("email")?.Value ?? _configuration["ScalewayEmail:DefaultFromEmail"] ?? "noreply@rentflow.ro";
+
+                // Generate new token and extend expiration
+                invitation.InvitationToken = Guid.NewGuid().ToString();
+                invitation.ExpiresAt = DateTimeOffset.UtcNow.AddDays(7);
+                invitation.Status = InvitationStatus.Pending;
+                invitation.UpdatedAt = DateTimeOffset.UtcNow;
+
+                // Get frontend URL from configuration
+                var frontendUrl = _configuration["FrontendUrl"] ?? "http://localhost:3000";
+                var invitationLink = $"{frontendUrl}/onboard?token={invitation.InvitationToken}";
+
+                // Extract tenant first name from email
+                var tenantFirstName = invitation.Email.Split('@')[0];
+
+                // Format property type for display
+                var propertyTypeDisplay = property.Type.ToString();
+                if (property.Type == PropertyType.Apartment && property.Bedrooms.HasValue)
+                {
+                    propertyTypeDisplay = $"{property.Bedrooms} Bedroom Apartment";
+                }
+                else if (property.Type == PropertyType.House && property.Bedrooms.HasValue)
+                {
+                    propertyTypeDisplay = $"{property.Bedrooms} Bedroom House";
+                }
+
+                // Prepare email data
+                var emailData = new TenantInvitationEmailData
+                {
+                    TenantFirstName = tenantFirstName,
+                    TenantEmail = invitation.Email,
+                    OwnerName = ownerName,
+                    OwnerEmail = ownerEmail,
+                    PropertyName = property.Name,
+                    PropertyAddress = property.Address,
+                    PropertyType = propertyTypeDisplay,
+                    RentAmount = invitation.RentAmount ?? property.RentAmount,
+                    LeaseStartDate = invitation.LeaseStart?.ToString("dd.MM.yyyy") ?? "To be determined",
+                    OnboardingUrl = invitationLink,
+                    ExpirationDate = invitation.ExpiresAt.ToString("dd.MM.yyyy"),
+                    FrontendUrl = frontendUrl
+                };
+
+                // Render email template
+                var (htmlBody, textBody) = await _emailTemplateService.RenderTenantInvitationEmailAsync(emailData);
+
+                // Send email with "Reminder" in subject
+                var emailSubject = $"Reminder: You're invited to {property.Name} - Complete Your Tenant Onboarding";
+                await _emailService.SendHtmlEmailAsync(invitation.Email, emailSubject, htmlBody, textBody);
+
+                _logger.LogInformation("Tenant invitation reminder email sent successfully to {Email} for property {PropertyId}", invitation.Email, invitation.PropertyId);
+
+                return Ok(new
+                {
+                    id = invitation.Id,
+                    invitationToken = invitation.InvitationToken,
+                    invitationLink = invitationLink,
+                    expiresAt = invitation.ExpiresAt,
+                    emailSent = true
+                });
             }
-
-            // Generate new token and extend expiration
-            invitation.InvitationToken = Guid.NewGuid().ToString();
-            invitation.ExpiresAt = DateTimeOffset.UtcNow.AddDays(7);
-            invitation.Status = InvitationStatus.Pending;
-            invitation.UpdatedAt = DateTimeOffset.UtcNow;
-
-            // Get frontend URL from configuration
-            var frontendUrl = _configuration["FrontendUrl"] ?? "http://localhost:3000";
-            var invitationLink = $"{frontendUrl}/onboard?token={invitation.InvitationToken}";
-
-            return Ok(new
+            catch (Exception ex)
             {
-                id = invitation.Id,
-                invitationToken = invitation.InvitationToken,
-                invitationLink = invitationLink,
-                expiresAt = invitation.ExpiresAt
-            });
+                _logger.LogError(ex, "Error resending invitation email for invitation {InvitationId}", id);
+                return StatusCode(500, new { message = "Failed to resend invitation", error = ex.Message });
+            }
         }
 
         // Internal method to get invitations list for testing

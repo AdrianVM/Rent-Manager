@@ -26,12 +26,32 @@ function PropertyForm({ property, onSave, onCancel }) {
     }
 
     const propertyData = {
-      ...formData,
-      id: property?.id || Date.now().toString(),
-      bedrooms: parseInt(formData.bedrooms) || 0,
-      bathrooms: parseInt(formData.bathrooms) || 0,
-      rentAmount: parseFloat(formData.rentAmount) || 0
+      name: formData.name,
+      address: formData.address,
+      type: formData.type, // camelCase enum value (JsonStringEnumConverter handles it)
+      rentAmount: parseFloat(formData.rentAmount) || 0,
+      description: formData.description || null,
+      // Only include bedrooms if it has a value (for nullable int)
+      bedrooms: formData.bedrooms ? parseInt(formData.bedrooms) : null,
+      bathrooms: formData.bathrooms ? parseFloat(formData.bathrooms) : null,
+      // Only include parking fields if property type is parkingSpace
+      parkingType: formData.type === 'parkingSpace' && formData.parkingType ? formData.parkingType : null,
+      spaceNumber: formData.type === 'parkingSpace' && formData.spaceNumber ? formData.spaceNumber : null,
+      // Only include square footage for commercial properties
+      squareFootage: formData.type === 'commercial' && formData.squareFootage ? parseInt(formData.squareFootage) : null
     };
+
+    // Remove null values to avoid sending them (let backend use defaults)
+    Object.keys(propertyData).forEach(key => {
+      if (propertyData[key] === null || propertyData[key] === '') {
+        delete propertyData[key];
+      }
+    });
+
+    // Don't include ID for new properties - let backend generate it
+    if (property?.id) {
+      propertyData.id = property.id;
+    }
 
     onSave(propertyData);
   };

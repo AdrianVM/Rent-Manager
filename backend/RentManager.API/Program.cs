@@ -48,6 +48,7 @@ builder.Services.AddHttpClient(); // Required for ScalewayEmailService
 builder.Services.Configure<RentManager.API.Services.Email.ScalewayEmailSettings>(
     builder.Configuration.GetSection("ScalewayEmail"));
 builder.Services.AddScoped<RentManager.API.Services.Email.IEmailService, RentManager.API.Services.Email.ScalewayEmailService>();
+builder.Services.AddScoped<RentManager.API.Services.Email.IEmailTemplateService, RentManager.API.Services.Email.EmailTemplateService>();
 
 builder.Services.AddScoped<SeedDataService>();
 

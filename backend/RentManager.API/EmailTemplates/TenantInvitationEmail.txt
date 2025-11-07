@@ -1,0 +1,39 @@
+Hi {{TenantFirstName}},
+
+Great news! {{OwnerName}} has invited you to become a tenant at:
+
+PROPERTY DETAILS
+================
+Property: {{PropertyName}}
+Address: {{PropertyAddress}}
+Monthly Rent: {{RentAmount}} RON
+Move-in Date: {{LeaseStartDate}}
+Property Type: {{PropertyType}}
+
+COMPLETE YOUR ONBOARDING
+=========================
+To get started, complete your tenant onboarding in just 5 easy steps. The process takes about 10 minutes.
+
+Click here to begin: {{OnboardingUrl}}
+
+This invitation expires on {{ExpirationDate}}
+
+WHAT TO EXPECT
+==============
+• Enter your personal information
+• Provide emergency contact details
+• Review lease terms
+• Set up your tenant portal account
+• Accept terms and conditions
+
+QUESTIONS?
+==========
+Contact your property owner:
+{{OwnerEmail}}
+{{#if OwnerPhone}}{{OwnerPhone}}{{/if}}
+
+Need help? Contact AVM Support at support@rentflow.ro
+
+---
+© 2025 AVM Property Management - Professional Property Management Platform
+Visit us at {{FrontendUrl}}
