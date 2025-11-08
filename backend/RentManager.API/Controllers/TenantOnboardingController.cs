@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using RentManager.API.Models;
 using RentManager.API.Services;
+using RentManager.API.Services.Email;
 
 namespace RentManager.API.Controllers
 {
@@ -10,10 +11,23 @@ namespace RentManager.API.Controllers
     public class TenantOnboardingController : ControllerBase
     {
         private readonly IDataService _dataService;
+        private readonly IEmailService _emailService;
+        private readonly IEmailTemplateService _emailTemplateService;
+        private readonly IConfiguration _configuration;
+        private readonly ILogger<TenantOnboardingController> _logger;
 
-        public TenantOnboardingController(IDataService dataService)
+        public TenantOnboardingController(
+            IDataService dataService,
+            IEmailService emailService,
+            IEmailTemplateService emailTemplateService,
+            IConfiguration configuration,
+            ILogger<TenantOnboardingController> logger)
         {
             _dataService = dataService;
+            _emailService = emailService;
+            _emailTemplateService = emailTemplateService;
+            _configuration = configuration;
+            _logger = logger;
         }
 
         [HttpPost]
@@ -84,6 +98,9 @@ namespace RentManager.API.Controllers
             invitation.Status = InvitationStatus.Accepted;
             invitation.UpdatedAt = DateTimeOffset.UtcNow;
 
+            // Send welcome email to the new tenant
+            await SendWelcomeEmailAsync(tenant, invitation);
+
             return Ok(new
             {
                 message = "Tenant onboarding completed successfully",
@@ -96,6 +113,59 @@ namespace RentManager.API.Controllers
                     propertyId = tenant.PropertyId
                 }
             });
+        }
+
+        private async Task SendWelcomeEmailAsync(Tenant tenant, TenantInvitation invitation)
+        {
+            try
+            {
+                // Get property details
+                var property = await _dataService.GetPropertyAsync(tenant.PropertyId);
+                if (property == null)
+                {
+                    _logger.LogWarning("Cannot send welcome email: Property not found for tenant {TenantId}", tenant.Id);
+                    return;
+                }
+
+                // Get tenant person details
+                var tenantPerson = !string.IsNullOrEmpty(tenant.PersonId)
+                    ? await _dataService.GetPersonAsync(tenant.PersonId)
+                    : null;
+
+                // Prepare email data with available information
+                // Note: Owner details would require additional service methods, using defaults for now
+                var emailData = new WelcomeEmailData
+                {
+                    TenantFirstName = tenantPerson?.FirstName ?? tenant.Email.Split('@')[0],
+                    TenantEmail = tenant.Email,
+                    PropertyAddress = property.Address,
+                    OwnerName = "Property Owner",
+                    OwnerEmail = "support@rentflow.ro",
+                    OwnerPhone = null,
+                    FrontendUrl = _configuration["FrontendUrl"] ?? "https://rentflow.ro"
+                };
+
+                // Render email templates
+                var (htmlBody, textBody) = await _emailTemplateService.RenderWelcomeEmailAsync(emailData);
+
+                // Send email
+                var subject = $"Welcome to Rent Manager, {emailData.TenantFirstName}! Your Tenant Portal is Ready";
+
+                await _emailService.SendHtmlEmailAsync(
+                    to: tenant.Email,
+                    subject: subject,
+                    htmlBody: htmlBody,
+                    textBody: textBody
+                );
+
+                _logger.LogInformation("Welcome email sent successfully to new tenant {TenantId} at {Email}",
+                    tenant.Id, tenant.Email);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Failed to send welcome email to tenant {TenantId}", tenant.Id);
+                // Don't throw - email failure shouldn't break onboarding
+            }
         }
 
         // Get property details for onboarding (public)

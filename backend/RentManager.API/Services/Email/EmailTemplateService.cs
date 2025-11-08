@@ -7,6 +7,7 @@ public interface IEmailTemplateService
 {
     Task<(string htmlBody, string textBody)> RenderTenantInvitationEmailAsync(TenantInvitationEmailData data);
     Task<(string htmlBody, string textBody)> RenderPaymentConfirmationEmailAsync(PaymentConfirmationEmailData data);
+    Task<(string htmlBody, string textBody)> RenderWelcomeEmailAsync(WelcomeEmailData data);
 }
 
 public class TenantInvitationEmailData
@@ -38,6 +39,17 @@ public class PaymentConfirmationEmailData
     public string PaymentMethodDisplay { get; set; } = string.Empty;
     public string OwnerName { get; set; } = string.Empty;
     public string OwnerEmail { get; set; } = string.Empty;
+    public string FrontendUrl { get; set; } = string.Empty;
+}
+
+public class WelcomeEmailData
+{
+    public string TenantFirstName { get; set; } = string.Empty;
+    public string TenantEmail { get; set; } = string.Empty;
+    public string PropertyAddress { get; set; } = string.Empty;
+    public string OwnerName { get; set; } = string.Empty;
+    public string OwnerEmail { get; set; } = string.Empty;
+    public string? OwnerPhone { get; set; }
     public string FrontendUrl { get; set; } = string.Empty;
 }
 
@@ -134,6 +146,49 @@ public class EmailTemplateService : IEmailTemplateService
             .Replace("{{OwnerName}}", data.OwnerName)
             .Replace("{{OwnerEmail}}", data.OwnerEmail)
             .Replace("{{FrontendUrl}}", data.FrontendUrl);
+
+        return rendered;
+    }
+
+    public async Task<(string htmlBody, string textBody)> RenderWelcomeEmailAsync(WelcomeEmailData data)
+    {
+        var htmlTemplatePath = Path.Combine(_templateBasePath, "WelcomeEmail.html");
+        var textTemplatePath = Path.Combine(_templateBasePath, "WelcomeEmail.txt");
+
+        if (!File.Exists(htmlTemplatePath) || !File.Exists(textTemplatePath))
+        {
+            throw new FileNotFoundException("Welcome email template files not found");
+        }
+
+        var htmlTemplate = await File.ReadAllTextAsync(htmlTemplatePath);
+        var textTemplate = await File.ReadAllTextAsync(textTemplatePath);
+
+        var htmlBody = RenderWelcomeTemplate(htmlTemplate, data);
+        var textBody = RenderWelcomeTemplate(textTemplate, data);
+
+        return (htmlBody, textBody);
+    }
+
+    private string RenderWelcomeTemplate(string template, WelcomeEmailData data)
+    {
+        var rendered = template
+            .Replace("{{TenantFirstName}}", data.TenantFirstName)
+            .Replace("{{TenantEmail}}", data.TenantEmail)
+            .Replace("{{PropertyAddress}}", data.PropertyAddress)
+            .Replace("{{OwnerName}}", data.OwnerName)
+            .Replace("{{OwnerEmail}}", data.OwnerEmail)
+            .Replace("{{FrontendUrl}}", data.FrontendUrl);
+
+        // Handle conditional OwnerPhone
+        if (!string.IsNullOrWhiteSpace(data.OwnerPhone))
+        {
+            rendered = Regex.Replace(rendered, @"\{\{#if OwnerPhone\}\}(.*?)\{\{/if\}\}", "$1", RegexOptions.Singleline);
+            rendered = rendered.Replace("{{OwnerPhone}}", data.OwnerPhone);
+        }
+        else
+        {
+            rendered = Regex.Replace(rendered, @"\{\{#if OwnerPhone\}\}.*?\{\{/if\}\}", "", RegexOptions.Singleline);
+        }
 
         return rendered;
     }

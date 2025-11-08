@@ -1,0 +1,67 @@
+AVM PROPERTY MANAGEMENT
+Welcome to Rent Manager!
+
+🎉 CONGRATULATIONS, {{TenantFirstName}}!
+
+Thank you for completing your tenant onboarding.
+Your portal is now ready to use.
+
+═══════════════════════════════════════
+YOUR PROPERTY
+═══════════════════════════════════════
+
+🏠 {{PropertyAddress}}
+
+You're all set for your new home!
+
+═══════════════════════════════════════
+WHAT YOU CAN DO IN YOUR PORTAL
+═══════════════════════════════════════
+
+💳 PAY RENT ONLINE
+   Securely pay your monthly rent with credit card
+   or bank transfer
+
+📄 VIEW YOUR LEASE CONTRACT
+   Access your lease agreement anytime, anywhere
+
+📊 TRACK PAYMENT HISTORY
+   See all your past payments and download receipts
+
+👤 UPDATE YOUR PROFILE
+   Keep your contact information and preferences
+   up to date
+
+═══════════════════════════════════════
+
+Access your tenant portal:
+{{FrontendUrl}}
+
+═══════════════════════════════════════
+YOUR PROPERTY OWNER
+═══════════════════════════════════════
+
+Name:  {{OwnerName}}
+Email: {{OwnerEmail}}
+{{#if OwnerPhone}}Phone: {{OwnerPhone}}{{/if}}
+
+Feel free to reach out if you have any questions!
+
+═══════════════════════════════════════
+NEED HELP?
+═══════════════════════════════════════
+
+📚 Help Center: {{FrontendUrl}}/help
+💬 Support Email: support@rentflow.ro
+
+We're here to make managing your rental
+simple and stress-free.
+
+───────────────────────────────────────
+
+Questions? Contact AVM Support
+Email: support@rentflow.ro
+Portal: {{FrontendUrl}}
+
+© 2025 AVM Property Management
+Professional Property Management Platform
