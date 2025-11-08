@@ -31,6 +31,18 @@ namespace RentManager.API.Services
             return Task.FromResult(person);
         }
 
+        public Task<PropertyOwner?> GetPropertyOwnerByPropertyIdAsync(string propertyId)
+        {
+            // InMemory implementation - not fully implemented, returns null
+            return Task.FromResult<PropertyOwner?>(null);
+        }
+
+        public Task<User?> GetUserByPersonIdAsync(string personId)
+        {
+            // InMemory implementation - not fully implemented, returns null
+            return Task.FromResult<User?>(null);
+        }
+
         // Properties
         public Task<List<Property>> GetPropertiesAsync(User? user = null)
         {

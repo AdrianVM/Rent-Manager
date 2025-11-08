@@ -15,6 +15,10 @@ namespace RentManager.API.Services
         Task<Person> CreatePersonAsync(Person person);
         Task<Person?> GetPersonAsync(string id);
 
+        // Property Owners
+        Task<PropertyOwner?> GetPropertyOwnerByPropertyIdAsync(string propertyId);
+        Task<User?> GetUserByPersonIdAsync(string personId);
+
         // Tenants
         Task<List<Tenant>> GetTenantsAsync(User? user = null);
         Task<Tenant?> GetTenantAsync(string id, User? user = null);

@@ -132,16 +132,22 @@ namespace RentManager.API.Controllers
                     ? await _dataService.GetPersonAsync(tenant.PersonId)
                     : null;
 
-                // Prepare email data with available information
-                // Note: Owner details would require additional service methods, using defaults for now
+                // Get property owner details
+                var propertyOwner = await _dataService.GetPropertyOwnerByPropertyIdAsync(property.Id);
+                var ownerPerson = propertyOwner?.PersonOwners?.FirstOrDefault();
+                var ownerUser = ownerPerson != null
+                    ? await _dataService.GetUserByPersonIdAsync(ownerPerson.Id)
+                    : null;
+
+                // Prepare email data
                 var emailData = new WelcomeEmailData
                 {
                     TenantFirstName = tenantPerson?.FirstName ?? tenant.Email.Split('@')[0],
                     TenantEmail = tenant.Email,
                     PropertyAddress = property.Address,
-                    OwnerName = "Property Owner",
-                    OwnerEmail = "support@rentflow.ro",
-                    OwnerPhone = null,
+                    OwnerName = ownerPerson != null ? $"{ownerPerson.FirstName} {ownerPerson.LastName}" : "Property Owner",
+                    OwnerEmail = ownerUser?.Email ?? "support@rentflow.ro",
+                    OwnerPhone = ownerPerson?.Phone,
                     FrontendUrl = _configuration["FrontendUrl"] ?? "https://rentflow.ro"
                 };
 

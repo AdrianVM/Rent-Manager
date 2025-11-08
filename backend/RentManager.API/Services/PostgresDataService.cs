@@ -196,6 +196,19 @@ namespace RentManager.API.Services
             return await _context.Persons.FindAsync(id);
         }
 
+        public async Task<PropertyOwner?> GetPropertyOwnerByPropertyIdAsync(string propertyId)
+        {
+            return await _context.PropertyOwners
+                .Include(po => po.PersonOwners)
+                .FirstOrDefaultAsync(po => po.PropertyId == propertyId);
+        }
+
+        public async Task<User?> GetUserByPersonIdAsync(string personId)
+        {
+            return await _context.Users
+                .FirstOrDefaultAsync(u => u.PersonId == personId);
+        }
+
         // Property operations
         public async Task<List<Property>> GetPropertiesAsync(User? user = null)
         {
