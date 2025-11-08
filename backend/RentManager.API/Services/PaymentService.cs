@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using RentManager.API.Data;
 using RentManager.API.Models;
 using RentManager.API.Services.PaymentGateway;
+using RentManager.API.Services.Email;
 using System.Text.RegularExpressions;
 
 namespace RentManager.API.Services;
@@ -14,14 +15,23 @@ public class PaymentService : IPaymentService
     private readonly RentManagerDbContext _context;
     private readonly ILogger<PaymentService> _logger;
     private readonly IPaymentGateway? _paymentGateway;
+    private readonly IEmailService _emailService;
+    private readonly IEmailTemplateService _emailTemplateService;
+    private readonly IConfiguration _configuration;
 
     public PaymentService(
         RentManagerDbContext context,
         ILogger<PaymentService> logger,
+        IEmailService emailService,
+        IEmailTemplateService emailTemplateService,
+        IConfiguration configuration,
         IPaymentGateway? paymentGateway = null)
     {
         _context = context;
         _logger = logger;
+        _emailService = emailService;
+        _emailTemplateService = emailTemplateService;
+        _configuration = configuration;
         _paymentGateway = paymentGateway;
     }
 
@@ -270,6 +280,13 @@ public class PaymentService : IPaymentService
 
             _logger.LogInformation("Payment processed successfully: {PaymentId} via {Method}",
                 paymentId, payment.Method);
+
+            // Send payment confirmation email if payment was completed
+            if (payment.Status == PaymentStatus.Completed)
+            {
+                // Send email asynchronously - don't await to avoid blocking the response
+                _ = Task.Run(async () => await SendPaymentConfirmationEmailAsync(payment));
+            }
         }
         catch (Exception ex)
         {
@@ -302,6 +319,9 @@ public class PaymentService : IPaymentService
         await _context.SaveChangesAsync();
 
         _logger.LogInformation("Payment confirmed: {PaymentId} with code: {ConfirmationCode}", paymentId, confirmationCode);
+
+        // Send payment confirmation email
+        _ = Task.Run(async () => await SendPaymentConfirmationEmailAsync(payment));
 
         return payment;
     }
@@ -795,6 +815,108 @@ public class PaymentService : IPaymentService
         _logger.LogInformation("Payment deleted: {PaymentId}", id);
 
         return true;
+    }
+
+    #endregion
+
+    #region Email Notifications
+
+    private async Task SendPaymentConfirmationEmailAsync(Payment payment)
+    {
+        try
+        {
+            // Get tenant details
+            var tenant = await _context.Tenants
+                .Include(t => t.Person)
+                .FirstOrDefaultAsync(t => t.Id == payment.TenantId);
+
+            if (tenant?.Person == null)
+            {
+                _logger.LogWarning("Cannot send payment confirmation email: Tenant or Person not found for payment {PaymentId}", payment.Id);
+                return;
+            }
+
+            // Get property details
+            var property = await _context.Properties
+                .FirstOrDefaultAsync(p => p.Id == tenant.PropertyId);
+
+            if (property == null)
+            {
+                _logger.LogWarning("Cannot send payment confirmation email: Property not found for tenant {TenantId}", tenant.Id);
+                return;
+            }
+
+            // Get property owner details
+            var propertyOwner = await _context.PropertyOwners
+                .Include(po => po.PersonOwners)
+                .FirstOrDefaultAsync(po => po.PropertyId == property.Id);
+
+            var ownerPerson = propertyOwner?.PersonOwners.FirstOrDefault();
+
+            // Format payment method display
+            var paymentMethodDisplay = payment.Method switch
+            {
+                PaymentMethod.CreditCard => "Credit Card",
+                PaymentMethod.DebitCard => "Debit Card",
+                PaymentMethod.CardOnline => !string.IsNullOrEmpty(payment.ExternalTransactionId) ? $"Card ending in {payment.ExternalTransactionId.Substring(Math.Max(0, payment.ExternalTransactionId.Length - 4))}" : "Online Card",
+                PaymentMethod.Online => "Online Payment",
+                PaymentMethod.BankTransfer => "Bank Transfer",
+                PaymentMethod.Cash => "Cash",
+                PaymentMethod.Check => "Check",
+                _ => payment.Method.ToString()
+            };
+
+            // Get the user account associated with this tenant
+            var tenantUser = await _context.Users
+                .FirstOrDefaultAsync(u => u.PersonId == tenant.PersonId);
+
+            if (tenantUser == null)
+            {
+                _logger.LogWarning("Cannot send payment confirmation email: User account not found for tenant {TenantId}", tenant.Id);
+                return;
+            }
+
+            // Get the owner user account
+            var ownerUser = ownerPerson != null ? await _context.Users
+                .FirstOrDefaultAsync(u => u.PersonId == ownerPerson.Id) : null;
+
+            // Prepare email data
+            var emailData = new PaymentConfirmationEmailData
+            {
+                TenantFirstName = tenant.Person?.FirstName ?? tenant.Email.Split('@')[0],
+                TenantEmail = tenant.Email,
+                PropertyAddress = property.Address,
+                Amount = payment.Amount,
+                PaymentDate = payment.ProcessedAt?.ToString("MMMM d, yyyy") ?? payment.Date.ToString("MMMM d, yyyy"),
+                TransactionId = payment.ExternalTransactionId ?? payment.Id,
+                PaymentReference = payment.PaymentReference ?? $"PAY-{payment.Id.Substring(0, 8).ToUpper()}",
+                PaymentMethodDisplay = paymentMethodDisplay,
+                OwnerName = ownerPerson != null ? $"{ownerPerson.FirstName} {ownerPerson.LastName}" : "Property Owner",
+                OwnerEmail = ownerUser?.Email ?? "support@rentflow.ro",
+                FrontendUrl = _configuration["FrontendUrl"] ?? "https://rentflow.ro"
+            };
+
+            // Render email templates
+            var (htmlBody, textBody) = await _emailTemplateService.RenderPaymentConfirmationEmailAsync(emailData);
+
+            // Send email
+            var subject = $"Payment Received: {emailData.Amount:N0} RON for {property.Address} - {emailData.PaymentDate}";
+
+            await _emailService.SendHtmlEmailAsync(
+                to: tenant.Email,
+                subject: subject,
+                htmlBody: htmlBody,
+                textBody: textBody
+            );
+
+            _logger.LogInformation("Payment confirmation email sent successfully for payment {PaymentId} to {Email}",
+                payment.Id, tenant.Email);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to send payment confirmation email for payment {PaymentId}", payment.Id);
+            // Don't throw - email failure shouldn't break payment processing
+        }
     }
 
     #endregion

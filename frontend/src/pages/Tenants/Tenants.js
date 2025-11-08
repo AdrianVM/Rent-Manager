@@ -9,48 +9,56 @@ import './Tenants.css';
 
 function TenantForm({ tenant, onSave, onCancel, properties }) {
   const [tenantType, setTenantType] = useState(tenant?.tenantType?.toLowerCase() || 'person');
+
+  // Format dates for input fields (convert from ISO to YYYY-MM-DD)
+  const formatDateForInput = (dateString) => {
+    if (!dateString) return '';
+    const date = new Date(dateString);
+    return date.toISOString().split('T')[0];
+  };
+
   const [formData, setFormData] = useState({
     email: tenant?.email || '',
     phone: tenant?.phone || '',
     propertyId: tenant?.propertyId || '',
-    leaseStart: tenant?.leaseStart || '',
-    leaseEnd: tenant?.leaseEnd || '',
+    leaseStart: formatDateForInput(tenant?.leaseStart) || '',
+    leaseEnd: formatDateForInput(tenant?.leaseEnd) || '',
     rentAmount: tenant?.rentAmount || '',
     deposit: tenant?.deposit || '',
-    status: tenant?.status || 'active'
+    status: tenant?.status || 'Active' // Must match enum: Active, Inactive, Pending
   });
 
-  const [personDetails, setPersonDetails] = useState(tenant?.personDetails || {
-    firstName: '',
-    lastName: '',
-    dateOfBirth: '',
-    idNumber: '',
-    nationality: '',
-    occupation: '',
-    emergencyContactName: '',
-    emergencyContactPhone: '',
-    emergencyContactRelation: ''
+  const [personDetails, setPersonDetails] = useState({
+    firstName: tenant?.person?.firstName || '',
+    lastName: tenant?.person?.lastName || '',
+    dateOfBirth: formatDateForInput(tenant?.person?.dateOfBirth) || '',
+    idNumber: tenant?.person?.idNumber || '',
+    nationality: tenant?.person?.nationality || '',
+    occupation: tenant?.person?.occupation || '',
+    emergencyContactName: tenant?.emergencyContactName || '',
+    emergencyContactPhone: tenant?.emergencyContactPhone || '',
+    emergencyContactRelation: tenant?.emergencyContactRelation || ''
   });
 
-  const [companyDetails, setCompanyDetails] = useState(tenant?.companyDetails || {
-    companyName: '',
-    taxId: '',
-    registrationNumber: '',
-    legalForm: '',
-    industry: '',
-    contactPersonName: '',
-    contactPersonTitle: '',
-    contactPersonEmail: '',
-    contactPersonPhone: '',
-    billingAddress: ''
+  const [companyDetails, setCompanyDetails] = useState({
+    companyName: tenant?.company?.companyName || '',
+    taxId: tenant?.company?.taxId || '',
+    registrationNumber: tenant?.company?.registrationNumber || '',
+    legalForm: tenant?.company?.legalForm || '',
+    industry: tenant?.company?.industry || '',
+    contactPersonName: tenant?.company?.contactPersonName || '',
+    contactPersonTitle: tenant?.company?.contactPersonTitle || '',
+    contactPersonEmail: tenant?.company?.contactPersonEmail || '',
+    contactPersonPhone: tenant?.company?.contactPersonPhone || '',
+    billingAddress: tenant?.company?.billingAddress || ''
   });
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     // Validate common fields
     if (!formData.email || !formData.propertyId || !formData.rentAmount) {
-      alert('Please fill in all required fields');
+      alert('Please fill in all required fields: Email, Property, and Monthly Rent');
       return;
     }
 
@@ -67,16 +75,35 @@ function TenantForm({ tenant, onSave, onCancel, properties }) {
       }
     }
 
-    const tenantData = {
-      ...formData,
-      id: tenant?.id || Date.now().toString(),
-      tenantType: tenantType,
-      rentAmount: parseFloat(formData.rentAmount) || 0,
-      deposit: parseFloat(formData.deposit) || 0,
-      personDetails: tenantType === 'person' ? personDetails : null,
-      companyDetails: tenantType === 'company' ? companyDetails : null
+    // Capitalize first letter for enum values
+    const capitalizeFirst = (str) => str.charAt(0).toUpperCase() + str.slice(1);
+
+    // Convert date string (YYYY-MM-DD) to UTC ISO string for backend
+    const dateToUTC = (dateString) => {
+      if (!dateString) return null;
+      const date = new Date(dateString + 'T00:00:00Z'); // Force UTC interpretation
+      return date.toISOString();
     };
 
+    const tenantData = {
+      email: formData.email.trim(),
+      phone: formData.phone?.trim() || null,
+      propertyId: formData.propertyId,
+      leaseStart: dateToUTC(formData.leaseStart),
+      leaseEnd: dateToUTC(formData.leaseEnd),
+      rentAmount: parseFloat(formData.rentAmount) || 0,
+      deposit: formData.deposit ? parseFloat(formData.deposit) : null,
+      status: capitalizeFirst(formData.status || 'active'), // Must be Active, Inactive, or Pending
+      tenantType: capitalizeFirst(tenantType), // Must be Person or Company
+      personId: tenant?.personId || null,
+      companyId: tenant?.companyId || null,
+      emergencyContactName: tenantType === 'person' ? (personDetails.emergencyContactName?.trim() || null) : null,
+      emergencyContactPhone: tenantType === 'person' ? (personDetails.emergencyContactPhone?.trim() || null) : null,
+      emergencyContactRelation: tenantType === 'person' ? (personDetails.emergencyContactRelation?.trim() || null) : null
+    };
+
+    console.log('Submitting tenant data:', JSON.stringify(tenantData, null, 2));
+    console.log('Tenant being edited:', tenant);
     onSave(tenantData);
   };
 
@@ -207,9 +234,9 @@ function TenantForm({ tenant, onSave, onCancel, properties }) {
               onChange={handleChange}
               className="form-control"
             >
-              <option value="active">Active</option>
-              <option value="inactive">Inactive</option>
-              <option value="pending">Pending</option>
+              <option value="Active">Active</option>
+              <option value="Inactive">Inactive</option>
+              <option value="Pending">Pending</option>
             </select>
           </div>
           <div className="tenant-form-actions">
@@ -269,17 +296,22 @@ function Tenants() {
 
   const handleSaveTenant = async (tenantData) => {
     try {
+      console.log('Saving tenant data:', tenantData);
       if (editingTenant) {
-        await apiService.updateTenant(editingTenant.id, tenantData);
+        const response = await apiService.updateTenant(editingTenant.id, tenantData);
+        console.log('Update response:', response);
       } else {
-        await apiService.createTenant(tenantData);
+        const response = await apiService.createTenant(tenantData);
+        console.log('Create response:', response);
       }
       await loadData(); // Reload data from server
       setShowForm(false);
       setEditingTenant(null);
     } catch (err) {
-      alert('Failed to save tenant. Please try again.');
+      const errorMessage = err.response?.data?.message || err.message || 'Unknown error';
+      alert(`Failed to save tenant: ${errorMessage}`);
       console.error('Error saving tenant:', err);
+      console.error('Error response:', err.response);
     }
   };
 

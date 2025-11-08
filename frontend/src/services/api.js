@@ -24,9 +24,20 @@ class ApiService {
 
     try {
       const response = await fetch(url, config);
-      
+
       if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+        // Try to get error details from response
+        let errorMessage = `HTTP error! status: ${response.status}`;
+        try {
+          const errorData = await response.json();
+          console.error('API error details:', errorData);
+          errorMessage = errorData.message || errorData.title || JSON.stringify(errorData);
+        } catch (e) {
+          // Response wasn't JSON
+        }
+        const error = new Error(errorMessage);
+        error.status = response.status;
+        throw error;
       }
 
       // Handle empty responses (like DELETE)

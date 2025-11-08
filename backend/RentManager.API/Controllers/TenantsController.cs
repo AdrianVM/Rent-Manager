@@ -63,12 +63,31 @@ namespace RentManager.API.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<ActionResult<Tenant>> UpdateTenant(string id, Tenant tenant)
+        public async Task<ActionResult<Tenant>> UpdateTenant(string id, TenantUpdateRequest request)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
+
+            // Map DTO to Tenant model
+            var tenant = new Tenant
+            {
+                TenantType = request.TenantType,
+                Email = request.Email,
+                Phone = request.Phone,
+                PersonId = request.PersonId,
+                CompanyId = request.CompanyId,
+                PropertyId = request.PropertyId,
+                LeaseStart = request.LeaseStart,
+                LeaseEnd = request.LeaseEnd,
+                RentAmount = request.RentAmount,
+                Deposit = request.Deposit,
+                Status = request.Status,
+                EmergencyContactName = request.EmergencyContactName,
+                EmergencyContactPhone = request.EmergencyContactPhone,
+                EmergencyContactRelation = request.EmergencyContactRelation
+            };
 
             var updatedTenant = await _dataService.UpdateTenantAsync(id, tenant);
             if (updatedTenant == null)

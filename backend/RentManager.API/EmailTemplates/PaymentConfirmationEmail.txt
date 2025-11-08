@@ -1,0 +1,40 @@
+AVM PROPERTY MANAGEMENT
+Payment Confirmation
+
+Hi {{TenantFirstName}},
+
+✓ PAYMENT RECEIVED!
+
+Your rent payment has been successfully processed.
+
+═══════════════════════════════════════
+PAYMENT DETAILS
+═══════════════════════════════════════
+
+Amount:              {{Amount}} RON
+Date:                {{PaymentDate}}
+Property:            {{PropertyAddress}}
+Payment Method:      {{PaymentMethodDisplay}}
+Transaction ID:      {{TransactionId}}
+Payment Reference:   {{PaymentReference}}
+
+═══════════════════════════════════════
+
+ℹ️ This payment will appear in your account history within 24 hours.
+Keep this email for your records.
+
+View your payment history:
+{{FrontendUrl}}/payments
+
+Question about this payment?
+Contact {{OwnerName}}
+{{OwnerEmail}}
+
+───────────────────────────────────────
+
+Need help? Contact AVM Support
+Email: support@rentflow.ro
+Portal: {{FrontendUrl}}
+
+© 2025 AVM Property Management
+Professional Property Management Platform

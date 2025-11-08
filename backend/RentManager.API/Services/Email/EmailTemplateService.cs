@@ -6,6 +6,7 @@ namespace RentManager.API.Services.Email;
 public interface IEmailTemplateService
 {
     Task<(string htmlBody, string textBody)> RenderTenantInvitationEmailAsync(TenantInvitationEmailData data);
+    Task<(string htmlBody, string textBody)> RenderPaymentConfirmationEmailAsync(PaymentConfirmationEmailData data);
 }
 
 public class TenantInvitationEmailData
@@ -22,6 +23,21 @@ public class TenantInvitationEmailData
     public string LeaseStartDate { get; set; } = string.Empty;
     public string OnboardingUrl { get; set; } = string.Empty;
     public string ExpirationDate { get; set; } = string.Empty;
+    public string FrontendUrl { get; set; } = string.Empty;
+}
+
+public class PaymentConfirmationEmailData
+{
+    public string TenantFirstName { get; set; } = string.Empty;
+    public string TenantEmail { get; set; } = string.Empty;
+    public string PropertyAddress { get; set; } = string.Empty;
+    public decimal Amount { get; set; }
+    public string PaymentDate { get; set; } = string.Empty;
+    public string TransactionId { get; set; } = string.Empty;
+    public string PaymentReference { get; set; } = string.Empty;
+    public string PaymentMethodDisplay { get; set; } = string.Empty;
+    public string OwnerName { get; set; } = string.Empty;
+    public string OwnerEmail { get; set; } = string.Empty;
     public string FrontendUrl { get; set; } = string.Empty;
 }
 
@@ -81,6 +97,43 @@ public class EmailTemplateService : IEmailTemplateService
         {
             rendered = Regex.Replace(rendered, @"\{\{#if OwnerPhone\}\}.*?\{\{/if\}\}", "", RegexOptions.Singleline);
         }
+
+        return rendered;
+    }
+
+    public async Task<(string htmlBody, string textBody)> RenderPaymentConfirmationEmailAsync(PaymentConfirmationEmailData data)
+    {
+        var htmlTemplatePath = Path.Combine(_templateBasePath, "PaymentConfirmationEmail.html");
+        var textTemplatePath = Path.Combine(_templateBasePath, "PaymentConfirmationEmail.txt");
+
+        if (!File.Exists(htmlTemplatePath) || !File.Exists(textTemplatePath))
+        {
+            throw new FileNotFoundException("Payment confirmation email template files not found");
+        }
+
+        var htmlTemplate = await File.ReadAllTextAsync(htmlTemplatePath);
+        var textTemplate = await File.ReadAllTextAsync(textTemplatePath);
+
+        var htmlBody = RenderPaymentConfirmationTemplate(htmlTemplate, data);
+        var textBody = RenderPaymentConfirmationTemplate(textTemplate, data);
+
+        return (htmlBody, textBody);
+    }
+
+    private string RenderPaymentConfirmationTemplate(string template, PaymentConfirmationEmailData data)
+    {
+        var rendered = template
+            .Replace("{{TenantFirstName}}", data.TenantFirstName)
+            .Replace("{{TenantEmail}}", data.TenantEmail)
+            .Replace("{{PropertyAddress}}", data.PropertyAddress)
+            .Replace("{{Amount}}", FormatCurrency(data.Amount))
+            .Replace("{{PaymentDate}}", data.PaymentDate)
+            .Replace("{{TransactionId}}", data.TransactionId)
+            .Replace("{{PaymentReference}}", data.PaymentReference)
+            .Replace("{{PaymentMethodDisplay}}", data.PaymentMethodDisplay)
+            .Replace("{{OwnerName}}", data.OwnerName)
+            .Replace("{{OwnerEmail}}", data.OwnerEmail)
+            .Replace("{{FrontendUrl}}", data.FrontendUrl);
 
         return rendered;
     }
