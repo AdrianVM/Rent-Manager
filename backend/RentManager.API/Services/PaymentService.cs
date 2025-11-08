@@ -284,8 +284,7 @@ public class PaymentService : IPaymentService
             // Send payment confirmation email if payment was completed
             if (payment.Status == PaymentStatus.Completed)
             {
-                // Send email asynchronously - don't await to avoid blocking the response
-                _ = Task.Run(async () => await SendPaymentConfirmationEmailAsync(payment));
+                await SendPaymentConfirmationEmailAsync(payment);
             }
         }
         catch (Exception ex)
@@ -321,7 +320,7 @@ public class PaymentService : IPaymentService
         _logger.LogInformation("Payment confirmed: {PaymentId} with code: {ConfirmationCode}", paymentId, confirmationCode);
 
         // Send payment confirmation email
-        _ = Task.Run(async () => await SendPaymentConfirmationEmailAsync(payment));
+        await SendPaymentConfirmationEmailAsync(payment);
 
         return payment;
     }
