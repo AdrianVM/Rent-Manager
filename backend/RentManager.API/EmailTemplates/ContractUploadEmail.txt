@@ -1,0 +1,46 @@
+AVM PROPERTY MANAGEMENT
+New Contract Available
+
+Hi {{TenantFirstName}},
+
+📄 NEW CONTRACT AVAILABLE
+
+{{UploadedBy}} has uploaded a new contract for your property.
+
+═══════════════════════════════════════
+CONTRACT DETAILS
+═══════════════════════════════════════
+
+Type:                {{ContractType}}
+Property:            {{PropertyAddress}}
+Uploaded:            {{UploadDate}}
+Uploaded By:         {{UploadedBy}}
+Status:              {{ContractStatus}}
+
+═══════════════════════════════════════
+
+{{#if StatusPending}}
+⚠️ ACTION REQUIRED: This contract is pending your signature
+{{/if}}
+
+View your contract:
+{{ContractViewUrl}}
+
+ℹ️ Click the link above to view and review the contract.
+Make sure to carefully read all terms and conditions.
+
+Questions about this contract?
+Contact {{OwnerName}}
+{{OwnerEmail}}
+{{#if OwnerPhone}}
+{{OwnerPhone}}
+{{/if}}
+
+───────────────────────────────────────
+
+Need help? Contact AVM Support
+Email: support@rentflow.ro
+Portal: {{FrontendUrl}}
+
+© 2025 AVM Property Management
+Professional Property Management Platform

@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using RentManager.API.Models;
 using RentManager.API.Services;
+using RentManager.API.Services.Email;
 
 namespace RentManager.API.Controllers
 {
@@ -11,10 +12,23 @@ namespace RentManager.API.Controllers
     public class ContractsController : ControllerBase
     {
         private readonly IDataService _dataService;
+        private readonly IEmailService _emailService;
+        private readonly IEmailTemplateService _emailTemplateService;
+        private readonly IConfiguration _configuration;
+        private readonly ILogger<ContractsController> _logger;
 
-        public ContractsController(IDataService dataService)
+        public ContractsController(
+            IDataService dataService,
+            IEmailService emailService,
+            IEmailTemplateService emailTemplateService,
+            IConfiguration configuration,
+            ILogger<ContractsController> logger)
         {
             _dataService = dataService;
+            _emailService = emailService;
+            _emailTemplateService = emailTemplateService;
+            _configuration = configuration;
+            _logger = logger;
         }
 
         [HttpGet]
@@ -67,12 +81,124 @@ namespace RentManager.API.Controllers
                 };
 
                 var createdContract = await _dataService.CreateContractAsync(contract);
+
+                // Send contract upload notification email to tenant
+                try
+                {
+                    await SendContractUploadNotificationAsync(createdContract);
+                }
+                catch (Exception emailEx)
+                {
+                    _logger.LogError(emailEx, "Failed to send contract upload notification email for contract {ContractId}", createdContract.Id);
+                    // Don't fail the entire request if email fails
+                }
+
                 return CreatedAtAction(nameof(GetContract), new { id = createdContract.Id }, createdContract);
             }
             catch (Exception ex)
             {
                 return BadRequest($"Error creating contract: {ex.Message}");
             }
+        }
+
+        private async Task SendContractUploadNotificationAsync(Contract contract)
+        {
+            // Get tenant details
+            var tenant = await _dataService.GetTenantAsync(contract.TenantId);
+            if (tenant == null)
+            {
+                _logger.LogWarning("Cannot send contract upload notification: Tenant {TenantId} not found", contract.TenantId);
+                return;
+            }
+
+            // Get property details
+            var property = await _dataService.GetPropertyAsync(contract.PropertyId);
+            if (property == null)
+            {
+                _logger.LogWarning("Cannot send contract upload notification: Property {PropertyId} not found", contract.PropertyId);
+                return;
+            }
+
+            // Get property owner details from PropertyOwner
+            var propertyOwner = await _dataService.GetPropertyOwnerByPropertyIdAsync(contract.PropertyId);
+
+            // Get current user info for owner details (the person uploading the contract)
+            var ownerName = User.FindFirst("name")?.Value ?? "Property Owner";
+            var ownerEmail = User.FindFirst("email")?.Value ?? _configuration["ScalewayEmail:DefaultFromEmail"] ?? "noreply@rentflow.ro";
+
+            // Try to get owner phone from PropertyOwner's first person if available
+            string? ownerPhone = null;
+            if (propertyOwner != null && propertyOwner.PersonOwners.Any())
+            {
+                var firstOwnerPerson = propertyOwner.PersonOwners.FirstOrDefault();
+                ownerPhone = firstOwnerPerson?.Phone;
+            }
+
+            // Get frontend URL from configuration
+            var frontendUrl = _configuration["FrontendUrl"] ?? "http://localhost:3000";
+            var contractViewUrl = $"{frontendUrl}/contracts/{contract.Id}";
+
+            // Extract tenant first name from person name or email
+            var tenantFirstName = !string.IsNullOrWhiteSpace(tenant.Person?.FirstName)
+                ? tenant.Person.FirstName
+                : tenant.Email.Split('@')[0];
+
+            // Determine contract type from file name
+            var contractType = "Lease Agreement";
+            if (contract.FileName.Contains("addendum", StringComparison.OrdinalIgnoreCase))
+            {
+                contractType = "Lease Addendum";
+            }
+            else if (contract.FileName.Contains("amendment", StringComparison.OrdinalIgnoreCase))
+            {
+                contractType = "Lease Amendment";
+            }
+
+            // Format contract status for display
+            var statusDisplay = contract.Status.ToString();
+
+            // Prepare email data
+            var emailData = new ContractUploadEmailData
+            {
+                TenantFirstName = tenantFirstName,
+                TenantEmail = tenant.Email,
+                PropertyAddress = property.Address,
+                ContractType = contractType,
+                UploadDate = contract.UploadedAt.ToString("dd.MM.yyyy HH:mm"),
+                UploadedBy = ownerName,
+                ContractStatus = statusDisplay,
+                ContractViewUrl = contractViewUrl,
+                OwnerName = ownerName,
+                OwnerEmail = ownerEmail,
+                OwnerPhone = ownerPhone,
+                FrontendUrl = frontendUrl
+            };
+
+            // Render email template
+            var (htmlBody, textBody) = await _emailTemplateService.RenderContractUploadEmailAsync(emailData);
+
+            // Determine subject based on contract status
+            var subject = contract.Status == ContractStatus.Pending
+                ? $"Action Required: New Contract for {property.Address}"
+                : $"New Contract Available for {property.Address}";
+
+            // Send email
+            var emailResponse = await _emailService.SendHtmlEmailAsync(
+                tenant.Email,
+                subject,
+                htmlBody,
+                textBody
+            );
+
+            if (!emailResponse.Success)
+            {
+                _logger.LogError("Failed to send contract upload notification to {Email}: {Error}",
+                    tenant.Email, emailResponse.ErrorMessage);
+                throw new Exception($"Email service error: {emailResponse.ErrorMessage}");
+            }
+
+            _logger.LogInformation("Contract upload notification sent successfully to {Email} for contract {ContractId}",
+                tenant.Email, contract.Id);
         }
 
         [HttpPut("{id}")]

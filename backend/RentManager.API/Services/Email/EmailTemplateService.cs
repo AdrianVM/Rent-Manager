@@ -8,6 +8,7 @@ public interface IEmailTemplateService
     Task<(string htmlBody, string textBody)> RenderTenantInvitationEmailAsync(TenantInvitationEmailData data);
     Task<(string htmlBody, string textBody)> RenderPaymentConfirmationEmailAsync(PaymentConfirmationEmailData data);
     Task<(string htmlBody, string textBody)> RenderWelcomeEmailAsync(WelcomeEmailData data);
+    Task<(string htmlBody, string textBody)> RenderContractUploadEmailAsync(ContractUploadEmailData data);
 }
 
 public class TenantInvitationEmailData
@@ -47,6 +48,22 @@ public class WelcomeEmailData
     public string TenantFirstName { get; set; } = string.Empty;
     public string TenantEmail { get; set; } = string.Empty;
     public string PropertyAddress { get; set; } = string.Empty;
+    public string OwnerName { get; set; } = string.Empty;
+    public string OwnerEmail { get; set; } = string.Empty;
+    public string? OwnerPhone { get; set; }
+    public string FrontendUrl { get; set; } = string.Empty;
+}
+
+public class ContractUploadEmailData
+{
+    public string TenantFirstName { get; set; } = string.Empty;
+    public string TenantEmail { get; set; } = string.Empty;
+    public string PropertyAddress { get; set; } = string.Empty;
+    public string ContractType { get; set; } = string.Empty;
+    public string UploadDate { get; set; } = string.Empty;
+    public string UploadedBy { get; set; } = string.Empty;
+    public string ContractStatus { get; set; } = string.Empty;
+    public string ContractViewUrl { get; set; } = string.Empty;
     public string OwnerName { get; set; } = string.Empty;
     public string OwnerEmail { get; set; } = string.Empty;
     public string? OwnerPhone { get; set; }
@@ -178,6 +195,70 @@ public class EmailTemplateService : IEmailTemplateService
             .Replace("{{OwnerName}}", data.OwnerName)
             .Replace("{{OwnerEmail}}", data.OwnerEmail)
             .Replace("{{FrontendUrl}}", data.FrontendUrl);
+
+        // Handle conditional OwnerPhone
+        if (!string.IsNullOrWhiteSpace(data.OwnerPhone))
+        {
+            rendered = Regex.Replace(rendered, @"\{\{#if OwnerPhone\}\}(.*?)\{\{/if\}\}", "$1", RegexOptions.Singleline);
+            rendered = rendered.Replace("{{OwnerPhone}}", data.OwnerPhone);
+        }
+        else
+        {
+            rendered = Regex.Replace(rendered, @"\{\{#if OwnerPhone\}\}.*?\{\{/if\}\}", "", RegexOptions.Singleline);
+        }
+
+        return rendered;
+    }
+
+    public async Task<(string htmlBody, string textBody)> RenderContractUploadEmailAsync(ContractUploadEmailData data)
+    {
+        var htmlTemplatePath = Path.Combine(_templateBasePath, "ContractUploadEmail.html");
+        var textTemplatePath = Path.Combine(_templateBasePath, "ContractUploadEmail.txt");
+
+        if (!File.Exists(htmlTemplatePath) || !File.Exists(textTemplatePath))
+        {
+            throw new FileNotFoundException("Contract upload email template files not found");
+        }
+
+        var htmlTemplate = await File.ReadAllTextAsync(htmlTemplatePath);
+        var textTemplate = await File.ReadAllTextAsync(textTemplatePath);
+
+        var htmlBody = RenderContractUploadTemplate(htmlTemplate, data);
+        var textBody = RenderContractUploadTemplate(textTemplate, data);
+
+        return (htmlBody, textBody);
+    }
+
+    private string RenderContractUploadTemplate(string template, ContractUploadEmailData data)
+    {
+        var rendered = template
+            .Replace("{{TenantFirstName}}", data.TenantFirstName)
+            .Replace("{{TenantEmail}}", data.TenantEmail)
+            .Replace("{{PropertyAddress}}", data.PropertyAddress)
+            .Replace("{{ContractType}}", data.ContractType)
+            .Replace("{{UploadDate}}", data.UploadDate)
+            .Replace("{{UploadedBy}}", data.UploadedBy)
+            .Replace("{{ContractStatus}}", data.ContractStatus)
+            .Replace("{{ContractViewUrl}}", data.ContractViewUrl)
+            .Replace("{{OwnerName}}", data.OwnerName)
+            .Replace("{{OwnerEmail}}", data.OwnerEmail)
+            .Replace("{{FrontendUrl}}", data.FrontendUrl);
+
+        // Handle conditional StatusPending
+        var isPending = data.ContractStatus.Equals("Pending", StringComparison.OrdinalIgnoreCase);
+        if (isPending)
+        {
+            // Keep the content, remove the conditional tags
+            rendered = Regex.Replace(rendered, @"\{\{#if StatusPending\}\}\s*(.*?)\s*\{\{/if\}\}", "$1", RegexOptions.Singleline);
+        }
+        else
+        {
+            // Remove the entire conditional block including content
+            rendered = Regex.Replace(rendered, @"\{\{#if StatusPending\}\}.*?\{\{/if\}\}", "", RegexOptions.Singleline);
+        }
+
+        // Clean up any leftover empty lines
+        rendered = Regex.Replace(rendered, @"(\r?\n){3,}", "\n\n", RegexOptions.Multiline);
 
         // Handle conditional OwnerPhone
         if (!string.IsNullOrWhiteSpace(data.OwnerPhone))
