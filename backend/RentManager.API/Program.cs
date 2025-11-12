@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using RentManager.API.Data;
 using RentManager.API.Services;
+using RentManager.API.BackgroundJobs;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -54,6 +55,9 @@ builder.Services.AddScoped<RentManager.API.Services.Email.IEmailService, RentMan
 builder.Services.AddScoped<RentManager.API.Services.Email.IEmailTemplateService, RentManager.API.Services.Email.EmailTemplateService>();
 
 builder.Services.AddScoped<SeedDataService>();
+
+// Add Hangfire background jobs
+builder.Services.AddHangfireBackgroundJobs(builder.Configuration);
 
 // Zitadel OAuth Configuration
 var zitadelSettings = builder.Configuration.GetSection("Zitadel");
@@ -136,11 +140,17 @@ app.UseCors("AllowFrontend");
 app.UseAuthentication();
 app.UseAuthorization();
 
+// Configure Hangfire Dashboard
+app.UseHangfireConfiguration(builder.Configuration);
+
 // Redirect root to Swagger UI
 app.MapGet("/", () => Results.Redirect("/swagger")).ExcludeFromDescription();
 
 app.MapControllers();
 app.MapHealthChecks("/health");
+
+// Configure recurring background jobs
+JobScheduler.ConfigureRecurringJobs();
 
 var summaries = new[]
 {

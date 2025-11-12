@@ -16,6 +16,11 @@ services:
       Stripe__WebhookSecret: ${STRIPE_WEBHOOK_SECRET:-}
       Zitadel__Authority: ${ZITADEL_AUTHORITY:-}
       Zitadel__Audience: ${ZITADEL_AUDIENCE:-}
+      Hangfire__DashboardPath: /hangfire
+      Hangfire__WorkerCount: 4
+      Hangfire__ServerName: RentManager-Production
+      BackgroundJobs__EnableJobs: "true"
+      BackgroundJobs__TimeZone: UTC
     ports:
       - "5000:8080"
     extra_hosts:
