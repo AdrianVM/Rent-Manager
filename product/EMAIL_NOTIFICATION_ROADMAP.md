@@ -162,7 +162,7 @@ This roadmap prioritizes notifications by **user value** and **business impact**
 
 ---
 
-#### 1.1 Tenant Invitation Email
+#### ✅ 1.1 Tenant Invitation Email (COMPLETED)
 **Priority:** CRITICAL
 **User Roles:** Property Owner (sender), Prospective Tenant (recipient)
 **Business Value:** HIGH - Currently invitations are manual links that must be copied/pasted
@@ -265,7 +265,7 @@ This roadmap prioritizes notifications by **user value** and **business impact**
 
 ---
 
-#### 1.3 Payment Confirmation (Immediate)
+#### ✅ 1.3 Payment Confirmation (Immediate) (COMPLETED)
 **Priority:** CRITICAL
 **User Roles:** Tenant (recipient), Property Owner (cc/notification option)
 **Business Value:** HIGH - Builds trust and reduces "Did my payment go through?" support tickets
@@ -377,58 +377,6 @@ This roadmap prioritizes notifications by **user value** and **business impact**
 
 ---
 
-#### 1.5 Payment Failed Notification (Immediate)
-**Priority:** CRITICAL
-**User Roles:** Tenant (recipient), Property Owner (recipient)
-**Business Value:** HIGH - Enables immediate action to resolve payment issues
-
-**User Story:**
-> As a tenant, when my payment attempt fails, I want to be immediately notified with the specific reason and clear steps to resolve it, so I can fix the issue quickly and avoid being marked as late.
-
-**User Scenario:**
-1. Ioana attempts online payment on November 5th
-2. Payment fails due to insufficient funds
-3. System immediately sends failure notification to Ioana:
-   - Specific failure reason: "Insufficient funds"
-   - Payment amount and date attempted
-   - Clear instructions: "Update payment method or add funds and try again"
-   - "Retry Payment" button
-4. Ioana adds funds to her account and successfully retries within 2 hours
-5. Property owner is notified of failed attempt via daily digest (not immediate alert to avoid alarm)
-
-**Email Content Structure:**
-- **Subject:** "Payment Failed: Action Needed for [Property Address]"
-- **Body:**
-  - Clear statement: "Your payment of 2,500 RON on November 5, 2025 could not be processed"
-  - Reason: "Reason: Insufficient funds in account ending 1234"
-  - Urgency: "To avoid late fees, please resolve this issue today"
-  - Primary CTA: "Retry Payment" button
-  - Alternative: "Update Payment Method" or "Use Different Payment Method"
-  - Help: "Payment issue? Contact your bank or [Property Owner Name]"
-  - Due date reminder: "Original due date: November 5, 2025"
-- **Footer:** For technical issues, contact support
-
-**Success Metrics:**
-- 100% of failed payments trigger immediate notification
-- 70%+ of failed payments retried within 24 hours
-- 50%+ of retries successful on first attempt
-- 30% reduction in payment failures through proactive education
-- Reduced tenant anxiety through clear communication
-
-**Common Failure Reasons & Messaging:**
-- **Insufficient funds:** "Add funds to your account and retry"
-- **Card declined:** "Contact your bank or use a different card"
-- **Expired card:** "Update your payment method with current card details"
-- **Technical error:** "Our payment system experienced an issue. Please try again or contact support"
-- **Security hold:** "Your bank has placed a security hold. Please contact them to authorize this transaction"
-
-**Edge Cases:**
-- **Multiple failures:** Escalate messaging after 2nd failed attempt, suggest alternative payment method
-- **Fraud detection:** Special handling with support contact if flagged for fraud
-- **System error:** Clearly distinguish between tenant-side and system-side failures
-
----
-
 ### PHASE 2: ENHANCEMENT (Should Have)
 **Target Launch:** Month 3-4
 **Rationale:** Significantly improves user experience and engagement
@@ -471,7 +419,7 @@ This roadmap prioritizes notifications by **user value** and **business impact**
 
 ---
 
-#### 2.2 Contract Upload Notification
+#### ✅ 2.2 Contract Upload Notification (COMPLETED)
 **Priority:** MEDIUM-HIGH
 **User Roles:** Tenant (recipient)
 **Business Value:** MEDIUM - Improves contract visibility and signature rates
@@ -503,7 +451,7 @@ This roadmap prioritizes notifications by **user value** and **business impact**
 
 ---
 
-#### 2.3 Welcome Email (Post-Onboarding)
+#### ✅ 2.3 Welcome Email (Post-Onboarding) (COMPLETED)
 **Priority:** MEDIUM
 **User Roles:** Tenant (recipient)
 **Business Value:** MEDIUM - Sets positive tone and reduces early support burden
