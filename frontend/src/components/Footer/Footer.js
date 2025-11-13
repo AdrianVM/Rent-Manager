@@ -48,7 +48,7 @@ function Footer() {
               <li><a href="#privacy" className="footer-link">Privacy Policy</a></li>
               <li><a href="#terms" className="footer-link">Terms of Service</a></li>
               <li><a href="#security" className="footer-link">Security</a></li>
-              <li><a href="#cookies" className="footer-link">Cookie Policy</a></li>
+              <li><a href="/cookie-policy" className="footer-link">Cookie Policy</a></li>
             </ul>
           </div>
         </div>

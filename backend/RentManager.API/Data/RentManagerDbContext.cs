@@ -22,6 +22,7 @@ namespace RentManager.API.Data
         public DbSet<Company> Companies { get; set; } = null!;
         public DbSet<Person> Persons { get; set; } = null!;
         public DbSet<MaintenanceRequest> MaintenanceRequests { get; set; } = null!;
+        public DbSet<CookieConsent> CookieConsents { get; set; } = null!;
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -307,6 +308,30 @@ namespace RentManager.API.Data
                     .WithMany()
                     .HasForeignKey(mr => mr.PropertyId)
                     .OnDelete(DeleteBehavior.Cascade);
+            });
+
+            // Configure CookieConsent entity
+            modelBuilder.Entity<CookieConsent>(entity =>
+            {
+                entity.ToTable("cookie_consents");
+                entity.HasKey(e => e.Id);
+                entity.HasIndex(e => e.UserId);
+                entity.HasIndex(e => e.ConsentToken);
+                entity.HasIndex(e => e.ExpiryDate);
+
+                entity.Property(e => e.Id).IsRequired();
+                entity.Property(e => e.UserId).HasMaxLength(255);
+                entity.Property(e => e.ConsentToken).HasMaxLength(255);
+                entity.Property(e => e.StrictlyNecessary).IsRequired();
+                entity.Property(e => e.Functional).IsRequired();
+                entity.Property(e => e.Performance).IsRequired();
+                entity.Property(e => e.Marketing).IsRequired();
+                entity.Property(e => e.ConsentDate).IsRequired();
+                entity.Property(e => e.LastUpdated).IsRequired();
+                entity.Property(e => e.IpAddress).HasMaxLength(45); // IPv6 max length
+                entity.Property(e => e.UserAgent).HasMaxLength(500);
+                entity.Property(e => e.PolicyVersion).IsRequired().HasMaxLength(10);
+                entity.Property(e => e.ExpiryDate).IsRequired();
             });
         }
     }

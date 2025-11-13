@@ -1,9 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import authService from './services/authService';
+import cookieConsentService from './services/cookieConsentService';
 import { Navigation, MainContent } from './components/common';
 import { Sidebar } from './components/Sidebar';
 import { Footer } from './components/Footer';
+import CookieBanner from './components/CookieConsent/CookieBanner';
+import CookiePreferences from './components/CookieConsent/CookiePreferences';
 import {
   Login,
   AdminDashboard,
@@ -26,6 +29,7 @@ import {
   CashFlow,
   OccupancyRevenue
 } from './pages';
+import CookiePolicy from './pages/CookiePolicy/CookiePolicy';
 import TenantOnboarding from './pages/TenantOnboarding';
 import AuthCallback from './pages/AuthCallback';
 import Logout from './pages/Logout';
@@ -35,6 +39,8 @@ function App() {
   const [loading, setLoading] = useState(true);
   const [availableRoles, setAvailableRoles] = useState([]);
   const [currentRole, setCurrentRole] = useState(null);
+  const [showCookieBanner, setShowCookieBanner] = useState(false);
+  const [showCookiePreferences, setShowCookiePreferences] = useState(false);
 
   useEffect(() => {
     // Initialize auth service and check if user is already authenticated
@@ -61,6 +67,19 @@ function App() {
     initAuth();
   }, []);
 
+  useEffect(() => {
+    // Check if cookie consent banner should be shown
+    const checkCookieConsent = () => {
+      if (cookieConsentService.shouldShowBanner()) {
+        setShowCookieBanner(true);
+      }
+    };
+
+    // Delay showing banner slightly to not interrupt initial page load
+    const timer = setTimeout(checkCookieConsent, 1000);
+    return () => clearTimeout(timer);
+  }, []);
+
   const handleLoginSuccess = (userData) => {
     const roles = authService.getAllUserRoles();
     setUser(userData);
@@ -82,6 +101,33 @@ function App() {
     localStorage.setItem('activeRole', newRole);
   };
 
+  const handleAcceptAllCookies = async () => {
+    try {
+      await cookieConsentService.acceptAll();
+      setShowCookieBanner(false);
+    } catch (error) {
+      console.error('Error accepting cookies:', error);
+    }
+  };
+
+  const handleAcceptNecessaryOnly = async () => {
+    try {
+      await cookieConsentService.acceptNecessaryOnly();
+      setShowCookieBanner(false);
+    } catch (error) {
+      console.error('Error accepting necessary cookies:', error);
+    }
+  };
+
+  const handleCustomizeCookies = () => {
+    setShowCookieBanner(false);
+    setShowCookiePreferences(true);
+  };
+
+  const handleCookiePreferencesSaved = () => {
+    setShowCookiePreferences(false);
+  };
+
   if (loading) {
     return (
       <div className="app-loading">
@@ -99,9 +145,24 @@ function App() {
           <Route path="/logout" element={<Logout />} />
           <Route path="/onboard" element={<TenantOnboarding />} />
           <Route path="/logo-showcase" element={<LogoShowcase />} />
+          <Route path="/cookie-policy" element={<CookiePolicy />} />
           <Route path="*" element={<Login onLoginSuccess={handleLoginSuccess} />} />
         </Routes>
         <Footer />
+        {showCookieBanner && (
+          <CookieBanner
+            onAcceptAll={handleAcceptAllCookies}
+            onAcceptNecessary={handleAcceptNecessaryOnly}
+            onCustomize={handleCustomizeCookies}
+            onClose={() => setShowCookieBanner(false)}
+          />
+        )}
+        {showCookiePreferences && (
+          <CookiePreferences
+            onSave={handleCookiePreferencesSaved}
+            onClose={() => setShowCookiePreferences(false)}
+          />
+        )}
       </div>
     </Router>
   );
@@ -128,6 +189,7 @@ function App() {
         {/* Public routes accessible even when logged in */}
         <Route path="/onboard" element={<TenantOnboarding />} />
         <Route path="/logo-showcase" element={<LogoShowcase />} />
+        <Route path="/cookie-policy" element={<CookiePolicy />} />
 
         {/* Authenticated routes */}
         <Route path="/*" element={
@@ -200,6 +262,20 @@ function App() {
               </MainContent>
               <Footer />
             </div>
+            {showCookieBanner && (
+              <CookieBanner
+                onAcceptAll={handleAcceptAllCookies}
+                onAcceptNecessary={handleAcceptNecessaryOnly}
+                onCustomize={handleCustomizeCookies}
+                onClose={() => setShowCookieBanner(false)}
+              />
+            )}
+            {showCookiePreferences && (
+              <CookiePreferences
+                onSave={handleCookiePreferencesSaved}
+                onClose={() => setShowCookiePreferences(false)}
+              />
+            )}
           </div>
         } />
       </Routes>
