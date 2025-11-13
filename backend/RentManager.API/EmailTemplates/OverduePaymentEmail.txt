@@ -1,0 +1,52 @@
+AVM PROPERTY MANAGEMENT
+========================
+
+⚠️ PAYMENT OVERDUE NOTICE ⚠️
+
+Hi {{TenantFirstName}},
+
+Your rent payment for {{PropertyAddress}} was due on {{DueDate}} and is now {{DaysOverdue}} day(s) overdue.
+
+OUTSTANDING BALANCE
+===================
+
+Rent Amount:         {{RentAmount}} RON
+{{#if LateFee}}Late Fee:             {{LateFee}} RON
+{{/if}}
+-----------------------------------------
+TOTAL AMOUNT DUE:    {{TotalAmountDue}} RON
+
+Original Due Date:   {{DueDate}}
+Property:            {{PropertyAddress}}
+Days Overdue:        {{DaysOverdue}} Day(s)
+
+⚠️ IMPORTANT NOTICE
+===================
+
+Please submit your payment as soon as possible to avoid additional late fees or further action. Continued non-payment may result in lease termination proceedings.
+
+MAKE PAYMENT NOW
+================
+
+Visit the payment portal to submit your payment immediately:
+{{PaymentUrl}}
+
+QUESTIONS OR PAYMENT DIFFICULTIES?
+==================================
+
+If you're experiencing financial hardship or need to discuss payment arrangements, please contact your property owner immediately:
+
+{{OwnerName}}
+Email: {{OwnerEmail}}
+{{#if OwnerPhone}}Phone: {{OwnerPhone}}
+{{/if}}
+
+---
+
+Need technical support?
+Contact AVM Support: support@rentflow.ro
+
+Visit AVM Portal: {{FrontendUrl}}
+
+© 2025 AVM Property Management
+Professional Property Management Platform

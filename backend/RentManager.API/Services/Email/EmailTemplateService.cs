@@ -9,6 +9,7 @@ public interface IEmailTemplateService
     Task<(string htmlBody, string textBody)> RenderPaymentConfirmationEmailAsync(PaymentConfirmationEmailData data);
     Task<(string htmlBody, string textBody)> RenderWelcomeEmailAsync(WelcomeEmailData data);
     Task<(string htmlBody, string textBody)> RenderContractUploadEmailAsync(ContractUploadEmailData data);
+    Task<(string htmlBody, string textBody)> RenderOverduePaymentEmailAsync(OverduePaymentEmailData data);
 }
 
 public class TenantInvitationEmailData
@@ -64,6 +65,23 @@ public class ContractUploadEmailData
     public string UploadedBy { get; set; } = string.Empty;
     public string ContractStatus { get; set; } = string.Empty;
     public string ContractViewUrl { get; set; } = string.Empty;
+    public string OwnerName { get; set; } = string.Empty;
+    public string OwnerEmail { get; set; } = string.Empty;
+    public string? OwnerPhone { get; set; }
+    public string FrontendUrl { get; set; } = string.Empty;
+}
+
+public class OverduePaymentEmailData
+{
+    public string TenantFirstName { get; set; } = string.Empty;
+    public string TenantEmail { get; set; } = string.Empty;
+    public string PropertyAddress { get; set; } = string.Empty;
+    public decimal RentAmount { get; set; }
+    public string DueDate { get; set; } = string.Empty;
+    public int DaysOverdue { get; set; }
+    public decimal? LateFee { get; set; }
+    public decimal TotalAmountDue { get; set; }
+    public string PaymentUrl { get; set; } = string.Empty;
     public string OwnerName { get; set; } = string.Empty;
     public string OwnerEmail { get; set; } = string.Empty;
     public string? OwnerPhone { get; set; }
@@ -259,6 +277,65 @@ public class EmailTemplateService : IEmailTemplateService
 
         // Clean up any leftover empty lines
         rendered = Regex.Replace(rendered, @"(\r?\n){3,}", "\n\n", RegexOptions.Multiline);
+
+        // Handle conditional OwnerPhone
+        if (!string.IsNullOrWhiteSpace(data.OwnerPhone))
+        {
+            rendered = Regex.Replace(rendered, @"\{\{#if OwnerPhone\}\}(.*?)\{\{/if\}\}", "$1", RegexOptions.Singleline);
+            rendered = rendered.Replace("{{OwnerPhone}}", data.OwnerPhone);
+        }
+        else
+        {
+            rendered = Regex.Replace(rendered, @"\{\{#if OwnerPhone\}\}.*?\{\{/if\}\}", "", RegexOptions.Singleline);
+        }
+
+        return rendered;
+    }
+
+    public async Task<(string htmlBody, string textBody)> RenderOverduePaymentEmailAsync(OverduePaymentEmailData data)
+    {
+        var htmlTemplatePath = Path.Combine(_templateBasePath, "OverduePaymentEmail.html");
+        var textTemplatePath = Path.Combine(_templateBasePath, "OverduePaymentEmail.txt");
+
+        if (!File.Exists(htmlTemplatePath) || !File.Exists(textTemplatePath))
+        {
+            throw new FileNotFoundException("Overdue payment email template files not found");
+        }
+
+        var htmlTemplate = await File.ReadAllTextAsync(htmlTemplatePath);
+        var textTemplate = await File.ReadAllTextAsync(textTemplatePath);
+
+        var htmlBody = RenderOverduePaymentTemplate(htmlTemplate, data);
+        var textBody = RenderOverduePaymentTemplate(textTemplate, data);
+
+        return (htmlBody, textBody);
+    }
+
+    private string RenderOverduePaymentTemplate(string template, OverduePaymentEmailData data)
+    {
+        var rendered = template
+            .Replace("{{TenantFirstName}}", data.TenantFirstName)
+            .Replace("{{TenantEmail}}", data.TenantEmail)
+            .Replace("{{PropertyAddress}}", data.PropertyAddress)
+            .Replace("{{RentAmount}}", FormatCurrency(data.RentAmount))
+            .Replace("{{DueDate}}", data.DueDate)
+            .Replace("{{DaysOverdue}}", data.DaysOverdue.ToString())
+            .Replace("{{TotalAmountDue}}", FormatCurrency(data.TotalAmountDue))
+            .Replace("{{PaymentUrl}}", data.PaymentUrl)
+            .Replace("{{OwnerName}}", data.OwnerName)
+            .Replace("{{OwnerEmail}}", data.OwnerEmail)
+            .Replace("{{FrontendUrl}}", data.FrontendUrl);
+
+        // Handle conditional LateFee
+        if (data.LateFee.HasValue && data.LateFee.Value > 0)
+        {
+            rendered = Regex.Replace(rendered, @"\{\{#if LateFee\}\}(.*?)\{\{/if\}\}", "$1", RegexOptions.Singleline);
+            rendered = rendered.Replace("{{LateFee}}", FormatCurrency(data.LateFee.Value));
+        }
+        else
+        {
+            rendered = Regex.Replace(rendered, @"\{\{#if LateFee\}\}.*?\{\{/if\}\}", "", RegexOptions.Singleline);
+        }
 
         // Handle conditional OwnerPhone
         if (!string.IsNullOrWhiteSpace(data.OwnerPhone))

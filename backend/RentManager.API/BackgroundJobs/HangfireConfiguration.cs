@@ -54,7 +54,7 @@ public static class HangfireConfiguration
             options.WorkerCount = Environment.ProcessorCount * 2;
 
             // Queue names (for job prioritization)
-            options.Queues = new[] { "critical", "default", "low" };
+            options.Queues = new[] { "critical", "high-priority", "default", "low" };
 
             // Shutdown timeout
             options.ShutdownTimeout = TimeSpan.FromMinutes(5);
@@ -88,6 +88,22 @@ public static class HangfireConfiguration
 
         app.UseHangfireDashboard("/hangfire", dashboardOptions);
 
+        // Schedule recurring jobs
+        ConfigureRecurringJobs();
+
         return app;
+    }
+
+    private static void ConfigureRecurringJobs()
+    {
+        // Check for overdue payments daily at 9:00 AM UTC
+        RecurringJob.AddOrUpdate<Jobs.CheckOverduePaymentsJob>(
+            "check-overdue-payments",
+            job => job.ExecuteAsync(JobCancellationToken.Null),
+            Cron.Daily(9), // Run at 9:00 AM UTC daily
+            new RecurringJobOptions
+            {
+                TimeZone = TimeZoneInfo.Utc
+            });
     }
 }

@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Payment Overdue Notice - AVM Property Management</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Inter', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
+            background-color: #f9fafb;
+            color: #111827;
+        }
+        .email-container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #ffffff;
+        }
+        .header {
+            background: linear-gradient(135deg, #1F4E79 0%, #1CA9A3 100%);
+            padding: 32px 40px;
+            text-align: center;
+        }
+        .header-logo {
+            font-size: 36px;
+            font-weight: 700;
+            letter-spacing: 0.05em;
+            color: #ffffff;
+            text-decoration: none;
+        }
+        .content {
+            padding: 40px;
+        }
+        .alert-icon {
+            text-align: center;
+            font-size: 64px;
+            margin-bottom: 24px;
+        }
+        .greeting {
+            font-size: 18px;
+            font-weight: 600;
+            color: #111827;
+            margin-bottom: 16px;
+        }
+        .alert-text {
+            font-size: 18px;
+            color: #dc2626;
+            font-weight: 600;
+            text-align: center;
+            margin-bottom: 24px;
+        }
+        .intro-text {
+            font-size: 16px;
+            color: #4b5563;
+            line-height: 1.6;
+            margin-bottom: 24px;
+            text-align: center;
+        }
+        .payment-card {
+            background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%);
+            border: 2px solid #dc2626;
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 32px;
+        }
+        .payment-card-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #991b1b;
+            margin-bottom: 16px;
+            text-align: center;
+        }
+        .payment-divider {
+            height: 1px;
+            background-color: #fca5a5;
+            margin: 16px 0;
+        }
+        .payment-detail {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+            font-size: 15px;
+        }
+        .payment-detail:last-child {
+            margin-bottom: 0;
+        }
+        .payment-label {
+            font-weight: 500;
+            color: #991b1b;
+        }
+        .payment-value {
+            color: #b91c1c;
+            font-weight: 600;
+            text-align: right;
+        }
+        .payment-amount {
+            font-size: 24px;
+            font-weight: 700;
+            color: #dc2626;
+            text-align: center;
+            margin: 16px 0;
+        }
+        .overdue-badge {
+            display: inline-block;
+            background-color: #dc2626;
+            color: #ffffff;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 16px;
+        }
+        .cta-button {
+            display: block;
+            width: 100%;
+            max-width: 350px;
+            margin: 0 auto 32px;
+            padding: 16px 48px;
+            background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+            color: #ffffff;
+            text-align: center;
+            text-decoration: none;
+            font-size: 16px;
+            font-weight: 600;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(220, 38, 38, 0.25);
+        }
+        .cta-button:hover {
+            background: linear-gradient(135deg, #b91c1c 0%, #991b1b 100%);
+        }
+        .info-section {
+            background-color: #fef3c7;
+            border-left: 4px solid #f59e0b;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 32px;
+        }
+        .info-title {
+            font-size: 15px;
+            font-weight: 600;
+            color: #92400e;
+            margin-bottom: 8px;
+        }
+        .info-text {
+            font-size: 14px;
+            color: #78350f;
+            line-height: 1.5;
+            margin: 0;
+        }
+        .contact-section {
+            background-color: #f9fafb;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 32px;
+        }
+        .contact-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: #6b7280;
+            margin-bottom: 8px;
+        }
+        .contact-info {
+            font-size: 15px;
+            color: #1F4E79;
+            text-decoration: none;
+        }
+        .footer {
+            background-color: #f9fafb;
+            padding: 32px 40px;
+            text-align: center;
+            border-top: 1px solid #e5e7eb;
+        }
+        .footer-text {
+            font-size: 14px;
+            color: #6b7280;
+            margin-bottom: 8px;
+        }
+        .footer-link {
+            color: #1F4E79;
+            text-decoration: none;
+            font-size: 14px;
+        }
+        .footer-company {
+            font-size: 12px;
+            color: #9ca3af;
+            margin-top: 16px;
+        }
+        @media only screen and (max-width: 600px) {
+            .content {
+                padding: 24px 20px;
+            }
+            .header {
+                padding: 24px 20px;
+            }
+            .footer {
+                padding: 24px 20px;
+            }
+            .payment-card {
+                padding: 16px;
+            }
+            .payment-amount {
+                font-size: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="email-container">
+        <!-- Header -->
+        <div class="header">
+            <a href="{{FrontendUrl}}" class="header-logo">AVM</a>
+        </div>
+
+        <!-- Content -->
+        <div class="content">
+            <div class="alert-icon">⚠️</div>
+
+            <div class="greeting">Hi {{TenantFirstName}},</div>
+
+            <p class="alert-text">
+                Payment Overdue Notice
+            </p>
+
+            <div style="text-align: center; margin-bottom: 24px;">
+                <span class="overdue-badge">{{DaysOverdue}} Day(s) Overdue</span>
+            </div>
+
+            <p class="intro-text">
+                Your rent payment for <strong>{{PropertyAddress}}</strong> was due on <strong>{{DueDate}}</strong> and is now {{DaysOverdue}} day(s) overdue.
+            </p>
+
+            <!-- Payment Details Card -->
+            <div class="payment-card">
+                <div class="payment-card-title">Outstanding Balance</div>
+                <div class="payment-divider"></div>
+
+                <div class="payment-detail">
+                    <span class="payment-label">💰 Rent Amount:</span>
+                    <span class="payment-value">{{RentAmount}} RON</span>
+                </div>
+
+                {{#if LateFee}}
+                <div class="payment-detail">
+                    <span class="payment-label">⏰ Late Fee:</span>
+                    <span class="payment-value">{{LateFee}} RON</span>
+                </div>
+                {{/if}}
+
+                <div class="payment-divider"></div>
+
+                <div class="payment-amount">{{TotalAmountDue}} RON</div>
+
+                <div style="text-align: center; font-size: 13px; color: #991b1b; font-weight: 500;">
+                    Total Amount Due
+                </div>
+
+                <div class="payment-divider"></div>
+
+                <div class="payment-detail">
+                    <span class="payment-label">📅 Original Due Date:</span>
+                    <span class="payment-value">{{DueDate}}</span>
+                </div>
+
+                <div class="payment-detail">
+                    <span class="payment-label">🏠 Property:</span>
+                    <span class="payment-value">{{PropertyAddress}}</span>
+                </div>
+
+                <div class="payment-detail">
+                    <span class="payment-label">⏱️ Days Overdue:</span>
+                    <span class="payment-value">{{DaysOverdue}} Day(s)</span>
+                </div>
+            </div>
+
+            <!-- Important Notice -->
+            <div class="info-section">
+                <div class="info-title">⚠️ Important Notice</div>
+                <p class="info-text">
+                    Please submit your payment as soon as possible to avoid additional late fees or further action. Continued non-payment may result in lease termination proceedings.
+                </p>
+            </div>
+
+            <!-- CTA Button -->
+            <a href="{{PaymentUrl}}" class="cta-button">
+                Make Payment Now →
+            </a>
+
+            <!-- Contact Section -->
+            <div class="contact-section">
+                <div class="contact-title">Questions or payment difficulties?</div>
+                <p class="info-text" style="margin-bottom: 12px;">
+                    If you're experiencing financial hardship or need to discuss payment arrangements, please contact your property owner immediately:
+                </p>
+                <div>
+                    <span class="contact-info">{{OwnerName}}</span>
+                </div>
+                <div>
+                    <a href="mailto:{{OwnerEmail}}" class="contact-info">{{OwnerEmail}}</a>
+                </div>
+                {{#if OwnerPhone}}
+                <div>
+                    <span class="contact-info">📞 {{OwnerPhone}}</span>
+                </div>
+                {{/if}}
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+            <p class="footer-text">
+                Need technical support? <a href="mailto:support@rentflow.ro" class="footer-link">Contact AVM Support</a>
+            </p>
+            <p class="footer-text">
+                <a href="{{FrontendUrl}}" class="footer-link">Visit AVM Portal</a>
+            </p>
+            <p class="footer-company">
+                &copy; 2025 AVM Property Management<br>
+                Professional Property Management Platform
+            </p>
+        </div>
+    </div>
+</body>
+</html>

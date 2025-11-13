@@ -142,6 +142,15 @@ function EmailSender() {
           >
             👋 Welcome Email
           </button>
+          <button
+            type="button"
+            className="btn-test"
+            onClick={() => handleTestTemplate('overdue-payment')}
+            disabled={isLoading || !testEmail.trim()}
+            style={{ width: '100%' }}
+          >
+            ⚠️ Overdue Payment
+          </button>
         </div>
 
         <div style={{ marginTop: '12px' }}>

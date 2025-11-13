@@ -197,6 +197,57 @@ public class TestEmailController : ControllerBase
         }
     }
 
+    [HttpPost("overdue-payment")]
+    public async Task<IActionResult> SendTestOverduePayment([FromBody] TestTemplateEmailRequest request)
+    {
+        try
+        {
+            var frontendUrl = _configuration["FrontendUrl"] ?? "http://localhost:3000";
+
+            // Simulate a payment that's 3 days overdue
+            var dueDate = DateTime.UtcNow.AddDays(-3);
+            var daysOverdue = 3;
+            var rentAmount = 2500.00m;
+            var lateFee = 50.00m;
+            var totalAmountDue = rentAmount + lateFee;
+
+            var emailData = new OverduePaymentEmailData
+            {
+                TenantFirstName = "Test User",
+                TenantEmail = request.RecipientEmail,
+                PropertyAddress = "123 Main Street, Apt 4B, Bucharest, Romania",
+                RentAmount = rentAmount,
+                DueDate = dueDate.ToString("MMMM d, yyyy"),
+                DaysOverdue = daysOverdue,
+                LateFee = lateFee,
+                TotalAmountDue = totalAmountDue,
+                PaymentUrl = $"{frontendUrl}/payments",
+                OwnerName = "Test Property Owner",
+                OwnerEmail = "owner@example.com",
+                OwnerPhone = "+40 123 456 789",
+                FrontendUrl = frontendUrl
+            };
+
+            var subject = $"⚠️ Rent Payment Overdue - {emailData.PropertyAddress}";
+            var jobId = _backgroundEmailService.EnqueueOverduePaymentEmail(emailData, subject);
+
+            _logger.LogInformation("Test overdue payment email enqueued (JobId: {JobId}) to {Email}", jobId, request.RecipientEmail);
+
+            return await Task.FromResult(Ok(new
+            {
+                success = true,
+                message = $"Overdue payment test email queued successfully",
+                jobId = jobId,
+                recipientEmail = request.RecipientEmail
+            }));
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to send test overdue payment email");
+            return await Task.FromResult(StatusCode(500, new { success = false, message = "Failed to send test email", error = ex.Message }));
+        }
+    }
+
     [HttpPost("all")]
     public async Task<IActionResult> SendAllTestEmails([FromBody] TestTemplateEmailRequest request)
     {
@@ -231,6 +282,13 @@ public class TestEmailController : ControllerBase
             {
                 var result = welcomeOk.Value as dynamic;
                 jobIds["welcome"] = result?.jobId ?? string.Empty;
+            }
+
+            var overduePaymentResult = await SendTestOverduePayment(request);
+            if (overduePaymentResult is OkObjectResult overduePaymentOk)
+            {
+                var result = overduePaymentOk.Value as dynamic;
+                jobIds["overduePayment"] = result?.jobId ?? string.Empty;
             }
 
             _logger.LogInformation("All test emails enqueued to {Email}", request.RecipientEmail);

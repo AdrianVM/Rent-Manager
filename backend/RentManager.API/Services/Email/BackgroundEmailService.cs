@@ -82,4 +82,21 @@ public class BackgroundEmailService : IBackgroundEmailService
 
         return jobId;
     }
+
+    public string EnqueueOverduePaymentEmail(OverduePaymentEmailData emailData, string subject)
+    {
+        _logger.LogInformation(
+            "Enqueueing overdue payment alert for {Email} - {DaysOverdue} days overdue",
+            emailData.TenantEmail,
+            emailData.DaysOverdue);
+
+        var jobId = _backgroundJobClient.Enqueue<OverduePaymentEmailJob>(
+            job => job.SendOverduePaymentAlertAsync(emailData, subject, JobCancellationToken.Null));
+
+        _logger.LogInformation(
+            "Overdue payment email enqueued with JobId: {JobId}",
+            jobId);
+
+        return jobId;
+    }
 }

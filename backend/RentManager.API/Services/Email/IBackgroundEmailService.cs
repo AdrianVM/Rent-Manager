@@ -37,4 +37,12 @@ public interface IBackgroundEmailService
     /// <param name="subject">Email subject</param>
     /// <returns>Hangfire job ID for tracking</returns>
     string EnqueueWelcomeEmail(WelcomeEmailData emailData, string subject);
+
+    /// <summary>
+    /// Enqueue an overdue payment alert email to be sent in the background
+    /// </summary>
+    /// <param name="emailData">Email template data</param>
+    /// <param name="subject">Email subject</param>
+    /// <returns>Hangfire job ID for tracking</returns>
+    string EnqueueOverduePaymentEmail(OverduePaymentEmailData emailData, string subject);
 }
