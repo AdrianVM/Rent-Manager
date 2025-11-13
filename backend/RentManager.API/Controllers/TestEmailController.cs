@@ -1,0 +1,259 @@
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using RentManager.API.Models;
+using RentManager.API.Services;
+using RentManager.API.Services.Email;
+using System.ComponentModel.DataAnnotations;
+
+namespace RentManager.API.Controllers;
+
+[ApiController]
+[Route("api/test-email")]
+[Authorize(Roles = "Admin")]
+public class TestEmailController : ControllerBase
+{
+    private readonly IBackgroundEmailService _backgroundEmailService;
+    private readonly IConfiguration _configuration;
+    private readonly IDataService _dataService;
+    private readonly ILogger<TestEmailController> _logger;
+
+    public TestEmailController(
+        IBackgroundEmailService backgroundEmailService,
+        IConfiguration configuration,
+        IDataService dataService,
+        ILogger<TestEmailController> logger)
+    {
+        _backgroundEmailService = backgroundEmailService;
+        _configuration = configuration;
+        _dataService = dataService;
+        _logger = logger;
+    }
+
+    [HttpPost("tenant-invitation")]
+    public async Task<IActionResult> SendTestTenantInvitation([FromBody] TestTemplateEmailRequest request)
+    {
+        try
+        {
+            var frontendUrl = _configuration["FrontendUrl"] ?? "http://localhost:3000";
+            var token = Guid.NewGuid().ToString();
+
+            var emailData = new TenantInvitationEmailData
+            {
+                TenantFirstName = "Test User",
+                TenantEmail = request.RecipientEmail,
+                OwnerName = "Test Property Owner",
+                OwnerEmail = "owner@example.com",
+                OwnerPhone = "+40 123 456 789",
+                PropertyName = "Modern Downtown Apartment",
+                PropertyAddress = "123 Main Street, Apt 4B, Bucharest, Romania",
+                PropertyType = "Apartment",
+                RentAmount = 2500.00m,
+                LeaseStartDate = DateTime.UtcNow.AddDays(14).ToString("dd.MM.yyyy"),
+                OnboardingUrl = $"{frontendUrl}/tenant-onboarding/{token}",
+                ExpirationDate = DateTime.UtcNow.AddDays(7).ToString("dd.MM.yyyy"),
+                FrontendUrl = frontendUrl
+            };
+
+            var subject = $"You're invited to {emailData.PropertyName} - Complete Your Tenant Onboarding";
+            var jobId = _backgroundEmailService.EnqueueTenantInvitationEmail(emailData, subject);
+
+            _logger.LogInformation("Test tenant invitation email enqueued (JobId: {JobId}) to {Email}", jobId, request.RecipientEmail);
+
+            return await Task.FromResult(Ok(new
+            {
+                success = true,
+                message = $"Tenant invitation test email queued successfully",
+                jobId = jobId,
+                recipientEmail = request.RecipientEmail
+            }));
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to send test tenant invitation email");
+            return await Task.FromResult(StatusCode(500, new { success = false, message = "Failed to send test email", error = ex.Message }));
+        }
+    }
+
+    [HttpPost("payment-confirmation")]
+    public async Task<IActionResult> SendTestPaymentConfirmation([FromBody] TestTemplateEmailRequest request)
+    {
+        try
+        {
+            var frontendUrl = _configuration["FrontendUrl"] ?? "http://localhost:3000";
+
+            var emailData = new PaymentConfirmationEmailData
+            {
+                TenantFirstName = "Test User",
+                TenantEmail = request.RecipientEmail,
+                PropertyAddress = "123 Main Street, Apt 4B, Bucharest, Romania",
+                Amount = 2500.00m,
+                PaymentDate = DateTime.UtcNow.ToString("MMMM d, yyyy"),
+                TransactionId = "TEST-" + Guid.NewGuid().ToString().Substring(0, 8).ToUpper(),
+                PaymentReference = "RENT-" + DateTime.UtcNow.ToString("yyyyMM") + "-TESTPAY",
+                PaymentMethodDisplay = "Online Card ending in 4242",
+                OwnerName = "Test Property Owner",
+                OwnerEmail = "owner@example.com",
+                FrontendUrl = frontendUrl
+            };
+
+            var subject = $"Payment Received: {emailData.Amount:N0} RON for {emailData.PropertyAddress} - {emailData.PaymentDate}";
+            var jobId = _backgroundEmailService.EnqueuePaymentConfirmationEmail(emailData, subject);
+
+            _logger.LogInformation("Test payment confirmation email enqueued (JobId: {JobId}) to {Email}", jobId, request.RecipientEmail);
+
+            return await Task.FromResult(Ok(new
+            {
+                success = true,
+                message = $"Payment confirmation test email queued successfully",
+                jobId = jobId,
+                recipientEmail = request.RecipientEmail
+            }));
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to send test payment confirmation email");
+            return await Task.FromResult(StatusCode(500, new { success = false, message = "Failed to send test email", error = ex.Message }));
+        }
+    }
+
+    [HttpPost("contract-upload")]
+    public async Task<IActionResult> SendTestContractUpload([FromBody] TestTemplateEmailRequest request)
+    {
+        try
+        {
+            var frontendUrl = _configuration["FrontendUrl"] ?? "http://localhost:3000";
+
+            var emailData = new ContractUploadEmailData
+            {
+                TenantFirstName = "Test User",
+                TenantEmail = request.RecipientEmail,
+                PropertyAddress = "123 Main Street, Apt 4B, Bucharest, Romania",
+                ContractType = "Lease Agreement",
+                UploadDate = DateTime.UtcNow.ToString("dd.MM.yyyy HH:mm"),
+                UploadedBy = "Test Property Owner",
+                ContractStatus = "Pending",
+                ContractViewUrl = $"{frontendUrl}/contracts/test-contract-id",
+                OwnerName = "Test Property Owner",
+                OwnerEmail = "owner@example.com",
+                OwnerPhone = "+40 123 456 789",
+                FrontendUrl = frontendUrl
+            };
+
+            var subject = $"Action Required: New Contract for {emailData.PropertyAddress}";
+            var jobId = _backgroundEmailService.EnqueueContractUploadEmail(emailData, subject);
+
+            _logger.LogInformation("Test contract upload email enqueued (JobId: {JobId}) to {Email}", jobId, request.RecipientEmail);
+
+            return await Task.FromResult(Ok(new
+            {
+                success = true,
+                message = $"Contract upload test email queued successfully",
+                jobId = jobId,
+                recipientEmail = request.RecipientEmail
+            }));
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to send test contract upload email");
+            return await Task.FromResult(StatusCode(500, new { success = false, message = "Failed to send test email", error = ex.Message }));
+        }
+    }
+
+    [HttpPost("welcome")]
+    public async Task<IActionResult> SendTestWelcome([FromBody] TestTemplateEmailRequest request)
+    {
+        try
+        {
+            var frontendUrl = _configuration["FrontendUrl"] ?? "http://localhost:3000";
+
+            var emailData = new WelcomeEmailData
+            {
+                TenantFirstName = "Test User",
+                TenantEmail = request.RecipientEmail,
+                PropertyAddress = "123 Main Street, Apt 4B, Bucharest, Romania",
+                OwnerName = "Test Property Owner",
+                OwnerEmail = "owner@example.com",
+                OwnerPhone = "+40 123 456 789",
+                FrontendUrl = frontendUrl
+            };
+
+            var subject = $"Welcome to Rent Manager, {emailData.TenantFirstName}! Your Tenant Portal is Ready";
+            var jobId = _backgroundEmailService.EnqueueWelcomeEmail(emailData, subject);
+
+            _logger.LogInformation("Test welcome email enqueued (JobId: {JobId}) to {Email}", jobId, request.RecipientEmail);
+
+            return await Task.FromResult(Ok(new
+            {
+                success = true,
+                message = $"Welcome test email queued successfully",
+                jobId = jobId,
+                recipientEmail = request.RecipientEmail
+            }));
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to send test welcome email");
+            return await Task.FromResult(StatusCode(500, new { success = false, message = "Failed to send test email", error = ex.Message }));
+        }
+    }
+
+    [HttpPost("all")]
+    public async Task<IActionResult> SendAllTestEmails([FromBody] TestTemplateEmailRequest request)
+    {
+        try
+        {
+            var jobIds = new Dictionary<string, string>();
+
+            // Send all test emails
+            var tenantInvitationResult = await SendTestTenantInvitation(request);
+            if (tenantInvitationResult is OkObjectResult tenantInvitationOk)
+            {
+                var result = tenantInvitationOk.Value as dynamic;
+                jobIds["tenantInvitation"] = result?.jobId ?? string.Empty;
+            }
+
+            var paymentConfirmationResult = await SendTestPaymentConfirmation(request);
+            if (paymentConfirmationResult is OkObjectResult paymentConfirmationOk)
+            {
+                var result = paymentConfirmationOk.Value as dynamic;
+                jobIds["paymentConfirmation"] = result?.jobId ?? string.Empty;
+            }
+
+            var contractUploadResult = await SendTestContractUpload(request);
+            if (contractUploadResult is OkObjectResult contractUploadOk)
+            {
+                var result = contractUploadOk.Value as dynamic;
+                jobIds["contractUpload"] = result?.jobId ?? string.Empty;
+            }
+
+            var welcomeResult = await SendTestWelcome(request);
+            if (welcomeResult is OkObjectResult welcomeOk)
+            {
+                var result = welcomeOk.Value as dynamic;
+                jobIds["welcome"] = result?.jobId ?? string.Empty;
+            }
+
+            _logger.LogInformation("All test emails enqueued to {Email}", request.RecipientEmail);
+
+            return Ok(new
+            {
+                success = true,
+                message = $"All test emails queued successfully to {request.RecipientEmail}",
+                jobIds = jobIds,
+                recipientEmail = request.RecipientEmail
+            });
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to send all test emails");
+            return StatusCode(500, new { success = false, message = "Failed to send test emails", error = ex.Message });
+        }
+    }
+}
+
+public class TestTemplateEmailRequest
+{
+    [Required(ErrorMessage = "Recipient email address is required")]
+    [EmailAddress(ErrorMessage = "Invalid email address")]
+    public string RecipientEmail { get; set; } = string.Empty;
+}

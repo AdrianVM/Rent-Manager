@@ -59,6 +59,15 @@ builder.Services.AddScoped<SeedDataService>();
 // Add Hangfire background jobs
 builder.Services.AddHangfireBackgroundJobs(builder.Configuration);
 
+// Register background email service
+builder.Services.AddScoped<RentManager.API.Services.Email.IBackgroundEmailService, RentManager.API.Services.Email.BackgroundEmailService>();
+
+// Register email job classes for dependency injection
+builder.Services.AddScoped<RentManager.API.BackgroundJobs.Jobs.TenantInvitationEmailJob>();
+builder.Services.AddScoped<RentManager.API.BackgroundJobs.Jobs.PaymentConfirmationEmailJob>();
+builder.Services.AddScoped<RentManager.API.BackgroundJobs.Jobs.ContractUploadEmailJob>();
+builder.Services.AddScoped<RentManager.API.BackgroundJobs.Jobs.WelcomeEmailJob>();
+
 // Zitadel OAuth Configuration
 var zitadelSettings = builder.Configuration.GetSection("Zitadel");
 var zitadelAuthority = zitadelSettings["Authority"];

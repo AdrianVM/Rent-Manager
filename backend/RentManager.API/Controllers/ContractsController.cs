@@ -12,21 +12,18 @@ namespace RentManager.API.Controllers
     public class ContractsController : ControllerBase
     {
         private readonly IDataService _dataService;
-        private readonly IEmailService _emailService;
-        private readonly IEmailTemplateService _emailTemplateService;
+        private readonly IBackgroundEmailService _backgroundEmailService;
         private readonly IConfiguration _configuration;
         private readonly ILogger<ContractsController> _logger;
 
         public ContractsController(
             IDataService dataService,
-            IEmailService emailService,
-            IEmailTemplateService emailTemplateService,
+            IBackgroundEmailService backgroundEmailService,
             IConfiguration configuration,
             ILogger<ContractsController> logger)
         {
             _dataService = dataService;
-            _emailService = emailService;
-            _emailTemplateService = emailTemplateService;
+            _backgroundEmailService = backgroundEmailService;
             _configuration = configuration;
             _logger = logger;
         }
@@ -174,31 +171,16 @@ namespace RentManager.API.Controllers
                 FrontendUrl = frontendUrl
             };
 
-            // Render email template
-            var (htmlBody, textBody) = await _emailTemplateService.RenderContractUploadEmailAsync(emailData);
-
             // Determine subject based on contract status
             var subject = contract.Status == ContractStatus.Pending
                 ? $"Action Required: New Contract for {property.Address}"
                 : $"New Contract Available for {property.Address}";
 
-            // Send email
-            var emailResponse = await _emailService.SendHtmlEmailAsync(
-                tenant.Email,
-                subject,
-                htmlBody,
-                textBody
-            );
+            // Enqueue email in background
+            var emailJobId = _backgroundEmailService.EnqueueContractUploadEmail(emailData, subject);
 
-            if (!emailResponse.Success)
-            {
-                _logger.LogError("Failed to send contract upload notification to {Email}: {Error}",
-                    tenant.Email, emailResponse.ErrorMessage);
-                throw new Exception($"Email service error: {emailResponse.ErrorMessage}");
-            }
-
-            _logger.LogInformation("Contract upload notification sent successfully to {Email} for contract {ContractId}",
-                tenant.Email, contract.Id);
+            _logger.LogInformation("Contract upload notification email enqueued (JobId: {JobId}) for contract {ContractId} to {Email}",
+                emailJobId, contract.Id, tenant.Email);
         }
 
         [HttpPut("{id}")]

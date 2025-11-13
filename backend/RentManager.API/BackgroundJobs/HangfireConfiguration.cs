@@ -16,8 +16,15 @@ public static class HangfireConfiguration
             .UseRecommendedSerializerSettings()
             .UsePostgreSqlStorage(options =>
             {
-                options.UseNpgsqlConnection(
-                    configuration.GetConnectionString("DefaultConnection"));
+                var connectionString = configuration.GetConnectionString("DefaultConnection")
+                    ?? throw new InvalidOperationException("DefaultConnection connection string is not configured");
+
+                // Ensure SSL Mode is required for production security
+                if (!connectionString.Contains("SSL Mode", StringComparison.OrdinalIgnoreCase))
+                {
+                    connectionString += ";SSL Mode=Require;Trust Server Certificate=true";
+                }
+                options.UseNpgsqlConnection(connectionString);
             }, new PostgreSqlStorageOptions
             {
                 // Hangfire will create tables in a separate schema

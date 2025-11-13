@@ -3,28 +3,12 @@ import authService from '../../services/authService';
 import './EmailSender.css';
 
 function EmailSender() {
-  const [formData, setFormData] = useState({
-    to: '',
-    subject: '',
-    body: '',
-    isHtml: true
-  });
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   const [testEmail, setTestEmail] = useState('');
 
-  const handleChange = (e) => {
-    const { name, value, type, checked } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: type === 'checkbox' ? checked : value
-    }));
-    setError('');
-    setSuccess('');
-  };
-
-  const handleTestEmailSend = async () => {
+  const handleTestTemplate = async (templateType) => {
     if (!testEmail.trim()) {
       setError('Please enter a test email address');
       return;
@@ -36,95 +20,48 @@ function EmailSender() {
 
     try {
       const token = authService.getToken();
-      const response = await fetch(
-        `${process.env.REACT_APP_API_URL}/admin/email/test`,
-        {
-          method: 'POST',
-          headers: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({ testEmail })
-        }
-      );
+      const endpoint = templateType === 'all'
+        ? `${process.env.REACT_APP_API_URL}/test-email/all`
+        : `${process.env.REACT_APP_API_URL}/test-email/${templateType}`;
 
-      // Check if response has content
-      const text = await response.text();
-      let data = null;
+      console.log('Sending test email request to:', endpoint);
 
-      try {
-        data = text ? JSON.parse(text) : {};
-      } catch (parseError) {
-        setError('Failed to send test email. Please try again.');
+      const response = await fetch(endpoint, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ RecipientEmail: testEmail })
+      });
+
+      console.log('Response status:', response.status);
+
+      // Try to parse JSON, but handle cases where response might not be JSON
+      let data;
+      const contentType = response.headers.get('content-type');
+      if (contentType && contentType.includes('application/json')) {
+        data = await response.json();
+      } else {
+        const text = await response.text();
+        console.error('Non-JSON response:', text);
+        setError(`Server error: ${response.status} - ${text.substring(0, 100)}`);
         return;
       }
 
-      if (response.ok && data.success) {
-        setSuccess(`Test email sent successfully to ${testEmail}!`);
-        setTestEmail('');
-      } else {
-        const errorMsg = data.errorMessage || 'Failed to send test email. Please try again.';
-        setError(errorMsg);
-      }
-    } catch (err) {
-      setError('Failed to send test email. Please check your email configuration.');
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-
-    if (!formData.to.trim() || !formData.subject.trim() || !formData.body.trim()) {
-      setError('Please fill in all required fields');
-      return;
-    }
-
-    setIsLoading(true);
-    setError('');
-    setSuccess('');
-
-    try {
-      const token = authService.getToken();
-      const response = await fetch(
-        `${process.env.REACT_APP_API_URL}/admin/email/send`,
-        {
-          method: 'POST',
-          headers: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify(formData)
-        }
-      );
-
-      // Check if response has content
-      const text = await response.text();
-      let data = null;
-
-      try {
-        data = text ? JSON.parse(text) : {};
-      } catch (parseError) {
-        setError('Failed to send email. Please try again.');
-        return;
-      }
+      console.log('Response data:', data);
 
       if (response.ok && data.success) {
-        setSuccess(`Email sent successfully to ${formData.to}!`);
-        // Reset form
-        setFormData({
-          to: '',
-          subject: '',
-          body: '',
-          isHtml: true
-        });
+        const templateName = templateType === 'all'
+          ? 'All email templates'
+          : templateType.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+        setSuccess(`${templateName} sent successfully to ${testEmail}!`);
       } else {
-        const errorMsg = data.errorMessage || 'Failed to send email. Please try again.';
-        setError(errorMsg);
+        setError(data.message || `Failed to send test email (${response.status}). Please try again.`);
       }
     } catch (err) {
-      setError('Failed to send email. Please try again.');
+      console.error('Error sending test email:', err);
+      setError(`Failed to send test email: ${err.message || 'Please check your configuration.'}`);
     } finally {
       setIsLoading(false);
     }
@@ -132,18 +69,18 @@ function EmailSender() {
 
   return (
     <div className="email-sender">
-      <h2 className="email-sender-title">Send Email</h2>
+      <h2 className="email-sender-title">Email Testing</h2>
       <p className="email-sender-description">
-        Send emails to users through the configured email service.
+        Test all email templates and verify their formatting.
       </p>
 
-      {/* Test Email Section */}
+      {/* Email Template Testing Section */}
       <div className="test-email-section">
-        <h3>Test Email Configuration</h3>
+        <h3>Test Email Templates</h3>
         <p className="test-email-description">
-          Send a test email to verify your email service is configured correctly.
+          Send test emails with sample data to verify template formatting and styling.
         </p>
-        <div className="test-email-form">
+        <div className="test-email-form" style={{ marginBottom: '12px' }}>
           <input
             type="email"
             className="form-input"
@@ -152,109 +89,74 @@ function EmailSender() {
             onChange={(e) => setTestEmail(e.target.value)}
             disabled={isLoading}
           />
-          <button
-            type="button"
-            className="btn-test"
-            onClick={handleTestEmailSend}
-            disabled={isLoading || !testEmail.trim()}
-          >
-            {isLoading ? 'Sending...' : 'Send Test Email'}
-          </button>
-        </div>
-      </div>
-
-      <hr className="section-divider" />
-
-      {/* Email Form */}
-      <form onSubmit={handleSubmit} className="email-form">
-        <div className="form-group">
-          <label htmlFor="to" className="form-label">
-            Recipient Email <span className="required">*</span>
-          </label>
-          <input
-            type="email"
-            id="to"
-            name="to"
-            className="form-input"
-            placeholder="recipient@example.com"
-            value={formData.to}
-            onChange={handleChange}
-            disabled={isLoading}
-            required
-          />
-        </div>
-
-        <div className="form-group">
-          <label htmlFor="subject" className="form-label">
-            Subject <span className="required">*</span>
-          </label>
-          <input
-            type="text"
-            id="subject"
-            name="subject"
-            className="form-input"
-            placeholder="Email subject"
-            value={formData.subject}
-            onChange={handleChange}
-            disabled={isLoading}
-            maxLength={200}
-            required
-          />
-        </div>
-
-        <div className="form-group">
-          <label htmlFor="body" className="form-label">
-            Message <span className="required">*</span>
-          </label>
-          <textarea
-            id="body"
-            name="body"
-            className="form-textarea"
-            placeholder={formData.isHtml ? 'Enter HTML or plain text message...' : 'Enter your message...'}
-            value={formData.body}
-            onChange={handleChange}
-            disabled={isLoading}
-            rows={10}
-            required
-          />
-        </div>
-
-        <div className="form-group-checkbox">
-          <input
-            type="checkbox"
-            id="isHtml"
-            name="isHtml"
-            checked={formData.isHtml}
-            onChange={handleChange}
-            disabled={isLoading}
-          />
-          <label htmlFor="isHtml" className="checkbox-label">
-            Send as HTML email
-          </label>
         </div>
 
         {error && (
-          <div className="alert alert-error">
+          <div className="alert alert-error" style={{ marginBottom: '12px' }}>
             <span className="alert-icon">⚠️</span>
             {error}
           </div>
         )}
 
         {success && (
-          <div className="alert alert-success">
+          <div className="alert alert-success" style={{ marginBottom: '12px' }}>
             <span className="alert-icon">✅</span>
             {success}
           </div>
         )}
 
-        <button
-          type="submit"
-          className="btn-primary"
-          disabled={isLoading || !formData.to || !formData.subject || !formData.body}
-        >
-          {isLoading ? 'Sending...' : 'Send Email'}
-        </button>
-      </form>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '12px' }}>
+          <button
+            type="button"
+            className="btn-test"
+            onClick={() => handleTestTemplate('tenant-invitation')}
+            disabled={isLoading || !testEmail.trim()}
+            style={{ width: '100%' }}
+          >
+            📧 Tenant Invitation
+          </button>
+          <button
+            type="button"
+            className="btn-test"
+            onClick={() => handleTestTemplate('payment-confirmation')}
+            disabled={isLoading || !testEmail.trim()}
+            style={{ width: '100%' }}
+          >
+            💳 Payment Confirmation
+          </button>
+          <button
+            type="button"
+            className="btn-test"
+            onClick={() => handleTestTemplate('contract-upload')}
+            disabled={isLoading || !testEmail.trim()}
+            style={{ width: '100%' }}
+          >
+            📄 Contract Upload
+          </button>
+          <button
+            type="button"
+            className="btn-test"
+            onClick={() => handleTestTemplate('welcome')}
+            disabled={isLoading || !testEmail.trim()}
+            style={{ width: '100%' }}
+          >
+            👋 Welcome Email
+          </button>
+        </div>
+
+        <div style={{ marginTop: '12px' }}>
+          <button
+            type="button"
+            className="btn-primary"
+            onClick={() => handleTestTemplate('all')}
+            disabled={isLoading || !testEmail.trim()}
+            style={{ width: '100%', background: '#8b5cf6' }}
+          >
+            {isLoading ? 'Sending...' : '🚀 Send All Templates'}
+          </button>
+        </div>
+      </div>
+
     </div>
   );
 }

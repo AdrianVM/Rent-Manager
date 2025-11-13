@@ -15,22 +15,19 @@ public class PaymentService : IPaymentService
     private readonly RentManagerDbContext _context;
     private readonly ILogger<PaymentService> _logger;
     private readonly IPaymentGateway? _paymentGateway;
-    private readonly IEmailService _emailService;
-    private readonly IEmailTemplateService _emailTemplateService;
+    private readonly IBackgroundEmailService _backgroundEmailService;
     private readonly IConfiguration _configuration;
 
     public PaymentService(
         RentManagerDbContext context,
         ILogger<PaymentService> logger,
-        IEmailService emailService,
-        IEmailTemplateService emailTemplateService,
+        IBackgroundEmailService backgroundEmailService,
         IConfiguration configuration,
         IPaymentGateway? paymentGateway = null)
     {
         _context = context;
         _logger = logger;
-        _emailService = emailService;
-        _emailTemplateService = emailTemplateService;
+        _backgroundEmailService = backgroundEmailService;
         _configuration = configuration;
         _paymentGateway = paymentGateway;
     }
@@ -895,21 +892,12 @@ public class PaymentService : IPaymentService
                 FrontendUrl = _configuration["FrontendUrl"] ?? "https://rentflow.ro"
             };
 
-            // Render email templates
-            var (htmlBody, textBody) = await _emailTemplateService.RenderPaymentConfirmationEmailAsync(emailData);
-
-            // Send email
+            // Enqueue email in background
             var subject = $"Payment Received: {emailData.Amount:N0} RON for {property.Address} - {emailData.PaymentDate}";
+            var emailJobId = _backgroundEmailService.EnqueuePaymentConfirmationEmail(emailData, subject);
 
-            await _emailService.SendHtmlEmailAsync(
-                to: tenant.Email,
-                subject: subject,
-                htmlBody: htmlBody,
-                textBody: textBody
-            );
-
-            _logger.LogInformation("Payment confirmation email sent successfully for payment {PaymentId} to {Email}",
-                payment.Id, tenant.Email);
+            _logger.LogInformation("Payment confirmation email enqueued (JobId: {JobId}) for payment {PaymentId} to {Email}",
+                emailJobId, payment.Id, tenant.Email);
         }
         catch (Exception ex)
         {

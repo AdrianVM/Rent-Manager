@@ -11,21 +11,18 @@ namespace RentManager.API.Controllers
     public class TenantOnboardingController : ControllerBase
     {
         private readonly IDataService _dataService;
-        private readonly IEmailService _emailService;
-        private readonly IEmailTemplateService _emailTemplateService;
+        private readonly IBackgroundEmailService _backgroundEmailService;
         private readonly IConfiguration _configuration;
         private readonly ILogger<TenantOnboardingController> _logger;
 
         public TenantOnboardingController(
             IDataService dataService,
-            IEmailService emailService,
-            IEmailTemplateService emailTemplateService,
+            IBackgroundEmailService backgroundEmailService,
             IConfiguration configuration,
             ILogger<TenantOnboardingController> logger)
         {
             _dataService = dataService;
-            _emailService = emailService;
-            _emailTemplateService = emailTemplateService;
+            _backgroundEmailService = backgroundEmailService;
             _configuration = configuration;
             _logger = logger;
         }
@@ -151,21 +148,12 @@ namespace RentManager.API.Controllers
                     FrontendUrl = _configuration["FrontendUrl"] ?? "https://rentflow.ro"
                 };
 
-                // Render email templates
-                var (htmlBody, textBody) = await _emailTemplateService.RenderWelcomeEmailAsync(emailData);
-
-                // Send email
+                // Enqueue email in background
                 var subject = $"Welcome to Rent Manager, {emailData.TenantFirstName}! Your Tenant Portal is Ready";
+                var emailJobId = _backgroundEmailService.EnqueueWelcomeEmail(emailData, subject);
 
-                await _emailService.SendHtmlEmailAsync(
-                    to: tenant.Email,
-                    subject: subject,
-                    htmlBody: htmlBody,
-                    textBody: textBody
-                );
-
-                _logger.LogInformation("Welcome email sent successfully to new tenant {TenantId} at {Email}",
-                    tenant.Id, tenant.Email);
+                _logger.LogInformation("Welcome email enqueued (JobId: {JobId}) for new tenant {TenantId} at {Email}",
+                    emailJobId, tenant.Id, tenant.Email);
             }
             catch (Exception ex)
             {

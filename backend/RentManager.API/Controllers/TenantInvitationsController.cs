@@ -13,21 +13,18 @@ namespace RentManager.API.Controllers
         private static readonly List<TenantInvitation> _invitations = new();
         private readonly IConfiguration _configuration;
         private readonly IDataService _dataService;
-        private readonly IEmailService _emailService;
-        private readonly IEmailTemplateService _emailTemplateService;
+        private readonly IBackgroundEmailService _backgroundEmailService;
         private readonly ILogger<TenantInvitationsController> _logger;
 
         public TenantInvitationsController(
             IConfiguration configuration,
             IDataService dataService,
-            IEmailService emailService,
-            IEmailTemplateService emailTemplateService,
+            IBackgroundEmailService backgroundEmailService,
             ILogger<TenantInvitationsController> logger)
         {
             _configuration = configuration;
             _dataService = dataService;
-            _emailService = emailService;
-            _emailTemplateService = emailTemplateService;
+            _backgroundEmailService = backgroundEmailService;
             _logger = logger;
         }
 
@@ -98,14 +95,11 @@ namespace RentManager.API.Controllers
                     FrontendUrl = frontendUrl
                 };
 
-                // Render email template
-                var (htmlBody, textBody) = await _emailTemplateService.RenderTenantInvitationEmailAsync(emailData);
-
-                // Send email
+                // Enqueue email in background
                 var emailSubject = $"You're invited to {property.Name} - Complete Your Tenant Onboarding";
-                await _emailService.SendHtmlEmailAsync(request.Email, emailSubject, htmlBody, textBody);
+                var emailJobId = _backgroundEmailService.EnqueueTenantInvitationEmail(emailData, emailSubject);
 
-                _logger.LogInformation("Tenant invitation email sent successfully to {Email} for property {PropertyId}", request.Email, request.PropertyId);
+                _logger.LogInformation("Tenant invitation email enqueued (JobId: {JobId}) for {Email} and property {PropertyId}", emailJobId, request.Email, request.PropertyId);
 
                 return Ok(new
                 {
@@ -262,14 +256,11 @@ namespace RentManager.API.Controllers
                     FrontendUrl = frontendUrl
                 };
 
-                // Render email template
-                var (htmlBody, textBody) = await _emailTemplateService.RenderTenantInvitationEmailAsync(emailData);
-
-                // Send email with "Reminder" in subject
+                // Enqueue email in background with "Reminder" in subject
                 var emailSubject = $"Reminder: You're invited to {property.Name} - Complete Your Tenant Onboarding";
-                await _emailService.SendHtmlEmailAsync(invitation.Email, emailSubject, htmlBody, textBody);
+                var emailJobId = _backgroundEmailService.EnqueueTenantInvitationEmail(emailData, emailSubject);
 
-                _logger.LogInformation("Tenant invitation reminder email sent successfully to {Email} for property {PropertyId}", invitation.Email, invitation.PropertyId);
+                _logger.LogInformation("Tenant invitation reminder email enqueued (JobId: {JobId}) for {Email} and property {PropertyId}", emailJobId, invitation.Email, invitation.PropertyId);
 
                 return Ok(new
                 {
