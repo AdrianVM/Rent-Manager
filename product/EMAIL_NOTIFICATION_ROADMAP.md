@@ -383,7 +383,7 @@ This roadmap prioritizes notifications by **user value** and **business impact**
 
 ---
 
-#### 2.1 Lease Expiration Warning (60, 30, 7 Days Before)
+#### ✅ 2.1 Lease Expiration Warning (60, 30, 7 Days Before) (COMPLETED)
 **Priority:** HIGH
 **User Roles:** Tenant (recipient), Property Owner (recipient)
 **Business Value:** MEDIUM-HIGH - Enables proactive lease renewal conversations
