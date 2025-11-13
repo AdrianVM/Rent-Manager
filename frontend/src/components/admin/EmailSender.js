@@ -160,6 +160,15 @@ function EmailSender() {
           >
             📅 Lease Expiration
           </button>
+          <button
+            type="button"
+            className="btn-test"
+            onClick={() => handleTestTemplate('rent-payment-reminder')}
+            disabled={isLoading || !testEmail.trim()}
+            style={{ width: '100%' }}
+          >
+            💰 Rent Reminder
+          </button>
         </div>
 
         <div style={{ marginTop: '12px' }}>

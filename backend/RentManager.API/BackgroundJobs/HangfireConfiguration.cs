@@ -115,5 +115,15 @@ public static class HangfireConfiguration
             {
                 TimeZone = TimeZoneInfo.Utc
             });
+
+        // Check for rent payment reminders daily at 9:00 AM UTC
+        RecurringJob.AddOrUpdate<Jobs.CheckRentPaymentRemindersJob>(
+            "check-rent-payment-reminders",
+            job => job.ExecuteAsync(JobCancellationToken.Null),
+            Cron.Daily(9), // Run at 9:00 AM UTC daily
+            new RecurringJobOptions
+            {
+                TimeZone = TimeZoneInfo.Utc
+            });
     }
 }

@@ -1,0 +1,60 @@
+AVM PROPERTY MANAGEMENT
+========================
+
+💳 RENT PAYMENT REMINDER
+
+Hi {{TenantFirstName}},
+
+Just a friendly reminder: your monthly rent of {{RentAmount}} RON for {{PropertyAddress}} is due in {{DaysUntilDue}} days.
+
+PAYMENT DETAILS
+===============
+
+Amount Due:        {{RentAmount}} RON
+Due Date:          {{DueDate}}
+Property:          {{PropertyAddress}}
+Status:            {{PaymentStatus}}
+Days Until Due:    {{DaysUntilDue}} Days
+
+PAY ONLINE NOW
+==============
+
+Visit the payment portal to submit your payment:
+{{PaymentUrl}}
+
+OR PAY VIA BANK TRANSFER
+=========================
+
+IBAN:              {{BankTransferIBAN}}
+Account Holder:    {{BankTransferAccountHolder}}
+Payment Reference: {{BankTransferReference}}
+
+⚠️ Please include the payment reference to ensure your payment is properly credited.
+
+✨ GREAT JOB!
+=============
+
+You've made {{OnTimePaymentsThisYear}} on-time payment(s) this year. Keep up the excellent record!
+
+QUESTIONS ABOUT YOUR PAYMENT?
+==============================
+
+Contact your property owner if you have any questions or concerns:
+
+{{OwnerName}}
+Email: {{OwnerEmail}}
+{{#if OwnerPhone}}Phone: {{OwnerPhone}}
+{{/if}}
+
+---
+
+Need help?
+Contact AVM Support: support@rentflow.ro
+
+Visit AVM Portal: {{FrontendUrl}}
+
+Don't want payment reminders?
+Manage preferences: {{FrontendUrl}}/settings/notifications
+
+© 2025 AVM Property Management
+Professional Property Management Platform

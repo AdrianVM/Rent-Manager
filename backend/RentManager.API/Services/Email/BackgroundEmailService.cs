@@ -116,4 +116,21 @@ public class BackgroundEmailService : IBackgroundEmailService
 
         return jobId;
     }
+
+    public string EnqueueRentPaymentReminderEmail(RentPaymentReminderEmailData emailData, string subject)
+    {
+        _logger.LogInformation(
+            "Enqueueing rent payment reminder for {Email} - {DaysUntilDue} days until due",
+            emailData.TenantEmail,
+            emailData.DaysUntilDue);
+
+        var jobId = _backgroundJobClient.Enqueue<RentPaymentReminderEmailJob>(
+            job => job.SendRentPaymentReminderAsync(emailData, subject, JobCancellationToken.Null));
+
+        _logger.LogInformation(
+            "Rent payment reminder email enqueued with JobId: {JobId}",
+            jobId);
+
+        return jobId;
+    }
 }

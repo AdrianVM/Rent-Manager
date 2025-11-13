@@ -11,6 +11,7 @@ public interface IEmailTemplateService
     Task<(string htmlBody, string textBody)> RenderContractUploadEmailAsync(ContractUploadEmailData data);
     Task<(string htmlBody, string textBody)> RenderOverduePaymentEmailAsync(OverduePaymentEmailData data);
     Task<(string htmlBody, string textBody)> RenderLeaseExpirationEmailAsync(LeaseExpirationEmailData data);
+    Task<(string htmlBody, string textBody)> RenderRentPaymentReminderEmailAsync(RentPaymentReminderEmailData data);
 }
 
 public class TenantInvitationEmailData
@@ -104,6 +105,26 @@ public class LeaseExpirationEmailData
     public string? OwnerPhone { get; set; }
     public string FrontendUrl { get; set; } = string.Empty;
     public string UrgencyLevel { get; set; } = string.Empty; // "notice", "reminder", "urgent"
+}
+
+public class RentPaymentReminderEmailData
+{
+    public string TenantFirstName { get; set; } = string.Empty;
+    public string TenantEmail { get; set; } = string.Empty;
+    public string PropertyAddress { get; set; } = string.Empty;
+    public decimal RentAmount { get; set; }
+    public string DueDate { get; set; } = string.Empty;
+    public int DaysUntilDue { get; set; }
+    public string PaymentStatus { get; set; } = string.Empty;
+    public string PaymentUrl { get; set; } = string.Empty;
+    public string BankTransferIBAN { get; set; } = string.Empty;
+    public string BankTransferAccountHolder { get; set; } = string.Empty;
+    public string BankTransferReference { get; set; } = string.Empty;
+    public string OwnerName { get; set; } = string.Empty;
+    public string OwnerEmail { get; set; } = string.Empty;
+    public string? OwnerPhone { get; set; }
+    public string FrontendUrl { get; set; } = string.Empty;
+    public int OnTimePaymentsThisYear { get; set; }
 }
 
 public class EmailTemplateService : IEmailTemplateService
@@ -403,6 +424,58 @@ public class EmailTemplateService : IEmailTemplateService
             .Replace("{{OwnerEmail}}", data.OwnerEmail)
             .Replace("{{FrontendUrl}}", data.FrontendUrl)
             .Replace("{{UrgencyLevel}}", data.UrgencyLevel);
+
+        // Handle conditional OwnerPhone
+        if (!string.IsNullOrWhiteSpace(data.OwnerPhone))
+        {
+            rendered = Regex.Replace(rendered, @"\{\{#if OwnerPhone\}\}(.*?)\{\{/if\}\}", "$1", RegexOptions.Singleline);
+            rendered = rendered.Replace("{{OwnerPhone}}", data.OwnerPhone);
+        }
+        else
+        {
+            rendered = Regex.Replace(rendered, @"\{\{#if OwnerPhone\}\}.*?\{\{/if\}\}", "", RegexOptions.Singleline);
+        }
+
+        return rendered;
+    }
+
+    public async Task<(string htmlBody, string textBody)> RenderRentPaymentReminderEmailAsync(RentPaymentReminderEmailData data)
+    {
+        var htmlTemplatePath = Path.Combine(_templateBasePath, "RentPaymentReminderEmail.html");
+        var textTemplatePath = Path.Combine(_templateBasePath, "RentPaymentReminderEmail.txt");
+
+        if (!File.Exists(htmlTemplatePath) || !File.Exists(textTemplatePath))
+        {
+            throw new FileNotFoundException("Rent payment reminder email template files not found");
+        }
+
+        var htmlTemplate = await File.ReadAllTextAsync(htmlTemplatePath);
+        var textTemplate = await File.ReadAllTextAsync(textTemplatePath);
+
+        var htmlBody = RenderRentPaymentReminderTemplate(htmlTemplate, data);
+        var textBody = RenderRentPaymentReminderTemplate(textTemplate, data);
+
+        return (htmlBody, textBody);
+    }
+
+    private string RenderRentPaymentReminderTemplate(string template, RentPaymentReminderEmailData data)
+    {
+        var rendered = template
+            .Replace("{{TenantFirstName}}", data.TenantFirstName)
+            .Replace("{{TenantEmail}}", data.TenantEmail)
+            .Replace("{{PropertyAddress}}", data.PropertyAddress)
+            .Replace("{{RentAmount}}", FormatCurrency(data.RentAmount))
+            .Replace("{{DueDate}}", data.DueDate)
+            .Replace("{{DaysUntilDue}}", data.DaysUntilDue.ToString())
+            .Replace("{{PaymentStatus}}", data.PaymentStatus)
+            .Replace("{{PaymentUrl}}", data.PaymentUrl)
+            .Replace("{{BankTransferIBAN}}", data.BankTransferIBAN)
+            .Replace("{{BankTransferAccountHolder}}", data.BankTransferAccountHolder)
+            .Replace("{{BankTransferReference}}", data.BankTransferReference)
+            .Replace("{{OwnerName}}", data.OwnerName)
+            .Replace("{{OwnerEmail}}", data.OwnerEmail)
+            .Replace("{{FrontendUrl}}", data.FrontendUrl)
+            .Replace("{{OnTimePaymentsThisYear}}", data.OnTimePaymentsThisYear.ToString());
 
         // Handle conditional OwnerPhone
         if (!string.IsNullOrWhiteSpace(data.OwnerPhone))
