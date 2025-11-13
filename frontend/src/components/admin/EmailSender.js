@@ -151,6 +151,15 @@ function EmailSender() {
           >
             ⚠️ Overdue Payment
           </button>
+          <button
+            type="button"
+            className="btn-test"
+            onClick={() => handleTestTemplate('lease-expiration')}
+            disabled={isLoading || !testEmail.trim()}
+            style={{ width: '100%' }}
+          >
+            📅 Lease Expiration
+          </button>
         </div>
 
         <div style={{ marginTop: '12px' }}>

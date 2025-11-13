@@ -99,4 +99,21 @@ public class BackgroundEmailService : IBackgroundEmailService
 
         return jobId;
     }
+
+    public string EnqueueLeaseExpirationEmail(LeaseExpirationEmailData emailData, string subject)
+    {
+        _logger.LogInformation(
+            "Enqueueing lease expiration warning for {Email} - {DaysUntilExpiration} days until expiration",
+            emailData.TenantEmail,
+            emailData.DaysUntilExpiration);
+
+        var jobId = _backgroundJobClient.Enqueue<LeaseExpirationEmailJob>(
+            job => job.SendLeaseExpirationWarningAsync(emailData, subject, JobCancellationToken.Null));
+
+        _logger.LogInformation(
+            "Lease expiration email enqueued with JobId: {JobId}",
+            jobId);
+
+        return jobId;
+    }
 }

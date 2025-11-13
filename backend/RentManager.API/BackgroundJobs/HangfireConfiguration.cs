@@ -105,5 +105,15 @@ public static class HangfireConfiguration
             {
                 TimeZone = TimeZoneInfo.Utc
             });
+
+        // Check for lease expirations daily at 9:00 AM UTC
+        RecurringJob.AddOrUpdate<Jobs.CheckLeaseExpirationsJob>(
+            "check-lease-expirations",
+            job => job.ExecuteAsync(JobCancellationToken.Null),
+            Cron.Daily(9), // Run at 9:00 AM UTC daily
+            new RecurringJobOptions
+            {
+                TimeZone = TimeZoneInfo.Utc
+            });
     }
 }

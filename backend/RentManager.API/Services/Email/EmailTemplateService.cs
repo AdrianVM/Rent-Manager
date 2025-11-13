@@ -10,6 +10,7 @@ public interface IEmailTemplateService
     Task<(string htmlBody, string textBody)> RenderWelcomeEmailAsync(WelcomeEmailData data);
     Task<(string htmlBody, string textBody)> RenderContractUploadEmailAsync(ContractUploadEmailData data);
     Task<(string htmlBody, string textBody)> RenderOverduePaymentEmailAsync(OverduePaymentEmailData data);
+    Task<(string htmlBody, string textBody)> RenderLeaseExpirationEmailAsync(LeaseExpirationEmailData data);
 }
 
 public class TenantInvitationEmailData
@@ -86,6 +87,23 @@ public class OverduePaymentEmailData
     public string OwnerEmail { get; set; } = string.Empty;
     public string? OwnerPhone { get; set; }
     public string FrontendUrl { get; set; } = string.Empty;
+}
+
+public class LeaseExpirationEmailData
+{
+    public string TenantFirstName { get; set; } = string.Empty;
+    public string TenantEmail { get; set; } = string.Empty;
+    public string PropertyAddress { get; set; } = string.Empty;
+    public string LeaseEndDate { get; set; } = string.Empty;
+    public int DaysUntilExpiration { get; set; }
+    public string LeaseStartDate { get; set; } = string.Empty;
+    public decimal CurrentRentAmount { get; set; }
+    public string RenewalUrl { get; set; } = string.Empty;
+    public string OwnerName { get; set; } = string.Empty;
+    public string OwnerEmail { get; set; } = string.Empty;
+    public string? OwnerPhone { get; set; }
+    public string FrontendUrl { get; set; } = string.Empty;
+    public string UrgencyLevel { get; set; } = string.Empty; // "notice", "reminder", "urgent"
 }
 
 public class EmailTemplateService : IEmailTemplateService
@@ -336,6 +354,55 @@ public class EmailTemplateService : IEmailTemplateService
         {
             rendered = Regex.Replace(rendered, @"\{\{#if LateFee\}\}.*?\{\{/if\}\}", "", RegexOptions.Singleline);
         }
+
+        // Handle conditional OwnerPhone
+        if (!string.IsNullOrWhiteSpace(data.OwnerPhone))
+        {
+            rendered = Regex.Replace(rendered, @"\{\{#if OwnerPhone\}\}(.*?)\{\{/if\}\}", "$1", RegexOptions.Singleline);
+            rendered = rendered.Replace("{{OwnerPhone}}", data.OwnerPhone);
+        }
+        else
+        {
+            rendered = Regex.Replace(rendered, @"\{\{#if OwnerPhone\}\}.*?\{\{/if\}\}", "", RegexOptions.Singleline);
+        }
+
+        return rendered;
+    }
+
+    public async Task<(string htmlBody, string textBody)> RenderLeaseExpirationEmailAsync(LeaseExpirationEmailData data)
+    {
+        var htmlTemplatePath = Path.Combine(_templateBasePath, "LeaseExpirationEmail.html");
+        var textTemplatePath = Path.Combine(_templateBasePath, "LeaseExpirationEmail.txt");
+
+        if (!File.Exists(htmlTemplatePath) || !File.Exists(textTemplatePath))
+        {
+            throw new FileNotFoundException("Lease expiration email template files not found");
+        }
+
+        var htmlTemplate = await File.ReadAllTextAsync(htmlTemplatePath);
+        var textTemplate = await File.ReadAllTextAsync(textTemplatePath);
+
+        var htmlBody = RenderLeaseExpirationTemplate(htmlTemplate, data);
+        var textBody = RenderLeaseExpirationTemplate(textTemplate, data);
+
+        return (htmlBody, textBody);
+    }
+
+    private string RenderLeaseExpirationTemplate(string template, LeaseExpirationEmailData data)
+    {
+        var rendered = template
+            .Replace("{{TenantFirstName}}", data.TenantFirstName)
+            .Replace("{{TenantEmail}}", data.TenantEmail)
+            .Replace("{{PropertyAddress}}", data.PropertyAddress)
+            .Replace("{{LeaseEndDate}}", data.LeaseEndDate)
+            .Replace("{{DaysUntilExpiration}}", data.DaysUntilExpiration.ToString())
+            .Replace("{{LeaseStartDate}}", data.LeaseStartDate)
+            .Replace("{{CurrentRentAmount}}", FormatCurrency(data.CurrentRentAmount))
+            .Replace("{{RenewalUrl}}", data.RenewalUrl)
+            .Replace("{{OwnerName}}", data.OwnerName)
+            .Replace("{{OwnerEmail}}", data.OwnerEmail)
+            .Replace("{{FrontendUrl}}", data.FrontendUrl)
+            .Replace("{{UrgencyLevel}}", data.UrgencyLevel);
 
         // Handle conditional OwnerPhone
         if (!string.IsNullOrWhiteSpace(data.OwnerPhone))

@@ -248,6 +248,55 @@ public class TestEmailController : ControllerBase
         }
     }
 
+    [HttpPost("lease-expiration")]
+    public async Task<IActionResult> SendTestLeaseExpiration([FromBody] TestTemplateEmailRequest request)
+    {
+        try
+        {
+            var frontendUrl = _configuration["FrontendUrl"] ?? "http://localhost:3000";
+
+            // Simulate a lease expiring in 30 days (reminder urgency)
+            var leaseEndDate = DateTime.UtcNow.AddDays(30);
+            var leaseStartDate = DateTime.UtcNow.AddMonths(-11);
+            var daysUntilExpiration = 30;
+
+            var emailData = new LeaseExpirationEmailData
+            {
+                TenantFirstName = "Test User",
+                TenantEmail = request.RecipientEmail,
+                PropertyAddress = "123 Main Street, Apt 4B, Bucharest, Romania",
+                LeaseEndDate = leaseEndDate.ToString("MMMM d, yyyy"),
+                DaysUntilExpiration = daysUntilExpiration,
+                LeaseStartDate = leaseStartDate.ToString("MMMM d, yyyy"),
+                CurrentRentAmount = 2500.00m,
+                RenewalUrl = $"{frontendUrl}/renewal",
+                OwnerName = "Test Property Owner",
+                OwnerEmail = "owner@example.com",
+                OwnerPhone = "+40 123 456 789",
+                FrontendUrl = frontendUrl,
+                UrgencyLevel = "reminder" // 30 days = reminder
+            };
+
+            var subject = $"Lease Expiring in 30 Days - Action Required - {emailData.PropertyAddress}";
+            var jobId = _backgroundEmailService.EnqueueLeaseExpirationEmail(emailData, subject);
+
+            _logger.LogInformation("Test lease expiration email enqueued (JobId: {JobId}) to {Email}", jobId, request.RecipientEmail);
+
+            return await Task.FromResult(Ok(new
+            {
+                success = true,
+                message = $"Lease expiration test email queued successfully",
+                jobId = jobId,
+                recipientEmail = request.RecipientEmail
+            }));
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to send test lease expiration email");
+            return await Task.FromResult(StatusCode(500, new { success = false, message = "Failed to send test email", error = ex.Message }));
+        }
+    }
+
     [HttpPost("all")]
     public async Task<IActionResult> SendAllTestEmails([FromBody] TestTemplateEmailRequest request)
     {
@@ -289,6 +338,13 @@ public class TestEmailController : ControllerBase
             {
                 var result = overduePaymentOk.Value as dynamic;
                 jobIds["overduePayment"] = result?.jobId ?? string.Empty;
+            }
+
+            var leaseExpirationResult = await SendTestLeaseExpiration(request);
+            if (leaseExpirationResult is OkObjectResult leaseExpirationOk)
+            {
+                var result = leaseExpirationOk.Value as dynamic;
+                jobIds["leaseExpiration"] = result?.jobId ?? string.Empty;
             }
 
             _logger.LogInformation("All test emails enqueued to {Email}", request.RecipientEmail);

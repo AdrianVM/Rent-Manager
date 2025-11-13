@@ -1,0 +1,50 @@
+AVM PROPERTY MANAGEMENT
+========================
+
+📅 LEASE EXPIRATION NOTICE
+
+Hi {{TenantFirstName}},
+
+Your lease for {{PropertyAddress}} is set to expire on {{LeaseEndDate}} (in {{DaysUntilExpiration}} days).
+
+CURRENT LEASE INFORMATION
+=========================
+
+Property:          {{PropertyAddress}}
+Lease Start:       {{LeaseStartDate}}
+Lease End:         {{LeaseEndDate}}
+Current Rent:      {{CurrentRentAmount}} RON/month
+Days Remaining:    {{DaysUntilExpiration}} days
+
+WHAT HAPPENS NEXT?
+==================
+
+If you'd like to renew: Contact your property owner to discuss renewal terms and sign a new lease agreement.
+
+If you're planning to move out: Review your lease for move-out notice requirements and contact your property owner to coordinate the transition.
+
+CONTACT OWNER ABOUT RENEWAL
+============================
+
+Visit the renewal portal:
+{{RenewalUrl}}
+
+READY TO DISCUSS YOUR OPTIONS?
+===============================
+
+Reach out to your property owner to discuss lease renewal or move-out arrangements:
+
+{{OwnerName}}
+Email: {{OwnerEmail}}
+{{#if OwnerPhone}}Phone: {{OwnerPhone}}
+{{/if}}
+
+---
+
+Need help?
+Contact AVM Support: support@rentflow.ro
+
+Visit AVM Portal: {{FrontendUrl}}
+
+© 2025 AVM Property Management
+Professional Property Management Platform
