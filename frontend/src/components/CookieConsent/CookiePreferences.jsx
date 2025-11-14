@@ -47,8 +47,13 @@ const CookiePreferences = ({ onSave, onClose }) => {
 
     try {
       await cookieConsentService.saveConsent(preferences);
+      // Success - call onSave callback
       if (onSave) {
         onSave(preferences);
+      }
+      // Also close the modal
+      if (onClose) {
+        onClose();
       }
     } catch (err) {
       setError('Failed to save preferences. Please try again.');
@@ -64,8 +69,13 @@ const CookiePreferences = ({ onSave, onClose }) => {
 
     try {
       await cookieConsentService.acceptAll();
+      // Success - call onSave callback
       if (onSave) {
         onSave({ functional: true, performance: true, marketing: true });
+      }
+      // Also close the modal
+      if (onClose) {
+        onClose();
       }
     } catch (err) {
       setError('Failed to save preferences. Please try again.');
