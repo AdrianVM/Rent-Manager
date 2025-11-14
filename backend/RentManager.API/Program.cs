@@ -54,6 +54,9 @@ builder.Services.Configure<RentManager.API.Services.Email.ScalewayEmailSettings>
 builder.Services.AddScoped<RentManager.API.Services.Email.IEmailService, RentManager.API.Services.Email.ScalewayEmailService>();
 builder.Services.AddScoped<RentManager.API.Services.Email.IEmailTemplateService, RentManager.API.Services.Email.EmailTemplateService>();
 
+// Privacy Policy Service
+builder.Services.AddScoped<IPrivacyPolicyService, PrivacyPolicyService>();
+
 builder.Services.AddScoped<SeedDataService>();
 
 // Add Hangfire background jobs

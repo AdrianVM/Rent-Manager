@@ -23,6 +23,8 @@ namespace RentManager.API.Data
         public DbSet<Person> Persons { get; set; } = null!;
         public DbSet<MaintenanceRequest> MaintenanceRequests { get; set; } = null!;
         public DbSet<CookieConsent> CookieConsents { get; set; } = null!;
+        public DbSet<PrivacyPolicyVersion> PrivacyPolicyVersions { get; set; } = null!;
+        public DbSet<UserPrivacyPolicyAcceptance> UserPrivacyPolicyAcceptances { get; set; } = null!;
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -332,6 +334,46 @@ namespace RentManager.API.Data
                 entity.Property(e => e.UserAgent).HasMaxLength(500);
                 entity.Property(e => e.PolicyVersion).IsRequired().HasMaxLength(10);
                 entity.Property(e => e.ExpiryDate).IsRequired();
+            });
+
+            // Configure PrivacyPolicyVersion entity
+            modelBuilder.Entity<PrivacyPolicyVersion>(entity =>
+            {
+                entity.ToTable("privacy_policy_versions");
+                entity.HasKey(e => e.Id);
+                entity.HasIndex(e => e.Version).IsUnique();
+                entity.HasIndex(e => e.IsCurrent);
+                entity.HasIndex(e => e.EffectiveDate);
+
+                entity.Property(e => e.Version).IsRequired().HasMaxLength(10);
+                entity.Property(e => e.ContentHtml).IsRequired();
+                entity.Property(e => e.EffectiveDate).IsRequired();
+                entity.Property(e => e.CreatedAt).IsRequired();
+                entity.Property(e => e.IsCurrent).IsRequired();
+                entity.Property(e => e.RequiresReAcceptance).IsRequired();
+                entity.Property(e => e.CreatedBy).HasMaxLength(255);
+                entity.Property(e => e.ChangesSummary).HasMaxLength(2000);
+            });
+
+            // Configure UserPrivacyPolicyAcceptance entity
+            modelBuilder.Entity<UserPrivacyPolicyAcceptance>(entity =>
+            {
+                entity.ToTable("user_privacy_policy_acceptances");
+                entity.HasKey(e => e.Id);
+                entity.HasIndex(e => e.UserId);
+                entity.HasIndex(e => e.PolicyVersionId);
+                entity.HasIndex(e => new { e.UserId, e.PolicyVersionId });
+
+                entity.Property(e => e.UserId).IsRequired().HasMaxLength(255);
+                entity.Property(e => e.AcceptedAt).IsRequired();
+                entity.Property(e => e.IpAddress).HasMaxLength(45);
+                entity.Property(e => e.UserAgent).HasMaxLength(500);
+                entity.Property(e => e.AcceptanceMethod).HasMaxLength(50);
+
+                entity.HasOne(e => e.PolicyVersion)
+                    .WithMany(pv => pv.UserAcceptances)
+                    .HasForeignKey(e => e.PolicyVersionId)
+                    .OnDelete(DeleteBehavior.Restrict); // Don't delete version if acceptances exist
             });
         }
     }

@@ -1,0 +1,259 @@
+.privacy-policy-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  padding: 20px;
+}
+
+.privacy-policy-modal-overlay.blocking {
+  background-color: rgba(0, 0, 0, 0.8);
+}
+
+.privacy-policy-modal {
+  background: white;
+  border-radius: 8px;
+  max-width: 800px;
+  width: 100%;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+}
+
+.privacy-policy-modal-header {
+  padding: 24px;
+  border-bottom: 1px solid #e0e0e0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.privacy-policy-modal-header h2 {
+  margin: 0;
+  font-size: 24px;
+  color: #1a1a1a;
+  font-weight: 600;
+}
+
+.policy-version-badge {
+  background-color: #f0f0f0;
+  padding: 6px 12px;
+  border-radius: 4px;
+  font-size: 14px;
+  font-weight: 500;
+  color: #666;
+}
+
+.privacy-policy-modal-content {
+  flex: 1;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  padding: 24px;
+}
+
+.changes-summary {
+  background-color: #fff8e1;
+  border-left: 4px solid #ffc107;
+  padding: 16px;
+  margin-bottom: 20px;
+  border-radius: 4px;
+}
+
+.changes-summary h3 {
+  margin: 0 0 8px 0;
+  font-size: 16px;
+  color: #1a1a1a;
+  font-weight: 600;
+}
+
+.changes-summary p {
+  margin: 0;
+  font-size: 14px;
+  color: #333;
+  line-height: 1.5;
+}
+
+.policy-scroll-area {
+  flex: 1;
+  overflow-y: auto;
+  border: 1px solid #e0e0e0;
+  border-radius: 4px;
+  padding: 20px;
+  background-color: #fafafa;
+}
+
+.policy-html-content {
+  line-height: 1.6;
+  color: #333;
+}
+
+.policy-html-content h2 {
+  font-size: 20px;
+  color: #1a1a1a;
+  margin-top: 24px;
+  margin-bottom: 12px;
+  font-weight: 600;
+}
+
+.policy-html-content h3 {
+  font-size: 18px;
+  color: #333;
+  margin-top: 20px;
+  margin-bottom: 10px;
+  font-weight: 600;
+}
+
+.policy-html-content p {
+  margin-bottom: 12px;
+  font-size: 15px;
+}
+
+.policy-html-content ul,
+.policy-html-content ol {
+  margin-bottom: 12px;
+  padding-left: 24px;
+}
+
+.policy-html-content li {
+  margin-bottom: 6px;
+  font-size: 15px;
+}
+
+.policy-html-content a {
+  color: #0066cc;
+  text-decoration: none;
+}
+
+.policy-html-content a:hover {
+  text-decoration: underline;
+}
+
+.acceptance-error {
+  margin-top: 16px;
+  padding: 12px;
+  background-color: #ffebee;
+  border-left: 4px solid #d32f2f;
+  border-radius: 4px;
+  color: #d32f2f;
+  font-size: 14px;
+}
+
+.privacy-policy-modal-footer {
+  padding: 24px;
+  border-top: 1px solid #e0e0e0;
+}
+
+.acceptance-required-note {
+  margin: 0 0 16px 0;
+  font-size: 14px;
+  color: #666;
+  text-align: center;
+}
+
+.modal-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+}
+
+.btn-later,
+.btn-accept,
+.btn-retry {
+  padding: 12px 24px;
+  border: none;
+  border-radius: 4px;
+  font-size: 16px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-later {
+  background-color: #f5f5f5;
+  color: #666;
+}
+
+.btn-later:hover:not(:disabled) {
+  background-color: #e0e0e0;
+}
+
+.btn-accept,
+.btn-retry {
+  background-color: #4caf50;
+  color: white;
+}
+
+.btn-accept:hover:not(:disabled),
+.btn-retry:hover {
+  background-color: #45a049;
+}
+
+.btn-accept:disabled,
+.btn-later:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.privacy-policy-modal-loading,
+.privacy-policy-modal-error {
+  padding: 60px 40px;
+  text-align: center;
+}
+
+.privacy-policy-modal-loading {
+  color: #666;
+  font-size: 18px;
+}
+
+.privacy-policy-modal-error h3 {
+  color: #d32f2f;
+  margin: 0 0 12px 0;
+}
+
+.privacy-policy-modal-error p {
+  color: #666;
+  margin: 0 0 20px 0;
+}
+
+@media (max-width: 768px) {
+  .privacy-policy-modal {
+    max-height: 95vh;
+  }
+
+  .privacy-policy-modal-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 20px;
+  }
+
+  .privacy-policy-modal-header h2 {
+    font-size: 20px;
+  }
+
+  .privacy-policy-modal-content {
+    padding: 16px;
+  }
+
+  .policy-scroll-area {
+    padding: 16px;
+  }
+
+  .modal-actions {
+    flex-direction: column;
+  }
+
+  .btn-later,
+  .btn-accept,
+  .btn-retry {
+    width: 100%;
+  }
+}

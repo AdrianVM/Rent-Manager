@@ -30,6 +30,7 @@ import {
   OccupancyRevenue
 } from './pages';
 import CookiePolicy from './pages/CookiePolicy/CookiePolicy';
+import PrivacyPolicyPage from './pages/PrivacyPolicy/PrivacyPolicyPage';
 import TenantOnboarding from './pages/TenantOnboarding';
 import AuthCallback from './pages/AuthCallback';
 import Logout from './pages/Logout';
@@ -146,6 +147,7 @@ function App() {
           <Route path="/onboard" element={<TenantOnboarding />} />
           <Route path="/logo-showcase" element={<LogoShowcase />} />
           <Route path="/cookie-policy" element={<CookiePolicy />} />
+          <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />
           <Route path="*" element={<Login onLoginSuccess={handleLoginSuccess} />} />
         </Routes>
         <Footer />
@@ -190,6 +192,7 @@ function App() {
         <Route path="/onboard" element={<TenantOnboarding />} />
         <Route path="/logo-showcase" element={<LogoShowcase />} />
         <Route path="/cookie-policy" element={<CookiePolicy />} />
+        <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />
 
         {/* Authenticated routes */}
         <Route path="/*" element={

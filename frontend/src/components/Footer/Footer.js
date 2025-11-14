@@ -45,7 +45,7 @@ function Footer() {
           <div className="footer-section">
             <h3 className="footer-heading">Legal</h3>
             <ul className="footer-links">
-              <li><a href="#privacy" className="footer-link">Privacy Policy</a></li>
+              <li><a href="/privacy-policy" className="footer-link">Privacy Policy</a></li>
               <li><a href="#terms" className="footer-link">Terms of Service</a></li>
               <li><a href="#security" className="footer-link">Security</a></li>
               <li><a href="/cookie-policy" className="footer-link">Cookie Policy</a></li>
