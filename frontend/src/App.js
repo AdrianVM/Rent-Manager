@@ -31,6 +31,7 @@ import {
 } from './pages';
 import CookiePolicy from './pages/CookiePolicy/CookiePolicy';
 import PrivacyPolicyPage from './pages/PrivacyPolicy/PrivacyPolicyPage';
+import DataSubjectRequestPage from './pages/DataRequests/DataSubjectRequestPage';
 import TenantOnboarding from './pages/TenantOnboarding';
 import AuthCallback from './pages/AuthCallback';
 import Logout from './pages/Logout';
@@ -253,6 +254,9 @@ function App() {
                       <Route path="/reports/occupancy-revenue" element={<OccupancyRevenue />} />
                     </>
                   )}
+
+                  {/* Privacy and Data Requests - Available to all authenticated users */}
+                  <Route path="/data-requests" element={<DataSubjectRequestPage />} />
 
                   {/* Admin-only routes */}
                   {isAdmin && (
