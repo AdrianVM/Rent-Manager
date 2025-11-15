@@ -1,6 +1,6 @@
 import authService from './authService';
 
-const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5057/api';
+const API_URL = process.env.REACT_APP_API_URL;
 const CONSENT_TOKEN_KEY = 'cookieConsentToken';
 const CONSENT_PREFERENCES_KEY = 'cookieConsent';
 

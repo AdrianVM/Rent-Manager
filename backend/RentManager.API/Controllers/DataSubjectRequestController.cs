@@ -4,6 +4,8 @@ using RentManager.API.Models;
 using RentManager.API.Services.DataSubject;
 using System.Security.Claims;
 using Hangfire;
+using RentManager.API.DTOs.DataSubjectRequest;
+using RentManager.API.Mappers;
 
 namespace RentManager.API.Controllers;
 
@@ -38,7 +40,7 @@ public class DataSubjectRequestController : ControllerBase
     [HttpPost]
     [ProducesResponseType(StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<ActionResult<DataSubjectRequest>> CreateRequest([FromBody] CreateDataSubjectRequestDto dto)
+    public async Task<ActionResult<DataSubjectRequestDto>> CreateRequest([FromBody] CreateDataSubjectRequestDto dto)
     {
         var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
         if (string.IsNullOrEmpty(userId))
@@ -71,7 +73,8 @@ public class DataSubjectRequestController : ControllerBase
                 dto.RequestType
             );
 
-            return CreatedAtAction(nameof(GetRequestById), new { id = request.Id }, request);
+            var result = request.ToDto();
+            return CreatedAtAction(nameof(GetRequestById), new { id = request.Id }, result);
         }
         catch (InvalidOperationException ex)
         {
@@ -88,7 +91,7 @@ public class DataSubjectRequestController : ControllerBase
     /// </summary>
     [HttpGet("my-requests")]
     [ProducesResponseType(StatusCodes.Status200OK)]
-    public async Task<ActionResult<List<DataSubjectRequest>>> GetMyRequests()
+    public async Task<ActionResult<List<DataSubjectRequestDto>>> GetMyRequests()
     {
         var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
         if (string.IsNullOrEmpty(userId))
@@ -97,7 +100,7 @@ public class DataSubjectRequestController : ControllerBase
         }
 
         var requests = await _requestService.GetUserRequestsAsync(userId);
-        return Ok(requests);
+        return Ok(requests.ToDto());
     }
 
     /// <summary>
@@ -106,7 +109,7 @@ public class DataSubjectRequestController : ControllerBase
     [HttpGet("{id}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<ActionResult<DataSubjectRequest>> GetRequestById(int id)
+    public async Task<ActionResult<DataSubjectRequestDto>> GetRequestById(int id)
     {
         var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
         if (string.IsNullOrEmpty(userId))
@@ -123,7 +126,7 @@ public class DataSubjectRequestController : ControllerBase
             return NotFound(new { message = $"Request {id} not found" });
         }
 
-        return Ok(request);
+        return Ok(request.ToDto());
     }
 
     /// <summary>
@@ -225,10 +228,10 @@ public class DataSubjectRequestController : ControllerBase
     [HttpGet("admin/pending")]
     [Authorize(Roles = "Admin")]
     [ProducesResponseType(StatusCodes.Status200OK)]
-    public async Task<ActionResult<List<DataSubjectRequest>>> GetPendingRequests()
+    public async Task<ActionResult<List<DataSubjectRequestDto>>> GetPendingRequests()
     {
         var requests = await _requestService.GetPendingRequestsAsync();
-        return Ok(requests);
+        return Ok(requests.ToDto());
     }
 
     /// <summary>
@@ -238,7 +241,7 @@ public class DataSubjectRequestController : ControllerBase
     [Authorize(Roles = "Admin")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<ActionResult<DataSubjectRequest>> UpdateRequestStatus(
+    public async Task<ActionResult<DataSubjectRequestDto>> UpdateRequestStatus(
         int id,
         [FromBody] UpdateRequestStatusDto dto)
     {
@@ -281,7 +284,7 @@ public class DataSubjectRequestController : ControllerBase
                 );
             }
 
-            return Ok(request);
+            return Ok(request.ToDto());
         }
         catch (KeyNotFoundException ex)
         {
@@ -300,7 +303,7 @@ public class DataSubjectRequestController : ControllerBase
     [Authorize(Roles = "Admin")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<ActionResult<DataSubjectRequest>> AssignRequest(
+    public async Task<ActionResult<DataSubjectRequestDto>> AssignRequest(
         int id,
         [FromBody] AssignRequestDto dto)
     {
@@ -313,29 +316,11 @@ public class DataSubjectRequestController : ControllerBase
         try
         {
             var request = await _requestService.AssignRequestAsync(id, dto.AssignToAdminId, adminId);
-            return Ok(request);
+            return Ok(request.ToDto());
         }
         catch (KeyNotFoundException ex)
         {
             return NotFound(new { message = ex.Message });
         }
     }
-}
-
-// DTOs
-public class CreateDataSubjectRequestDto
-{
-    public string RequestType { get; set; } = string.Empty;
-    public string? Description { get; set; }
-}
-
-public class UpdateRequestStatusDto
-{
-    public string Status { get; set; } = string.Empty;
-    public string? AdminNotes { get; set; }
-}
-
-public class AssignRequestDto
-{
-    public string AssignToAdminId { get; set; } = string.Empty;
 }

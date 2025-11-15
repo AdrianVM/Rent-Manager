@@ -3,7 +3,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import WizardStepper from '../components/common/WizardStepper';
 import { PrimaryButton, SecondaryButton } from '../components/common';
 
-const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:5057/api';
+const API_BASE_URL = process.env.REACT_APP_API_URL;
 
 function TenantOnboarding() {
   const [searchParams] = useSearchParams();

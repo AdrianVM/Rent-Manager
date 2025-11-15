@@ -125,10 +125,19 @@
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
+/* Submit Request Section */
+.submit-request-section h2 {
+  color: var(--text-primary);
+  font-size: var(--font-size-2xl);
+  font-weight: var(--font-weight-semibold);
+  margin: 0 0 var(--space-md) 0;
+}
+
 .section-description {
-  color: #718096;
+  color: var(--text-secondary);
   margin-bottom: 2rem;
   line-height: 1.6;
+  font-size: var(--font-size-base);
 }
 
 .form-group {
@@ -360,9 +369,12 @@
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
+/* Preview Section */
 .preview-section h2 {
-  color: #2d3748;
-  margin-bottom: 1.5rem;
+  color: var(--text-primary);
+  font-size: var(--font-size-2xl);
+  font-weight: var(--font-weight-semibold);
+  margin: 0 0 var(--space-lg) 0;
 }
 
 .data-categories,

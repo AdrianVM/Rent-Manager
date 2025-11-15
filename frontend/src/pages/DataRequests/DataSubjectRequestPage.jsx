@@ -14,7 +14,7 @@ const DataSubjectRequestPage = () => {
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
 
-  const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5057/api';
+  const API_URL = process.env.REACT_APP_API_URL;
 
   const requestTypes = [
     {
@@ -174,7 +174,11 @@ const DataSubjectRequestPage = () => {
         setActiveTab('my-requests');
       }, 2000);
     } catch (err) {
-      setError(err.message);
+      if (err.name === 'TypeError' && err.message.includes('fetch')) {
+        setError('Network error: Unable to connect to the server. Please check your connection and try again.');
+      } else {
+        setError(err.message || 'An unexpected error occurred');
+      }
     } finally {
       setLoading(false);
     }
@@ -226,6 +230,22 @@ const DataSubjectRequestPage = () => {
       minute: '2-digit'
     });
   };
+
+  // Check if user is authenticated
+  if (!token) {
+    return (
+      <div className="data-subject-request-page">
+        <div className="page-header">
+          <h1>Privacy & Data Requests</h1>
+          <p>Exercise your data protection rights under GDPR</p>
+        </div>
+        <div className="error-message">
+          <strong>Authentication Required</strong>
+          <p>You must be logged in to submit data subject requests. Please log in and try again.</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="data-subject-request-page">

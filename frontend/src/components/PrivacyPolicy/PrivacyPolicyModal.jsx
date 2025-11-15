@@ -13,7 +13,7 @@ const PrivacyPolicyModal = ({ onAccept, blocking = true }) => {
 
   const fetchCurrentPolicy = async () => {
     try {
-      const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5057/api';
+      const API_URL = process.env.REACT_APP_API_URL;
       const response = await fetch(`${API_URL}/PrivacyPolicy/current`);
 
       if (!response.ok) {
@@ -37,7 +37,7 @@ const PrivacyPolicyModal = ({ onAccept, blocking = true }) => {
     setError(null);
 
     try {
-      const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5057/api';
+      const API_URL = process.env.REACT_APP_API_URL;
       const token = localStorage.getItem('token');
 
       if (!token) {
