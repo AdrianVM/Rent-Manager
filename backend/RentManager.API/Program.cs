@@ -57,6 +57,12 @@ builder.Services.AddScoped<RentManager.API.Services.Email.IEmailTemplateService,
 // Privacy Policy Service
 builder.Services.AddScoped<IPrivacyPolicyService, PrivacyPolicyService>();
 
+// Data Subject Request Services (GDPR Phase 2)
+builder.Services.AddScoped<RentManager.API.Services.DataSubject.IDataSubjectRequestService, RentManager.API.Services.DataSubject.DataSubjectRequestService>();
+builder.Services.AddScoped<RentManager.API.Services.DataSubject.IDataAccessService, RentManager.API.Services.DataSubject.DataAccessService>();
+builder.Services.AddScoped<RentManager.API.Services.DataSubject.IDataDeletionService, RentManager.API.Services.DataSubject.DataDeletionService>();
+builder.Services.AddScoped<RentManager.API.Services.DataSubject.IDataPortabilityService, RentManager.API.Services.DataSubject.DataPortabilityService>();
+
 builder.Services.AddScoped<SeedDataService>();
 
 // Add Hangfire background jobs
@@ -70,6 +76,10 @@ builder.Services.AddScoped<RentManager.API.BackgroundJobs.Jobs.TenantInvitationE
 builder.Services.AddScoped<RentManager.API.BackgroundJobs.Jobs.PaymentConfirmationEmailJob>();
 builder.Services.AddScoped<RentManager.API.BackgroundJobs.Jobs.ContractUploadEmailJob>();
 builder.Services.AddScoped<RentManager.API.BackgroundJobs.Jobs.WelcomeEmailJob>();
+
+// Register data subject request background jobs
+builder.Services.AddScoped<RentManager.API.BackgroundJobs.Jobs.DataAccessRequestJob>();
+builder.Services.AddScoped<RentManager.API.BackgroundJobs.Jobs.RequestDeadlineReminderJob>();
 
 // Zitadel OAuth Configuration
 var zitadelSettings = builder.Configuration.GetSection("Zitadel");

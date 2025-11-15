@@ -25,6 +25,9 @@ namespace RentManager.API.Data
         public DbSet<CookieConsent> CookieConsents { get; set; } = null!;
         public DbSet<PrivacyPolicyVersion> PrivacyPolicyVersions { get; set; } = null!;
         public DbSet<UserPrivacyPolicyAcceptance> UserPrivacyPolicyAcceptances { get; set; } = null!;
+        public DbSet<DataSubjectRequest> DataSubjectRequests { get; set; } = null!;
+        public DbSet<DataSubjectRequestHistory> DataSubjectRequestHistories { get; set; } = null!;
+        public DbSet<DataDeletionLog> DataDeletionLogs { get; set; } = null!;
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -374,6 +377,82 @@ namespace RentManager.API.Data
                     .WithMany(pv => pv.UserAcceptances)
                     .HasForeignKey(e => e.PolicyVersionId)
                     .OnDelete(DeleteBehavior.Restrict); // Don't delete version if acceptances exist
+            });
+
+            // Configure DataSubjectRequest entity
+            modelBuilder.Entity<DataSubjectRequest>(entity =>
+            {
+                entity.ToTable("data_subject_requests");
+                entity.HasKey(e => e.Id);
+                entity.HasIndex(e => e.UserId);
+                entity.HasIndex(e => e.RequestType);
+                entity.HasIndex(e => e.Status);
+                entity.HasIndex(e => e.SubmittedAt);
+                entity.HasIndex(e => e.DeadlineAt);
+                entity.HasIndex(e => new { e.UserId, e.Status });
+
+                entity.Property(e => e.UserId).IsRequired().HasMaxLength(255);
+                entity.Property(e => e.RequestType).IsRequired().HasMaxLength(50);
+                entity.Property(e => e.Status).IsRequired().HasMaxLength(50);
+                entity.Property(e => e.Description).HasMaxLength(2000);
+                entity.Property(e => e.SubmittedAt).IsRequired();
+                entity.Property(e => e.DeadlineAt).IsRequired();
+                entity.Property(e => e.IpAddress).HasMaxLength(45);
+                entity.Property(e => e.UserAgent).HasMaxLength(500);
+                entity.Property(e => e.AssignedToAdminId).HasMaxLength(255);
+                entity.Property(e => e.AdminNotes).HasMaxLength(2000);
+                entity.Property(e => e.ExportFilePath).HasMaxLength(500);
+                entity.Property(e => e.DeletionSummary).HasMaxLength(2000);
+                entity.Property(e => e.RetentionSummary).HasMaxLength(2000);
+                entity.Property(e => e.VerificationMethod).HasMaxLength(100);
+                entity.Property(e => e.IdentityVerified).IsRequired();
+            });
+
+            // Configure DataSubjectRequestHistory entity
+            modelBuilder.Entity<DataSubjectRequestHistory>(entity =>
+            {
+                entity.ToTable("data_subject_request_histories");
+                entity.HasKey(e => e.Id);
+                entity.HasIndex(e => e.RequestId);
+                entity.HasIndex(e => e.PerformedAt);
+
+                entity.Property(e => e.Action).IsRequired().HasMaxLength(100);
+                entity.Property(e => e.OldStatus).HasMaxLength(50);
+                entity.Property(e => e.NewStatus).HasMaxLength(50);
+                entity.Property(e => e.Details).HasMaxLength(2000);
+                entity.Property(e => e.PerformedBy).HasMaxLength(255);
+                entity.Property(e => e.PerformedByRole).HasMaxLength(50);
+                entity.Property(e => e.PerformedAt).IsRequired();
+                entity.Property(e => e.IpAddress).HasMaxLength(45);
+
+                entity.HasOne(e => e.Request)
+                    .WithMany(r => r.History)
+                    .HasForeignKey(e => e.RequestId)
+                    .OnDelete(DeleteBehavior.Cascade);
+            });
+
+            // Configure DataDeletionLog entity
+            modelBuilder.Entity<DataDeletionLog>(entity =>
+            {
+                entity.ToTable("data_deletion_logs");
+                entity.HasKey(e => e.Id);
+                entity.HasIndex(e => e.UserId);
+                entity.HasIndex(e => e.DataCategory);
+                entity.HasIndex(e => e.DeletedAt);
+                entity.HasIndex(e => e.Reason);
+                entity.HasIndex(e => e.RelatedRequestId);
+
+                entity.Property(e => e.UserId).IsRequired().HasMaxLength(255);
+                entity.Property(e => e.DataCategory).IsRequired().HasMaxLength(100);
+                entity.Property(e => e.Description).HasMaxLength(2000);
+                entity.Property(e => e.DeletionMethod).IsRequired().HasMaxLength(50);
+                entity.Property(e => e.Reason).IsRequired().HasMaxLength(100);
+                entity.Property(e => e.LegalBasis).HasMaxLength(500);
+                entity.Property(e => e.DeletedAt).IsRequired();
+                entity.Property(e => e.DeletedBy).HasMaxLength(255);
+                entity.Property(e => e.IpAddress).HasMaxLength(45);
+                entity.Property(e => e.IsReversible).IsRequired();
+                entity.Property(e => e.BackupLocation).HasMaxLength(500);
             });
         }
     }
