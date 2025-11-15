@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { useAuth } from '../../contexts/AuthContext';
+import authService from '../../services/authService';
 import './DataSubjectRequestPage.css';
 
 const DataSubjectRequestPage = () => {
-  const { token } = useAuth();
+  const token = authService.getToken();
   const [activeTab, setActiveTab] = useState('submit'); // submit, my-requests, preview
   const [requestType, setRequestType] = useState('');
   const [description, setDescription] = useState('');
