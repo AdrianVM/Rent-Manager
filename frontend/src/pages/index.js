@@ -20,3 +20,6 @@ export { default as IncomeStatement } from './Reports/IncomeStatement';
 export { default as RentCollection } from './Reports/RentCollection';
 export { default as CashFlow } from './Reports/CashFlow';
 export { default as OccupancyRevenue } from './Reports/OccupancyRevenue';
+
+// Privacy & Compliance
+export { default as DataRetentionDashboard } from './PrivacyCompliance/DataRetentionDashboard';

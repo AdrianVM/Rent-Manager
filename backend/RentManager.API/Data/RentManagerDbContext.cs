@@ -28,6 +28,8 @@ namespace RentManager.API.Data
         public DbSet<DataSubjectRequest> DataSubjectRequests { get; set; } = null!;
         public DbSet<DataSubjectRequestHistory> DataSubjectRequestHistories { get; set; } = null!;
         public DbSet<DataDeletionLog> DataDeletionLogs { get; set; } = null!;
+        public DbSet<DataRetentionSchedule> DataRetentionSchedules { get; set; } = null!;
+        public DbSet<LegalHold> LegalHolds { get; set; } = null!;
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -453,6 +455,127 @@ namespace RentManager.API.Data
                 entity.Property(e => e.IpAddress).HasMaxLength(45);
                 entity.Property(e => e.IsReversible).IsRequired();
                 entity.Property(e => e.BackupLocation).HasMaxLength(500);
+            });
+
+            // Configure DataRetentionSchedule entity
+            modelBuilder.Entity<DataRetentionSchedule>(entity =>
+            {
+                entity.ToTable("data_retention_schedules");
+                entity.HasKey(e => e.Id);
+                entity.HasIndex(e => e.DataCategory).IsUnique();
+                entity.HasIndex(e => e.IsActive);
+
+                entity.Property(e => e.DataCategory).IsRequired().HasMaxLength(100);
+                entity.Property(e => e.Description).IsRequired().HasMaxLength(500);
+                entity.Property(e => e.RetentionMonths).IsRequired();
+                entity.Property(e => e.LegalBasis).IsRequired().HasMaxLength(500);
+                entity.Property(e => e.Action).HasConversion<string>().IsRequired();
+                entity.Property(e => e.IsActive).IsRequired();
+                entity.Property(e => e.CreatedAt).IsRequired();
+                entity.Property(e => e.ReviewedBy).HasMaxLength(255);
+
+                // Seed initial retention schedules
+                entity.HasData(
+                    new DataRetentionSchedule
+                    {
+                        Id = 1,
+                        DataCategory = "financial_records",
+                        Description = "Payment records, invoices, and financial transactions",
+                        RetentionMonths = 84, // 7 years
+                        LegalBasis = "Tax compliance requirements (IRS/HMRC 7-year retention)",
+                        Action = RetentionAction.Archive,
+                        IsActive = true,
+                        CreatedAt = new DateTimeOffset(2025, 1, 1, 0, 0, 0, TimeSpan.Zero)
+                    },
+                    new DataRetentionSchedule
+                    {
+                        Id = 2,
+                        DataCategory = "audit_logs",
+                        Description = "System logs, access logs, security logs",
+                        RetentionMonths = 3, // 90 days
+                        LegalBasis = "Security best practice and GDPR Article 5(2)",
+                        Action = RetentionAction.Delete,
+                        IsActive = true,
+                        CreatedAt = new DateTimeOffset(2025, 1, 1, 0, 0, 0, TimeSpan.Zero)
+                    },
+                    new DataRetentionSchedule
+                    {
+                        Id = 3,
+                        DataCategory = "cookie_consent",
+                        Description = "Cookie consent records",
+                        RetentionMonths = 24, // 2 years
+                        LegalBasis = "GDPR Article 7 - proof of consent requirement",
+                        Action = RetentionAction.Delete,
+                        IsActive = true,
+                        CreatedAt = new DateTimeOffset(2025, 1, 1, 0, 0, 0, TimeSpan.Zero)
+                    },
+                    new DataRetentionSchedule
+                    {
+                        Id = 4,
+                        DataCategory = "lease_agreements",
+                        Description = "Lease contracts and related documentation",
+                        RetentionMonths = 84, // 7 years after lease ends
+                        LegalBasis = "Legal obligation - contract law and tax compliance",
+                        Action = RetentionAction.Archive,
+                        IsActive = true,
+                        CreatedAt = new DateTimeOffset(2025, 1, 1, 0, 0, 0, TimeSpan.Zero)
+                    },
+                    new DataRetentionSchedule
+                    {
+                        Id = 5,
+                        DataCategory = "email_notifications",
+                        Description = "Sent email notifications (rent reminders, lease warnings)",
+                        RetentionMonths = 24, // 2 years
+                        LegalBasis = "Legitimate interest - proof of notification delivery",
+                        Action = RetentionAction.Delete,
+                        IsActive = true,
+                        CreatedAt = new DateTimeOffset(2025, 1, 1, 0, 0, 0, TimeSpan.Zero)
+                    },
+                    new DataRetentionSchedule
+                    {
+                        Id = 6,
+                        DataCategory = "inactive_accounts",
+                        Description = "User accounts inactive for extended periods",
+                        RetentionMonths = 36, // 3 years
+                        LegalBasis = "Legitimate interest - reduce data storage and security risk",
+                        Action = RetentionAction.Delete,
+                        IsActive = true,
+                        CreatedAt = new DateTimeOffset(2025, 1, 1, 0, 0, 0, TimeSpan.Zero)
+                    },
+                    new DataRetentionSchedule
+                    {
+                        Id = 7,
+                        DataCategory = "privacy_policy_acceptances",
+                        Description = "Privacy policy acceptance records",
+                        RetentionMonths = 84, // 7 years
+                        LegalBasis = "GDPR Article 7(1) - demonstrable consent requirement",
+                        Action = RetentionAction.Archive,
+                        IsActive = true,
+                        CreatedAt = new DateTimeOffset(2025, 1, 1, 0, 0, 0, TimeSpan.Zero)
+                    }
+                );
+            });
+
+            // Configure LegalHold entity
+            modelBuilder.Entity<LegalHold>(entity =>
+            {
+                entity.ToTable("legal_holds");
+                entity.HasKey(e => e.Id);
+                entity.HasIndex(e => e.UserId);
+                entity.HasIndex(e => e.IsActive);
+                entity.HasIndex(e => e.PlacedAt);
+                entity.HasIndex(e => new { e.UserId, e.IsActive });
+
+                entity.Property(e => e.UserId).IsRequired().HasMaxLength(255);
+                entity.Property(e => e.DataCategory).HasMaxLength(100);
+                entity.Property(e => e.Reason).IsRequired().HasMaxLength(1000);
+                entity.Property(e => e.PlacedAt).IsRequired();
+                entity.Property(e => e.PlacedBy).IsRequired().HasMaxLength(255);
+                entity.Property(e => e.ReleasedBy).HasMaxLength(255);
+                entity.Property(e => e.ReleaseReason).HasMaxLength(1000);
+                entity.Property(e => e.IsActive).IsRequired();
+                entity.Property(e => e.CaseReference).HasMaxLength(100);
+                entity.Property(e => e.Notes).HasMaxLength(2000);
             });
         }
     }

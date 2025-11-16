@@ -63,6 +63,11 @@ builder.Services.AddScoped<RentManager.API.Services.DataSubject.IDataAccessServi
 builder.Services.AddScoped<RentManager.API.Services.DataSubject.IDataDeletionService, RentManager.API.Services.DataSubject.DataDeletionService>();
 builder.Services.AddScoped<RentManager.API.Services.DataSubject.IDataPortabilityService, RentManager.API.Services.DataSubject.DataPortabilityService>();
 
+// Data Retention Services (GDPR Phase 3)
+builder.Services.AddScoped<RentManager.API.Services.DataRetention.IDataRetentionService, RentManager.API.Services.DataRetention.DataRetentionService>();
+builder.Services.AddScoped<RentManager.API.Services.DataRetention.ILegalHoldService, RentManager.API.Services.DataRetention.LegalHoldService>();
+builder.Services.AddScoped<RentManager.API.Services.DataRetention.IAutomatedDeletionService, RentManager.API.Services.DataRetention.AutomatedDeletionService>();
+
 builder.Services.AddScoped<SeedDataService>();
 
 // Add Hangfire background jobs
@@ -80,6 +85,11 @@ builder.Services.AddScoped<RentManager.API.BackgroundJobs.Jobs.WelcomeEmailJob>(
 // Register data subject request background jobs
 builder.Services.AddScoped<RentManager.API.BackgroundJobs.Jobs.DataAccessRequestJob>();
 builder.Services.AddScoped<RentManager.API.BackgroundJobs.Jobs.RequestDeadlineReminderJob>();
+
+// Register data retention background jobs (GDPR Phase 3)
+builder.Services.AddScoped<RentManager.API.BackgroundJobs.Jobs.DailyRetentionJob>();
+builder.Services.AddScoped<RentManager.API.BackgroundJobs.Jobs.RetentionComplianceReportJob>();
+builder.Services.AddScoped<RentManager.API.BackgroundJobs.Jobs.LegalHoldReminderJob>();
 
 // Zitadel OAuth Configuration
 var zitadelSettings = builder.Configuration.GetSection("Zitadel");

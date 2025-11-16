@@ -27,7 +27,8 @@ import {
   IncomeStatement,
   RentCollection,
   CashFlow,
-  OccupancyRevenue
+  OccupancyRevenue,
+  DataRetentionDashboard
 } from './pages';
 import CookiePolicy from './pages/CookiePolicy/CookiePolicy';
 import PrivacyPolicyPage from './pages/PrivacyPolicy/PrivacyPolicyPage';
@@ -263,6 +264,7 @@ function App() {
                     <>
                       <Route path="/user-management" element={<UserManagement />} />
                       <Route path="/system-settings" element={<SystemSettings />} />
+                      <Route path="/privacy-compliance" element={<DataRetentionDashboard />} />
                     </>
                   )}
                 </Routes>
