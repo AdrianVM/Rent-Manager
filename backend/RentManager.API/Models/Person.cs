@@ -20,7 +20,8 @@ namespace RentManager.API.Models
             get
             {
                 var parts = new[] { FirstName, MiddleName, LastName }
-                    .Where(p => !string.IsNullOrWhiteSpace(p));
+                    .Where(p => !string.IsNullOrWhiteSpace(p))
+                    .Select(p => p.Trim());
                 return string.Join(" ", parts);
             }
         }

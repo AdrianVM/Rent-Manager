@@ -134,7 +134,7 @@ namespace RentManager.Tests
             var name = tenant.Name;
 
             // Assert
-            name.Should().Be("John     Doe");
+            name.Should().Be("John Doe");
         }
 
         [Fact]
@@ -153,6 +153,9 @@ namespace RentManager.Tests
                     IdNumber = "123-45-6789",
                     Nationality = "American",
                     Occupation = "Engineer" },
+                EmergencyContactName = "Jane Doe",
+                EmergencyContactPhone = "+1234567890",
+                EmergencyContactRelation = "Spouse"
             };
 
             // Assert
