@@ -5,8 +5,16 @@ const UpdateNotification = ({ registration, onDismiss }) => {
   const [show, setShow] = useState(true);
 
   const handleUpdate = () => {
+    // Unregister the old service worker and reload to get the new version
     if (registration && registration.waiting) {
       registration.waiting.postMessage({ type: 'SKIP_WAITING' });
+
+      // Listen for the controlling service worker to change
+      navigator.serviceWorker.addEventListener('controllerchange', () => {
+        window.location.reload();
+      });
+    } else {
+      // Fallback: just reload
       window.location.reload();
     }
   };
