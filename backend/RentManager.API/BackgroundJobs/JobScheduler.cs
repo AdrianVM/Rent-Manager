@@ -19,18 +19,6 @@ public static class JobScheduler
     }
 
     /// <summary>
-    /// Manually enqueue a fire-and-forget job (useful for testing or admin actions)
-    /// Example: BackgroundJob.Enqueue<MyJob>(job => job.ExecuteAsync())
-    /// </summary>
-    /// <remarks>
-    /// This is a placeholder. Use BackgroundJob.Enqueue directly when adding jobs.
-    /// </remarks>
-    public static void EnqueueJob()
-    {
-        // Placeholder - use BackgroundJob.Enqueue<TJob>(job => job.MethodName()) directly
-    }
-
-    /// <summary>
     /// Remove a recurring job by its ID
     /// </summary>
     /// <param name="jobId">The recurring job ID</param>

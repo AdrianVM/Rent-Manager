@@ -358,43 +358,43 @@ namespace RentManager.API.Services
             }
         }
 
-    private async Task<List<Tenant>> SeedTenantsAsync(List<Property> properties, User mainUser, List<User> additionalUsers)
-    {
-        var tenants = new List<Tenant>();
-
-        // Check if tenant for main user already exists
-        var existingMainTenant = await _context.Tenants
-            .FirstOrDefaultAsync(t => t.PersonId == mainUser.PersonId && t.PropertyId == properties[0].Id);
-
-        if (existingMainTenant != null)
+        private async Task<List<Tenant>> SeedTenantsAsync(List<Property> properties, User mainUser, List<User> additionalUsers)
         {
-            tenants.Add(existingMainTenant);
-        }
-        else
-        {
-            // Create tenant for the main user
-            var mainTenant = new Tenant
+            var tenants = new List<Tenant>();
+
+            // Check if tenant for main user already exists
+            var existingMainTenant = await _context.Tenants
+                .FirstOrDefaultAsync(t => t.PersonId == mainUser.PersonId && t.PropertyId == properties[0].Id);
+
+            if (existingMainTenant != null)
             {
-                TenantType = TenantType.Person,
-                Email = mainUser.Email,
-                Phone = "+1 (555) 000-0000",
-                PersonId = mainUser.PersonId,
-                PropertyId = properties[0].Id, // Sunset Apartments
-                LeaseStart = new DateTimeOffset(2024, 1, 1, 0, 0, 0, TimeSpan.Zero).ToUniversalTime(),
-                LeaseEnd = new DateTimeOffset(2025, 12, 31, 0, 0, 0, TimeSpan.Zero).ToUniversalTime(),
-                RentAmount = properties[0].RentAmount,
-                Deposit = properties[0].RentAmount,
-                Status = TenantStatus.Active,
-                EmergencyContactName = "Emergency Contact",
-                EmergencyContactPhone = "+1 (555) 999-9999",
-                EmergencyContactRelation = "Family"
-            };
-            tenants.Add(await _dataService.CreateTenantAsync(mainTenant));
-        }
+                tenants.Add(existingMainTenant);
+            }
+            else
+            {
+                // Create tenant for the main user
+                var mainTenant = new Tenant
+                {
+                    TenantType = TenantType.Person,
+                    Email = mainUser.Email,
+                    Phone = "+1 (555) 000-0000",
+                    PersonId = mainUser.PersonId,
+                    PropertyId = properties[0].Id, // Sunset Apartments
+                    LeaseStart = new DateTimeOffset(2024, 1, 1, 0, 0, 0, TimeSpan.Zero).ToUniversalTime(),
+                    LeaseEnd = new DateTimeOffset(2025, 12, 31, 0, 0, 0, TimeSpan.Zero).ToUniversalTime(),
+                    RentAmount = properties[0].RentAmount,
+                    Deposit = properties[0].RentAmount,
+                    Status = TenantStatus.Active,
+                    EmergencyContactName = "Emergency Contact",
+                    EmergencyContactPhone = "+1 (555) 999-9999",
+                    EmergencyContactRelation = "Family"
+                };
+                tenants.Add(await _dataService.CreateTenantAsync(mainTenant));
+            }
 
-        // Create tenants for additional users
-        var tenantData = new[]
-        {
+            // Create tenants for additional users
+            var tenantData = new[]
+            {
             new { UserIndex = 0, PropertyIndex = 1, Phone = "+1 (555) 101-1001", LeaseStart = new DateTimeOffset(2024, 2, 1, 0, 0, 0, TimeSpan.Zero).ToUniversalTime(), LeaseEnd = new DateTimeOffset(2025, 1, 31, 0, 0, 0, TimeSpan.Zero).ToUniversalTime(), Status = TenantStatus.Active },
             new { UserIndex = 1, PropertyIndex = 2, Phone = "+1 (555) 102-1002", LeaseStart = new DateTimeOffset(2023, 6, 1, 0, 0, 0, TimeSpan.Zero).ToUniversalTime(), LeaseEnd = new DateTimeOffset(2026, 5, 31, 0, 0, 0, TimeSpan.Zero).ToUniversalTime(), Status = TenantStatus.Active },
             new { UserIndex = 2, PropertyIndex = 5, Phone = "+1 (555) 103-1003", LeaseStart = new DateTimeOffset(2024, 3, 1, 0, 0, 0, TimeSpan.Zero).ToUniversalTime(), LeaseEnd = new DateTimeOffset(2025, 2, 28, 0, 0, 0, TimeSpan.Zero).ToUniversalTime(), Status = TenantStatus.Active },
@@ -403,46 +403,46 @@ namespace RentManager.API.Services
             new { UserIndex = 6, PropertyIndex = 4, Phone = "+1 (555) 107-1007", LeaseStart = new DateTimeOffset(2022, 1, 1, 0, 0, 0, TimeSpan.Zero).ToUniversalTime(), LeaseEnd = new DateTimeOffset(2024, 12, 31, 0, 0, 0, TimeSpan.Zero).ToUniversalTime(), Status = TenantStatus.Active }
         };
 
-        foreach (var data in tenantData)
-        {
-            if (data.UserIndex >= additionalUsers.Count || data.PropertyIndex >= properties.Count)
-                continue;
-
-            var user = additionalUsers[data.UserIndex];
-            var property = properties[data.PropertyIndex];
-
-            // Check if tenant already exists for this user and property
-            var existingTenant = await _context.Tenants
-                .FirstOrDefaultAsync(t => t.PersonId == user.PersonId && t.PropertyId == property.Id);
-
-            if (existingTenant != null)
+            foreach (var data in tenantData)
             {
-                tenants.Add(existingTenant);
-                continue;
+                if (data.UserIndex >= additionalUsers.Count || data.PropertyIndex >= properties.Count)
+                    continue;
+
+                var user = additionalUsers[data.UserIndex];
+                var property = properties[data.PropertyIndex];
+
+                // Check if tenant already exists for this user and property
+                var existingTenant = await _context.Tenants
+                    .FirstOrDefaultAsync(t => t.PersonId == user.PersonId && t.PropertyId == property.Id);
+
+                if (existingTenant != null)
+                {
+                    tenants.Add(existingTenant);
+                    continue;
+                }
+
+                var tenant = new Tenant
+                {
+                    TenantType = TenantType.Person,
+                    Email = user.Email,
+                    Phone = data.Phone,
+                    PersonId = user.PersonId,
+                    PropertyId = property.Id,
+                    LeaseStart = data.LeaseStart,
+                    LeaseEnd = data.LeaseEnd,
+                    RentAmount = property.RentAmount,
+                    Deposit = property.RentAmount,
+                    Status = data.Status,
+                    EmergencyContactName = "Emergency Contact",
+                    EmergencyContactPhone = "+1 (555) 999-9999",
+                    EmergencyContactRelation = "Family"
+                };
+
+                tenants.Add(await _dataService.CreateTenantAsync(tenant));
             }
 
-            var tenant = new Tenant
-            {
-                TenantType = TenantType.Person,
-                Email = user.Email,
-                Phone = data.Phone,
-                PersonId = user.PersonId,
-                PropertyId = property.Id,
-                LeaseStart = data.LeaseStart,
-                LeaseEnd = data.LeaseEnd,
-                RentAmount = property.RentAmount,
-                Deposit = property.RentAmount,
-                Status = data.Status,
-                EmergencyContactName = "Emergency Contact",
-                EmergencyContactPhone = "+1 (555) 999-9999",
-                EmergencyContactRelation = "Family"
-            };
-
-            tenants.Add(await _dataService.CreateTenantAsync(tenant));
+            return tenants;
         }
-
-        return tenants;
-    }
 
         private async Task SeedPaymentsAsync(List<Tenant> tenants)
         {

@@ -50,13 +50,13 @@ namespace RentManager.API.Services
             {
                 return Task.FromResult(_properties);
             }
-            
+
             if (user.HasRole(Role.PropertyOwner))
             {
                 // In-memory service: PropertyOwner role gets all properties (simplified for testing)
                 return Task.FromResult(_properties);
             }
-            
+
             if (user.HasRole(Role.Renter) && !string.IsNullOrEmpty(user.PersonId))
             {
                 var tenant = _tenants.FirstOrDefault(t => t.PersonId == user.PersonId);
@@ -66,7 +66,7 @@ namespace RentManager.API.Services
                     return Task.FromResult(renterProperty);
                 }
             }
-            
+
             return Task.FromResult(new List<Property>());
         }
 
@@ -74,18 +74,18 @@ namespace RentManager.API.Services
         {
             var property = _properties.FirstOrDefault(p => p.Id == id);
             if (property == null) return Task.FromResult<Property?>(null);
-            
+
             if (user == null || user.HasRole(Role.Admin))
             {
                 return Task.FromResult<Property?>(property);
             }
-            
+
             if (user.HasRole(Role.PropertyOwner))
             {
                 // In-memory service: PropertyOwner role can access all properties (simplified for testing)
                 return Task.FromResult<Property?>(property);
             }
-            
+
             if (user.HasRole(Role.Renter) && !string.IsNullOrEmpty(user.PersonId))
             {
                 var tenant = _tenants.FirstOrDefault(t => t.PersonId == user.PersonId);
@@ -94,7 +94,7 @@ namespace RentManager.API.Services
                     return Task.FromResult<Property?>(property);
                 }
             }
-            
+
             return Task.FromResult<Property?>(null);
         }
 
@@ -143,19 +143,19 @@ namespace RentManager.API.Services
             {
                 return Task.FromResult(_tenants);
             }
-            
+
             if (user.HasRole(Role.PropertyOwner))
             {
                 // In-memory service: PropertyOwner role gets all tenants (simplified for testing)
                 return Task.FromResult(_tenants);
             }
-            
+
             if (user.HasRole(Role.Renter) && !string.IsNullOrEmpty(user.PersonId))
             {
                 var renterTenant = _tenants.Where(t => t.PersonId == user.PersonId).ToList();
                 return Task.FromResult(renterTenant);
             }
-            
+
             return Task.FromResult(new List<Tenant>());
         }
 
@@ -211,18 +211,18 @@ namespace RentManager.API.Services
         public Task<List<Payment>> GetPaymentsAsync(User? user = null)
         {
             var payments = _payments.OrderByDescending(p => p.Date).ToList();
-            
+
             if (user == null || user.HasRole(Role.Admin))
             {
                 return Task.FromResult(payments);
             }
-            
+
             if (user.HasRole(Role.PropertyOwner))
             {
                 // In-memory service: PropertyOwner role gets all payments (simplified for testing)
                 return Task.FromResult(payments);
             }
-            
+
             if (user.HasRole(Role.Renter) && !string.IsNullOrEmpty(user.PersonId))
             {
                 var tenant = _tenants.FirstOrDefault(t => t.PersonId == user.PersonId);
@@ -232,7 +232,7 @@ namespace RentManager.API.Services
                     return Task.FromResult(renterPayments);
                 }
             }
-            
+
             return Task.FromResult(new List<Payment>());
         }
 
@@ -280,18 +280,18 @@ namespace RentManager.API.Services
         public Task<List<Contract>> GetContractsAsync(User? user = null)
         {
             var contracts = _contracts.OrderByDescending(c => c.UploadedAt).ToList();
-            
+
             if (user == null || user.HasRole(Role.Admin))
             {
                 return Task.FromResult(contracts);
             }
-            
+
             if (user.HasRole(Role.PropertyOwner))
             {
                 // In-memory service: PropertyOwner role gets all contracts (simplified for testing)
                 return Task.FromResult(contracts);
             }
-            
+
             if (user.HasRole(Role.Renter) && !string.IsNullOrEmpty(user.PersonId))
             {
                 var tenant = _tenants.FirstOrDefault(t => t.PersonId == user.PersonId);
@@ -301,7 +301,7 @@ namespace RentManager.API.Services
                     return Task.FromResult(renterContracts);
                 }
             }
-            
+
             return Task.FromResult(new List<Contract>());
         }
 
@@ -361,8 +361,8 @@ namespace RentManager.API.Services
             var currentYear = DateTimeOffset.UtcNow.Year;
 
             var activeTenants = _tenants.Where(t => t.Status == TenantStatus.Active).ToList();
-            var currentMonthPayments = _payments.Where(p => 
-                p.Date.Month == currentMonth && 
+            var currentMonthPayments = _payments.Where(p =>
+                p.Date.Month == currentMonth &&
                 p.Date.Year == currentYear &&
                 p.Status == PaymentStatus.Completed).ToList();
 
@@ -372,7 +372,8 @@ namespace RentManager.API.Services
             var recentPayments = _payments
                 .OrderByDescending(p => p.Date)
                 .Take(5)
-                .Select(p => {
+                .Select(p =>
+                {
                     var tenant = _tenants.FirstOrDefault(t => t.Id == p.TenantId);
                     var property = tenant != null ? _properties.FirstOrDefault(pr => pr.Id == tenant.PropertyId) : null;
                     return new RecentPayment
@@ -386,11 +387,12 @@ namespace RentManager.API.Services
                     };
                 }).ToList();
 
-            var outstandingRentItems = activeTenants.Select(tenant => {
+            var outstandingRentItems = activeTenants.Select(tenant =>
+            {
                 var tenantCurrentMonthPayments = currentMonthPayments.Where(p => p.TenantId == tenant.Id).Sum(p => p.Amount);
                 var amountDue = tenant.RentAmount - tenantCurrentMonthPayments;
                 var property = _properties.FirstOrDefault(p => p.Id == tenant.PropertyId);
-                
+
                 return new OutstandingRentItem
                 {
                     TenantId = tenant.Id,

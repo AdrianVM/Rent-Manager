@@ -26,6 +26,6 @@ namespace RentManager.API.Data
         public DbSet<DataRetentionSchedule> DataRetentionSchedules { get; set; }
         public DbSet<LegalHold> LegalHolds { get; set; }
 
-        public Task<int> SaveChangesAsync(CancellationToken token=default);
+        public Task<int> SaveChangesAsync(CancellationToken token = default);
     }
 }

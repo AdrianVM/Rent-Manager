@@ -31,10 +31,12 @@ namespace RentManager.API.Data
         public DbSet<DataRetentionSchedule> DataRetentionSchedules { get; set; } = null!;
         public DbSet<LegalHold> LegalHolds { get; set; } = null!;
 
-        public override async Task<int> SaveChangesAsync(CancellationToken token = default)
+        // Explicitly implement IUnitOfWork.SaveChangesAsync
+        Task<int> IUnitOfWork.SaveChangesAsync(CancellationToken token)
         {
-           return await base.SaveChangesAsync(token);
+            return base.SaveChangesAsync(token);
         }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);

@@ -137,9 +137,6 @@ if (!string.IsNullOrEmpty(frontendUrl) && frontendUrl != "your-fe-url")
     allowedOrigins.Add(frontendUrl);
 }
 
-// Log the configured origins for debugging
-Console.WriteLine($"[CORS] Configured allowed origins: {string.Join(", ", allowedOrigins)}");
-
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowFrontend", policy =>
@@ -153,6 +150,10 @@ builder.Services.AddCors(options =>
 });
 
 var app = builder.Build();
+
+// Log configured CORS origins
+var logger = app.Services.GetRequiredService<ILogger<Program>>();
+logger.LogInformation("CORS configured with allowed origins: {Origins}", string.Join(", ", allowedOrigins));
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -181,11 +182,6 @@ app.MapHealthChecks("/health");
 
 // Configure recurring background jobs
 JobScheduler.ConfigureRecurringJobs();
-
-var summaries = new[]
-{
-    "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-};
 
 app.Run();
 
