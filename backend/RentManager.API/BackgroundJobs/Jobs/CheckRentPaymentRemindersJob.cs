@@ -69,6 +69,7 @@ public class CheckRentPaymentRemindersJob
 
             // Get all active tenants
             var activeTenants = await _context.Tenants
+                .AsNoTracking()
                 .Include(t => t.Property)
                     .ThenInclude(p => p.PropertyOwners)
                         .ThenInclude(po => po.PersonOwners)
@@ -92,6 +93,7 @@ public class CheckRentPaymentRemindersJob
 
                 // Check if payment has already been made for this month
                 var paymentMadeThisMonth = await _context.Payments
+                    .AsNoTracking()
                     .AnyAsync(p =>
                         p.TenantId == tenant.Id &&
                         p.Status == PaymentStatus.Completed &&
@@ -121,6 +123,7 @@ public class CheckRentPaymentRemindersJob
                 // Count on-time payments this year
                 var yearStart = new DateTimeOffset(today.Year, 1, 1, 0, 0, 0, TimeSpan.Zero);
                 var onTimePaymentsThisYear = await _context.Payments
+                    .AsNoTracking()
                     .Where(p =>
                         p.TenantId == tenant.Id &&
                         p.Status == PaymentStatus.Completed &&

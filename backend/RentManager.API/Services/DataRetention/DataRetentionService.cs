@@ -23,6 +23,7 @@ namespace RentManager.API.Services.DataRetention
         public async Task<List<DataRetentionSchedule>> GetRetentionSchedulesAsync()
         {
             return await _context.DataRetentionSchedules
+                .AsNoTracking()
                 .OrderBy(s => s.DataCategory)
                 .ToListAsync();
         }
@@ -30,6 +31,7 @@ namespace RentManager.API.Services.DataRetention
         public async Task<List<DataRetentionSchedule>> GetActiveRetentionSchedulesAsync()
         {
             return await _context.DataRetentionSchedules
+                .AsNoTracking()
                 .Where(s => s.IsActive)
                 .OrderBy(s => s.DataCategory)
                 .ToListAsync();
@@ -43,6 +45,7 @@ namespace RentManager.API.Services.DataRetention
         public async Task<DataRetentionSchedule?> GetRetentionPolicyForCategoryAsync(string dataCategory)
         {
             return await _context.DataRetentionSchedules
+                .AsNoTracking()
                 .Where(s => s.DataCategory == dataCategory && s.IsActive)
                 .FirstOrDefaultAsync();
         }
@@ -144,6 +147,7 @@ namespace RentManager.API.Services.DataRetention
             var reviewDeadline = DateTimeOffset.UtcNow.AddMonths(-monthsSinceLastReview);
 
             return await _context.DataRetentionSchedules
+                .AsNoTracking()
                 .Where(s => s.IsActive && (s.LastReviewedAt == null || s.LastReviewedAt < reviewDeadline))
                 .OrderBy(s => s.LastReviewedAt ?? s.CreatedAt)
                 .ToListAsync();

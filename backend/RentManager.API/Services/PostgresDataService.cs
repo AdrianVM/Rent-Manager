@@ -19,6 +19,7 @@ namespace RentManager.API.Services
         public async Task<User?> GetUserByIdAsync(string id)
         {
             return await _context.Users
+                .AsNoTracking()
                 .Include(u => u.Person)
                 .Include(u => u.UserRoles)
                     .ThenInclude(ur => ur.Role)
@@ -28,6 +29,7 @@ namespace RentManager.API.Services
         public async Task<User?> GetUserByEmailAsync(string email)
         {
             return await _context.Users
+                .AsNoTracking()
                 .Include(u => u.Person)
                 .Include(u => u.UserRoles)
                     .ThenInclude(ur => ur.Role)
@@ -37,6 +39,7 @@ namespace RentManager.API.Services
         public async Task<List<User>> GetAllUsersAsync()
         {
             return await _context.Users
+                .AsNoTracking()
                 .Include(u => u.Person)
                 .Include(u => u.UserRoles)
                     .ThenInclude(ur => ur.Role)
@@ -199,6 +202,7 @@ namespace RentManager.API.Services
         public async Task<PropertyOwner?> GetPropertyOwnerByPropertyIdAsync(string propertyId)
         {
             return await _context.PropertyOwners
+                .AsNoTracking()
                 .Include(po => po.PersonOwners)
                 .FirstOrDefaultAsync(po => po.PropertyId == propertyId);
         }
@@ -206,6 +210,7 @@ namespace RentManager.API.Services
         public async Task<User?> GetUserByPersonIdAsync(string personId)
         {
             return await _context.Users
+                .AsNoTracking()
                 .FirstOrDefaultAsync(u => u.PersonId == personId);
         }
 
@@ -213,7 +218,7 @@ namespace RentManager.API.Services
         public async Task<List<Property>> GetPropertiesAsync(User? user = null)
         {
             // TODO: Add user-based filtering if needed
-            return await _context.Properties.ToListAsync();
+            return await _context.Properties.AsNoTracking().ToListAsync();
         }
 
         public async Task<Property?> GetPropertyAsync(string id, User? user = null)
@@ -277,6 +282,7 @@ namespace RentManager.API.Services
         {
             // TODO: Add user-based filtering if needed
             return await _context.Tenants
+                .AsNoTracking()
                 .Include(t => t.Person)
                 .Include(t => t.Company)
                 .ToListAsync();
@@ -286,6 +292,7 @@ namespace RentManager.API.Services
         {
             // TODO: Add user-based access control if needed
             return await _context.Tenants
+                .AsNoTracking()
                 .Include(t => t.Person)
                 .Include(t => t.Company)
                 .FirstOrDefaultAsync(t => t.Id == id);
@@ -349,7 +356,7 @@ namespace RentManager.API.Services
         public async Task<List<Payment>> GetPaymentsAsync(User? user = null)
         {
             // TODO: Add user-based filtering if needed
-            return await _context.Payments.OrderByDescending(p => p.Date).ToListAsync();
+            return await _context.Payments.AsNoTracking().OrderByDescending(p => p.Date).ToListAsync();
         }
 
         public async Task<Payment?> GetPaymentAsync(string id, User? user = null)
@@ -408,7 +415,7 @@ namespace RentManager.API.Services
         public async Task<List<Contract>> GetContractsAsync(User? user = null)
         {
             // TODO: Add user-based filtering if needed
-            return await _context.Contracts.ToListAsync();
+            return await _context.Contracts.AsNoTracking().ToListAsync();
         }
 
         public async Task<Contract?> GetContractAsync(string id, User? user = null)
@@ -420,6 +427,7 @@ namespace RentManager.API.Services
         public async Task<List<Contract>> GetContractsByPropertyIdAsync(string propertyId, User? user = null)
         {
             return await _context.Contracts
+                .AsNoTracking()
                 .Where(c => c.PropertyId == propertyId)
                 .ToListAsync();
         }
@@ -427,6 +435,7 @@ namespace RentManager.API.Services
         public async Task<List<Contract>> GetContractsByTenantIdAsync(string tenantId, User? user = null)
         {
             return await _context.Contracts
+                .AsNoTracking()
                 .Where(c => c.TenantId == tenantId)
                 .ToListAsync();
         }
@@ -483,6 +492,7 @@ namespace RentManager.API.Services
         {
             // TODO: Add user-based filtering if needed
             return await _context.MaintenanceRequests
+                .AsNoTracking()
                 .Include(mr => mr.Tenant)
                     .ThenInclude(t => t.Person)
                 .Include(mr => mr.Tenant)
@@ -496,6 +506,7 @@ namespace RentManager.API.Services
         {
             // TODO: Add user-based access control if needed
             return await _context.MaintenanceRequests
+                .AsNoTracking()
                 .Include(mr => mr.Tenant)
                     .ThenInclude(t => t.Person)
                 .Include(mr => mr.Tenant)
@@ -507,6 +518,7 @@ namespace RentManager.API.Services
         public async Task<List<MaintenanceRequest>> GetMaintenanceRequestsByTenantIdAsync(string tenantId, User? user = null)
         {
             return await _context.MaintenanceRequests
+                .AsNoTracking()
                 .Include(mr => mr.Tenant)
                     .ThenInclude(t => t.Person)
                 .Include(mr => mr.Tenant)
@@ -520,6 +532,7 @@ namespace RentManager.API.Services
         public async Task<List<MaintenanceRequest>> GetMaintenanceRequestsByPropertyIdAsync(string propertyId, User? user = null)
         {
             return await _context.MaintenanceRequests
+                .AsNoTracking()
                 .Include(mr => mr.Tenant)
                     .ThenInclude(t => t.Person)
                 .Include(mr => mr.Tenant)

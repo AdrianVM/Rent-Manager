@@ -44,11 +44,13 @@ public class PaymentService : IPaymentService
             {
                 // Get property IDs owned by this user through PropertyOwner entity
                 var propertyIds = await _context.PropertyOwners
+                    .AsNoTracking()
                     .Where(po => po.PersonOwners.Any(p => p.Id == user.PersonId))
                     .Select(po => po.PropertyId)
                     .ToListAsync();
 
                 var tenantIds = await _context.Tenants
+                    .AsNoTracking()
                     .Where(t => propertyIds.Contains(t.PropertyId))
                     .Select(t => t.Id)
                     .ToListAsync();
@@ -57,7 +59,7 @@ public class PaymentService : IPaymentService
             }
             else if (user.HasRole(Role.Renter) && user.PersonId != null)
             {
-                var tenant = await _context.Tenants.FirstOrDefaultAsync(t => t.PersonId == user.PersonId);
+                var tenant = await _context.Tenants.AsNoTracking().FirstOrDefaultAsync(t => t.PersonId == user.PersonId);
                 if (tenant != null)
                 {
                     query = query.Where(p => p.TenantId == tenant.Id);
@@ -94,6 +96,7 @@ public class PaymentService : IPaymentService
     public async Task<List<Payment>> GetPaymentsByPropertyAsync(string propertyId, User? user = null)
     {
         var tenantIds = await _context.Tenants
+            .AsNoTracking()
             .Where(t => t.PropertyId == propertyId)
             .Select(t => t.Id)
             .ToListAsync();
@@ -102,6 +105,7 @@ public class PaymentService : IPaymentService
             return new List<Payment>();
 
         return await _context.Payments
+            .AsNoTracking()
             .Where(p => tenantIds.Contains(p.TenantId))
             .OrderByDescending(p => p.Date)
             .ToListAsync();
@@ -468,6 +472,7 @@ public class PaymentService : IPaymentService
     public async Task<bool> CheckDuplicatePaymentAsync(string tenantId, DateTimeOffset date, decimal amount)
     {
         var existingPayment = await _context.Payments
+            .AsNoTracking()
             .Where(p => p.TenantId == tenantId
                 && p.Date.Date == date.Date
                 && p.Amount == amount
@@ -491,11 +496,13 @@ public class PaymentService : IPaymentService
             {
                 // Get property IDs owned by this user through PropertyOwner entity
                 var propertyIds = await _context.PropertyOwners
+                    .AsNoTracking()
                     .Where(po => po.PersonOwners.Any(p => p.Id == user.PersonId))
                     .Select(po => po.PropertyId)
                     .ToListAsync();
 
                 var tenantIds = await _context.Tenants
+                    .AsNoTracking()
                     .Where(t => propertyIds.Contains(t.PropertyId))
                     .Select(t => t.Id)
                     .ToListAsync();
@@ -504,7 +511,7 @@ public class PaymentService : IPaymentService
             }
             else if (user.HasRole(Role.Renter) && user.PersonId != null)
             {
-                var tenant = await _context.Tenants.FirstOrDefaultAsync(t => t.PersonId == user.PersonId);
+                var tenant = await _context.Tenants.AsNoTracking().FirstOrDefaultAsync(t => t.PersonId == user.PersonId);
                 if (tenant != null)
                 {
                     query = query.Where(p => p.TenantId == tenant.Id);
@@ -517,7 +524,7 @@ public class PaymentService : IPaymentService
 
     public async Task<List<Payment>> GetFailedPaymentsAsync(DateTimeOffset? from = null, DateTimeOffset? to = null)
     {
-        var query = _context.Payments.Where(p => p.Status == PaymentStatus.Failed);
+        var query = _context.Payments.AsNoTracking().Where(p => p.Status == PaymentStatus.Failed);
 
         if (from.HasValue)
         {
@@ -552,11 +559,13 @@ public class PaymentService : IPaymentService
             {
                 // Get property IDs owned by this user through PropertyOwner entity
                 var propertyIds = await _context.PropertyOwners
+                    .AsNoTracking()
                     .Where(po => po.PersonOwners.Any(p => p.Id == user.PersonId))
                     .Select(po => po.PropertyId)
                     .ToListAsync();
 
                 var tenantIds = await _context.Tenants
+                    .AsNoTracking()
                     .Where(t => propertyIds.Contains(t.PropertyId))
                     .Select(t => t.Id)
                     .ToListAsync();
@@ -565,7 +574,7 @@ public class PaymentService : IPaymentService
             }
             else if (user.HasRole(Role.Renter) && user.PersonId != null)
             {
-                var tenant = await _context.Tenants.FirstOrDefaultAsync(t => t.PersonId == user.PersonId);
+                var tenant = await _context.Tenants.AsNoTracking().FirstOrDefaultAsync(t => t.PersonId == user.PersonId);
                 if (tenant != null)
                 {
                     query = query.Where(p => p.TenantId == tenant.Id);
@@ -584,6 +593,7 @@ public class PaymentService : IPaymentService
     {
         var firstDayOfMonth = new DateTime(forMonth.Year, forMonth.Month, 1);
         var activeTenants = await _context.Tenants
+            .AsNoTracking()
             .Where(t => t.Status == TenantStatus.Active)
             .ToListAsync();
 
@@ -629,6 +639,7 @@ public class PaymentService : IPaymentService
     public async Task<Payment?> GetLastPaymentForTenantAsync(string tenantId)
     {
         return await _context.Payments
+            .AsNoTracking()
             .Where(p => p.TenantId == tenantId && p.Status == PaymentStatus.Completed)
             .OrderByDescending(p => p.Date)
             .FirstOrDefaultAsync();
@@ -723,11 +734,13 @@ public class PaymentService : IPaymentService
             {
                 // Get property IDs owned by this user through PropertyOwner entity
                 var propertyIds = await _context.PropertyOwners
+                    .AsNoTracking()
                     .Where(po => po.PersonOwners.Any(p => p.Id == user.PersonId))
                     .Select(po => po.PropertyId)
                     .ToListAsync();
 
                 var tenantIds = await _context.Tenants
+                    .AsNoTracking()
                     .Where(t => propertyIds.Contains(t.PropertyId))
                     .Select(t => t.Id)
                     .ToListAsync();
@@ -736,7 +749,7 @@ public class PaymentService : IPaymentService
             }
             else if (user.HasRole(Role.Renter) && user.PersonId != null)
             {
-                var tenant = await _context.Tenants.FirstOrDefaultAsync(t => t.PersonId == user.PersonId);
+                var tenant = await _context.Tenants.AsNoTracking().FirstOrDefaultAsync(t => t.PersonId == user.PersonId);
                 if (tenant != null)
                 {
                     query = query.Where(p => p.TenantId == tenant.Id);
@@ -760,11 +773,13 @@ public class PaymentService : IPaymentService
             {
                 // Get property IDs owned by this user through PropertyOwner entity
                 var propertyIds = await _context.PropertyOwners
+                    .AsNoTracking()
                     .Where(po => po.PersonOwners.Any(p => p.Id == user.PersonId))
                     .Select(po => po.PropertyId)
                     .ToListAsync();
 
                 var tenantIds = await _context.Tenants
+                    .AsNoTracking()
                     .Where(t => propertyIds.Contains(t.PropertyId))
                     .Select(t => t.Id)
                     .ToListAsync();
@@ -773,7 +788,7 @@ public class PaymentService : IPaymentService
             }
             else if (user.HasRole(Role.Renter) && user.PersonId != null)
             {
-                var tenant = await _context.Tenants.FirstOrDefaultAsync(t => t.PersonId == user.PersonId);
+                var tenant = await _context.Tenants.AsNoTracking().FirstOrDefaultAsync(t => t.PersonId == user.PersonId);
                 if (tenant != null)
                 {
                     query = query.Where(p => p.TenantId == tenant.Id);
@@ -823,6 +838,7 @@ public class PaymentService : IPaymentService
         {
             // Get tenant details
             var tenant = await _context.Tenants
+                .AsNoTracking()
                 .Include(t => t.Person)
                 .FirstOrDefaultAsync(t => t.Id == payment.TenantId);
 
@@ -834,6 +850,7 @@ public class PaymentService : IPaymentService
 
             // Get property details
             var property = await _context.Properties
+                .AsNoTracking()
                 .FirstOrDefaultAsync(p => p.Id == tenant.PropertyId);
 
             if (property == null)
@@ -844,6 +861,7 @@ public class PaymentService : IPaymentService
 
             // Get property owner details
             var propertyOwner = await _context.PropertyOwners
+                .AsNoTracking()
                 .Include(po => po.PersonOwners)
                 .FirstOrDefaultAsync(po => po.PropertyId == property.Id);
 
@@ -864,6 +882,7 @@ public class PaymentService : IPaymentService
 
             // Get the user account associated with this tenant
             var tenantUser = await _context.Users
+                .AsNoTracking()
                 .FirstOrDefaultAsync(u => u.PersonId == tenant.PersonId);
 
             if (tenantUser == null)
@@ -874,6 +893,7 @@ public class PaymentService : IPaymentService
 
             // Get the owner user account
             var ownerUser = ownerPerson != null ? await _context.Users
+                .AsNoTracking()
                 .FirstOrDefaultAsync(u => u.PersonId == ownerPerson.Id) : null;
 
             // Prepare email data

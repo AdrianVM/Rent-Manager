@@ -29,6 +29,7 @@ public class PrivacyPolicyService : IPrivacyPolicyService
     public async Task<PrivacyPolicyVersion?> GetCurrentPolicyAsync()
     {
         return await _context.PrivacyPolicyVersions
+            .AsNoTracking()
             .Where(p => p.IsCurrent && p.EffectiveDate <= DateTimeOffset.UtcNow)
             .OrderByDescending(p => p.EffectiveDate)
             .FirstOrDefaultAsync();
@@ -37,12 +38,14 @@ public class PrivacyPolicyService : IPrivacyPolicyService
     public async Task<PrivacyPolicyVersion?> GetPolicyVersionAsync(int versionId)
     {
         return await _context.PrivacyPolicyVersions
+            .AsNoTracking()
             .FirstOrDefaultAsync(p => p.Id == versionId);
     }
 
     public async Task<List<PrivacyPolicyVersion>> GetAllVersionsAsync()
     {
         return await _context.PrivacyPolicyVersions
+            .AsNoTracking()
             .OrderByDescending(p => p.EffectiveDate)
             .ToListAsync();
     }
@@ -77,6 +80,7 @@ public class PrivacyPolicyService : IPrivacyPolicyService
         }
 
         var hasAccepted = await _context.UserPrivacyPolicyAcceptances
+            .AsNoTracking()
             .AnyAsync(a => a.UserId == userId && a.PolicyVersionId == currentPolicy.Id);
 
         return !hasAccepted;
@@ -85,6 +89,7 @@ public class PrivacyPolicyService : IPrivacyPolicyService
     public async Task<List<UserPrivacyPolicyAcceptance>> GetUserAcceptanceHistoryAsync(string userId)
     {
         return await _context.UserPrivacyPolicyAcceptances
+            .AsNoTracking()
             .Include(a => a.PolicyVersion)
             .Where(a => a.UserId == userId)
             .OrderByDescending(a => a.AcceptedAt)
@@ -133,6 +138,7 @@ public class PrivacyPolicyService : IPrivacyPolicyService
         }
 
         return await _context.UserPrivacyPolicyAcceptances
+            .AsNoTracking()
             .Include(a => a.PolicyVersion)
             .FirstOrDefaultAsync(a => a.UserId == userId && a.PolicyVersionId == currentPolicy.Id);
     }

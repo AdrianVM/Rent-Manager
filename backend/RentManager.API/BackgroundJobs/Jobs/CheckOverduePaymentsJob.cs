@@ -42,6 +42,7 @@ public class CheckOverduePaymentsJob
         {
             // Get all active tenants with their properties and owners
             var activeTenants = await _context.Tenants
+                .AsNoTracking()
                 .Include(t => t.Property)
                     .ThenInclude(p => p.PropertyOwners)
                         .ThenInclude(po => po.PersonOwners)
@@ -70,6 +71,7 @@ public class CheckOverduePaymentsJob
 
                 // Check if payment has been made for this month
                 var paymentMadeThisMonth = await _context.Payments
+                    .AsNoTracking()
                     .AnyAsync(p =>
                         p.TenantId == tenant.Id &&
                         p.Status == PaymentStatus.Completed &&

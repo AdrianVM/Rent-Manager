@@ -69,48 +69,49 @@ public class DataAccessService : IDataAccessService
         var categories = new List<string>();
 
         // Check User profile
-        var hasUser = await _context.Users.AnyAsync(u => u.Id == userId);
+        var hasUser = await _context.Users.AsNoTracking().AnyAsync(u => u.Id == userId);
         if (hasUser) categories.Add("user_profile");
 
         // Check Properties (as owner)
         var hasProperties = await _context.Properties
+            .AsNoTracking()
             .AnyAsync(p => p.PropertyOwners.Any(po => po.PersonOwners.Any(person =>
                 _context.Users.Any(u => u.Id == userId && u.PersonId == person.Id))));
         if (hasProperties) categories.Add("properties");
 
         // Check Tenants
-        var hasTenants = await _context.Tenants.AnyAsync(t =>
+        var hasTenants = await _context.Tenants.AsNoTracking().AnyAsync(t =>
             _context.Users.Any(u => u.Id == userId && (u.Email == t.Email || u.PersonId == t.PersonId)));
         if (hasTenants) categories.Add("tenants");
 
         // Check Payments
-        var hasPayments = await _context.Payments.AnyAsync(p =>
+        var hasPayments = await _context.Payments.AsNoTracking().AnyAsync(p =>
             _context.Tenants.Any(t => t.Id == p.TenantId &&
                 _context.Users.Any(u => u.Id == userId && (u.Email == t.Email || u.PersonId == t.PersonId))));
         if (hasPayments) categories.Add("payments");
 
         // Check Contracts
-        var hasContracts = await _context.Contracts.AnyAsync(c =>
+        var hasContracts = await _context.Contracts.AsNoTracking().AnyAsync(c =>
             _context.Tenants.Any(t => t.Id == c.TenantId &&
                 _context.Users.Any(u => u.Id == userId && (u.Email == t.Email || u.PersonId == t.PersonId))));
         if (hasContracts) categories.Add("contracts");
 
         // Check Maintenance Requests
-        var hasMaintenanceRequests = await _context.MaintenanceRequests.AnyAsync(mr =>
+        var hasMaintenanceRequests = await _context.MaintenanceRequests.AsNoTracking().AnyAsync(mr =>
             _context.Tenants.Any(t => t.Id == mr.TenantId &&
                 _context.Users.Any(u => u.Id == userId && (u.Email == t.Email || u.PersonId == t.PersonId))));
         if (hasMaintenanceRequests) categories.Add("maintenance_requests");
 
         // Check Cookie Consents
-        var hasCookieConsents = await _context.CookieConsents.AnyAsync(cc => cc.UserId == userId);
+        var hasCookieConsents = await _context.CookieConsents.AsNoTracking().AnyAsync(cc => cc.UserId == userId);
         if (hasCookieConsents) categories.Add("cookie_consents");
 
         // Check Privacy Policy Acceptances
-        var hasPrivacyAcceptances = await _context.UserPrivacyPolicyAcceptances.AnyAsync(pa => pa.UserId == userId);
+        var hasPrivacyAcceptances = await _context.UserPrivacyPolicyAcceptances.AsNoTracking().AnyAsync(pa => pa.UserId == userId);
         if (hasPrivacyAcceptances) categories.Add("privacy_policy_acceptances");
 
         // Check Data Subject Requests
-        var hasDataRequests = await _context.DataSubjectRequests.AnyAsync(dr => dr.UserId == userId);
+        var hasDataRequests = await _context.DataSubjectRequests.AsNoTracking().AnyAsync(dr => dr.UserId == userId);
         if (hasDataRequests) categories.Add("data_subject_requests");
 
         return categories;
@@ -125,6 +126,7 @@ public class DataAccessService : IDataAccessService
 
         // User Profile
         var user = await _context.Users
+            .AsNoTracking()
             .Include(u => u.Person)
             .Include(u => u.UserRoles)
                 .ThenInclude(ur => ur.Role)
@@ -157,6 +159,7 @@ public class DataAccessService : IDataAccessService
 
         // Properties (as owner)
         var properties = await _context.Properties
+            .AsNoTracking()
             .Include(p => p.PropertyOwners)
                 .ThenInclude(po => po.PersonOwners)
             .Where(p => p.PropertyOwners.Any(po => po.PersonOwners.Any(person =>
@@ -184,6 +187,7 @@ public class DataAccessService : IDataAccessService
 
         // Tenants
         var tenants = await _context.Tenants
+            .AsNoTracking()
             .Include(t => t.Property)
             .Where(t => _context.Users.Any(u => u.Id == userId && (u.Email == t.Email || u.PersonId == t.PersonId)))
             .Select(t => new
@@ -216,6 +220,7 @@ public class DataAccessService : IDataAccessService
         if (tenantIds.Any())
         {
             var payments = await _context.Payments
+                .AsNoTracking()
                 .Where(p => tenantIds.Contains(p.TenantId))
                 .Select(p => new
                 {
@@ -237,6 +242,7 @@ public class DataAccessService : IDataAccessService
 
             // Contracts (excludes FileContentBase64 for size reasons, but notes it exists)
             var contracts = await _context.Contracts
+                .AsNoTracking()
                 .Where(c => tenantIds.Contains(c.TenantId))
                 .Select(c => new
                 {
@@ -258,6 +264,7 @@ public class DataAccessService : IDataAccessService
 
             // Maintenance Requests
             var maintenanceRequests = await _context.MaintenanceRequests
+                .AsNoTracking()
                 .Where(mr => tenantIds.Contains(mr.TenantId))
                 .Select(mr => new
                 {
@@ -281,6 +288,7 @@ public class DataAccessService : IDataAccessService
 
         // Cookie Consents
         var cookieConsents = await _context.CookieConsents
+            .AsNoTracking()
             .Where(cc => cc.UserId == userId)
             .Select(cc => new
             {
@@ -303,6 +311,7 @@ public class DataAccessService : IDataAccessService
 
         // Privacy Policy Acceptances
         var privacyAcceptances = await _context.UserPrivacyPolicyAcceptances
+            .AsNoTracking()
             .Include(pa => pa.PolicyVersion)
             .Where(pa => pa.UserId == userId)
             .Select(pa => new
@@ -323,6 +332,7 @@ public class DataAccessService : IDataAccessService
 
         // Data Subject Requests
         var dataRequests = await _context.DataSubjectRequests
+            .AsNoTracking()
             .Include(dr => dr.History)
             .Where(dr => dr.UserId == userId)
             .Select(dr => new
