@@ -9,11 +9,11 @@ namespace RentManager.API.Services.DataRetention
     /// </summary>
     public class DataRetentionService : IDataRetentionService
     {
-        private readonly RentManagerDbContext _context;
+        private readonly IUnitOfWork _context;
         private readonly ILogger<DataRetentionService> _logger;
 
         public DataRetentionService(
-            RentManagerDbContext context,
+            IUnitOfWork context,
             ILogger<DataRetentionService> logger)
         {
             _context = context;

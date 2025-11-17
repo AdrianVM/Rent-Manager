@@ -165,23 +165,6 @@ class DataRetentionService {
   }
 
   /**
-   * Execute retention policies in dry-run mode (admin only)
-   */
-  async executeDryRun() {
-    const headers = this.getAuthHeaders();
-    const response = await fetch(`${API_BASE_URL}/dataretention/execute-dry-run`, {
-      method: 'POST',
-      headers
-    });
-
-    if (!response.ok) {
-      throw new Error('Failed to execute dry run');
-    }
-
-    return await response.json();
-  }
-
-  /**
    * Get retention information for the current user
    */
   async getMyRetentionInfo() {

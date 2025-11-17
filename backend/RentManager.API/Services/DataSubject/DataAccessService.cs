@@ -13,11 +13,11 @@ public interface IDataAccessService
 
 public class DataAccessService : IDataAccessService
 {
-    private readonly RentManagerDbContext _context;
+    private readonly IUnitOfWork _context;
     private readonly ILogger<DataAccessService> _logger;
 
     public DataAccessService(
-        RentManagerDbContext context,
+        IUnitOfWork context,
         ILogger<DataAccessService> logger)
     {
         _context = context;

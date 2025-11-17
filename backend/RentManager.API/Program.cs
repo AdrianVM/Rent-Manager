@@ -39,6 +39,7 @@ else
     builder.Services.AddSingleton<IDataService, InMemoryDataService>();
 }
 
+builder.Services.AddScoped<IUnitOfWork, RentManagerDbContext>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 
 // Configure Stripe
@@ -63,10 +64,10 @@ builder.Services.AddScoped<RentManager.API.Services.DataSubject.IDataAccessServi
 builder.Services.AddScoped<RentManager.API.Services.DataSubject.IDataDeletionService, RentManager.API.Services.DataSubject.DataDeletionService>();
 builder.Services.AddScoped<RentManager.API.Services.DataSubject.IDataPortabilityService, RentManager.API.Services.DataSubject.DataPortabilityService>();
 
-// Data Retention Services (GDPR Phase 3)
+// Data Retention Services (GDPR Phase 3 - Ultra-Simplified: Manual SQL Execution)
 builder.Services.AddScoped<RentManager.API.Services.DataRetention.IDataRetentionService, RentManager.API.Services.DataRetention.DataRetentionService>();
 builder.Services.AddScoped<RentManager.API.Services.DataRetention.ILegalHoldService, RentManager.API.Services.DataRetention.LegalHoldService>();
-builder.Services.AddScoped<RentManager.API.Services.DataRetention.IAutomatedDeletionService, RentManager.API.Services.DataRetention.AutomatedDeletionService>();
+// Note: Retention policies are executed manually via SQL scripts (see docs/data-retention-sql-scripts.md)
 
 builder.Services.AddScoped<SeedDataService>();
 
@@ -86,10 +87,7 @@ builder.Services.AddScoped<RentManager.API.BackgroundJobs.Jobs.WelcomeEmailJob>(
 builder.Services.AddScoped<RentManager.API.BackgroundJobs.Jobs.DataAccessRequestJob>();
 builder.Services.AddScoped<RentManager.API.BackgroundJobs.Jobs.RequestDeadlineReminderJob>();
 
-// Register data retention background jobs (GDPR Phase 3)
-builder.Services.AddScoped<RentManager.API.BackgroundJobs.Jobs.DailyRetentionJob>();
-builder.Services.AddScoped<RentManager.API.BackgroundJobs.Jobs.RetentionComplianceReportJob>();
-builder.Services.AddScoped<RentManager.API.BackgroundJobs.Jobs.LegalHoldReminderJob>();
+// Note: Phase 3 retention jobs removed - retention is now manual (admin-initiated)
 
 // Zitadel OAuth Configuration
 var zitadelSettings = builder.Configuration.GetSection("Zitadel");
@@ -189,26 +187,7 @@ var summaries = new[]
     "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
 };
 
-app.MapGet("/weatherforecast", () =>
-{
-    var forecast =  Enumerable.Range(1, 5).Select(index =>
-        new WeatherForecast
-        (
-            DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-            Random.Shared.Next(-20, 55),
-            summaries[Random.Shared.Next(summaries.Length)]
-        ))
-        .ToArray();
-    return forecast;
-})
-.WithName("GetWeatherForecast");
-
 app.Run();
-
-record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
-{
-    public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
-}
 
 // Make Program class public for testing
 public partial class Program { }

@@ -10,43 +10,12 @@ public static class JobScheduler
 {
     /// <summary>
     /// Configure all recurring background jobs
+    /// NOTE: Phase 3 automated retention jobs removed - retention is now executed manually by admins
     /// </summary>
     public static void ConfigureRecurringJobs()
     {
-        // Phase 3: Data Retention & Legal Hold Jobs
-
-        // Daily retention policy execution (runs at 2:00 AM UTC)
-        RecurringJob.AddOrUpdate<Jobs.DailyRetentionJob>(
-            recurringJobId: "daily-retention-policy",
-            methodCall: job => job.ExecuteAsync(),
-            cronExpression: Cron.Daily(2), // 2:00 AM daily
-            options: new RecurringJobOptions
-            {
-                TimeZone = TimeZoneInfo.Utc,
-                QueueName = "default"
-            });
-
-        // Weekly retention compliance report (runs every Monday at 8:00 AM UTC)
-        RecurringJob.AddOrUpdate<Jobs.RetentionComplianceReportJob>(
-            recurringJobId: "weekly-retention-compliance-report",
-            methodCall: job => job.ExecuteAsync(),
-            cronExpression: Cron.Weekly(DayOfWeek.Monday, 8), // Monday 8:00 AM
-            options: new RecurringJobOptions
-            {
-                TimeZone = TimeZoneInfo.Utc,
-                QueueName = "default"
-            });
-
-        // Monthly legal hold review reminders (runs on 1st of month at 9:00 AM UTC)
-        RecurringJob.AddOrUpdate<Jobs.LegalHoldReminderJob>(
-            recurringJobId: "monthly-legal-hold-reminders",
-            methodCall: job => job.ExecuteAsync(),
-            cronExpression: Cron.Monthly(1, 9), // 1st of month, 9:00 AM
-            options: new RecurringJobOptions
-            {
-                TimeZone = TimeZoneInfo.Utc,
-                QueueName = "default"
-            });
+        // Placeholder for future recurring jobs
+        // Use RecurringJob.AddOrUpdate<TJob>(...) to add jobs here
     }
 
     /// <summary>

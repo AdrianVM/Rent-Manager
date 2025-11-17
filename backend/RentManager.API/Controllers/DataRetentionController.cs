@@ -1,32 +1,30 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using RentManager.API.Models;
-using RentManager.API.Models.DTOs;
+using RentManager.API.DTOs;
 using RentManager.API.Services.DataRetention;
 
 namespace RentManager.API.Controllers
 {
     /// <summary>
-    /// API endpoints for data retention management.
-    /// Admin-only endpoints for managing retention schedules and compliance monitoring.
+    /// API endpoints for data retention policy management.
+    /// Ultra-simplified model - admins execute retention policies manually via SQL scripts.
+    /// Provides policy documentation and allows users to submit retention inquiries.
     /// </summary>
     [ApiController]
     [Route("api/[controller]")]
     public class DataRetentionController : ControllerBase
     {
         private readonly IDataRetentionService _retentionService;
-        private readonly IAutomatedDeletionService _deletionService;
         private readonly ILegalHoldService _legalHoldService;
         private readonly ILogger<DataRetentionController> _logger;
 
         public DataRetentionController(
             IDataRetentionService retentionService,
-            IAutomatedDeletionService deletionService,
             ILegalHoldService legalHoldService,
             ILogger<DataRetentionController> logger)
         {
             _retentionService = retentionService;
-            _deletionService = deletionService;
             _legalHoldService = legalHoldService;
             _logger = logger;
         }
@@ -185,15 +183,35 @@ namespace RentManager.API.Controllers
         }
 
         /// <summary>
-        /// Execute retention policies in dry-run mode (admin only, for testing).
+        /// Get public retention policies (accessible to all authenticated users).
+        /// Shows what data is retained and for how long.
         /// </summary>
-        [HttpPost("execute-dry-run")]
-        [Authorize(Roles = "Admin")]
-        public async Task<ActionResult<RetentionExecutionResult>> ExecuteDryRun()
+        [HttpGet("policies")]
+        [Authorize]
+        public async Task<ActionResult<List<RetentionPolicyPublicDto>>> GetPublicPolicies()
         {
-            _logger.LogInformation("Admin requested dry-run execution of retention policies");
-            var result = await _deletionService.ExecuteRetentionPoliciesAsync(dryRun: true);
-            return Ok(result);
+            var schedules = await _retentionService.GetActiveRetentionSchedulesAsync();
+
+            var policies = schedules.Select(s => new RetentionPolicyPublicDto
+            {
+                DataCategory = s.DataCategory,
+                Description = s.Description,
+                RetentionMonths = s.RetentionMonths,
+                RetentionPeriodDescription = s.RetentionMonths == 0
+                    ? "Retained while your account is active"
+                    : $"{s.RetentionMonths} months ({Math.Round(s.RetentionMonths / 12.0, 1)} years)",
+                LegalBasis = s.LegalBasis,
+                Action = s.Action.ToString(),
+                ActionDescription = s.Action switch
+                {
+                    RetentionAction.Delete => "Permanently deleted",
+                    RetentionAction.Anonymize => "Personally identifiable information removed",
+                    RetentionAction.Archive => "Moved to secure long-term storage",
+                    _ => "Unknown action"
+                }
+            }).ToList();
+
+            return Ok(policies);
         }
 
         /// <summary>

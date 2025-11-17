@@ -1,6 +1,6 @@
 using RentManager.API.Models;
 
-namespace RentManager.API.Models.DTOs;
+namespace RentManager.API.DTOs;
 
 /// <summary>
 /// DTO for initiating a new payment

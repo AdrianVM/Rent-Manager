@@ -12,13 +12,13 @@ namespace RentManager.API.BackgroundJobs.Jobs;
 /// </summary>
 public class CheckOverduePaymentsJob
 {
-    private readonly RentManagerDbContext _context;
+    private readonly IUnitOfWork _context;
     private readonly IBackgroundEmailService _backgroundEmailService;
     private readonly IConfiguration _configuration;
     private readonly ILogger<CheckOverduePaymentsJob> _logger;
 
     public CheckOverduePaymentsJob(
-        RentManagerDbContext context,
+        IUnitOfWork context,
         IBackgroundEmailService backgroundEmailService,
         IConfiguration configuration,
         ILogger<CheckOverduePaymentsJob> logger)

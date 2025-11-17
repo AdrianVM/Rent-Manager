@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using RentManager.API.Models;
-using RentManager.API.Models.DTOs;
+using RentManager.API.DTOs;
 using RentManager.API.Services;
 using System.Security.Claims;
 

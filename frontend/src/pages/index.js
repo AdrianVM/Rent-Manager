@@ -22,4 +22,5 @@ export { default as CashFlow } from './Reports/CashFlow';
 export { default as OccupancyRevenue } from './Reports/OccupancyRevenue';
 
 // Privacy & Compliance
-export { default as DataRetentionDashboard } from './PrivacyCompliance/DataRetentionDashboard';
+export { default as RetentionPolicyPage } from './PrivacyCompliance/RetentionPolicyPage';
+export { default as LegalHoldsManager } from './PrivacyCompliance/LegalHoldsManager';

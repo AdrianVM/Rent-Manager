@@ -7,13 +7,11 @@ namespace RentManager.API.Services
     public class SeedDataService
     {
         private readonly IDataService _dataService;
-        private readonly IAuthService _authService;
-        private readonly RentManagerDbContext _context;
+        private readonly IUnitOfWork _context;
 
-        public SeedDataService(IDataService dataService, IAuthService authService, RentManagerDbContext context)
+        public SeedDataService(IDataService dataService, IUnitOfWork context)
         {
             _dataService = dataService;
-            _authService = authService;
             _context = context;
         }
 

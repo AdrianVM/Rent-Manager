@@ -14,11 +14,11 @@ public interface IDataDeletionService
 
 public class DataDeletionService : IDataDeletionService
 {
-    private readonly RentManagerDbContext _context;
+    private readonly IUnitOfWork _context;
     private readonly ILogger<DataDeletionService> _logger;
 
     public DataDeletionService(
-        RentManagerDbContext context,
+        IUnitOfWork context,
         ILogger<DataDeletionService> logger)
     {
         _context = context;
@@ -234,7 +234,7 @@ public class DataDeletionService : IDataDeletionService
         if (user.Person != null)
         {
             user.Person.FirstName = "REDACTED";
-            user.Person.MiddleName = null;
+            user.Person.MiddleName = null!;
             user.Person.LastName = "REDACTED";
             user.Person.IdNumber = null;
             user.Person.Phone = null;
@@ -291,7 +291,7 @@ public class DataDeletionService : IDataDeletionService
         {
             user.Person.FirstName = "Anonymous";
             user.Person.LastName = "User";
-            user.Person.MiddleName = null;
+            user.Person.MiddleName = null!;
             user.Person.IdNumber = null;
             user.Person.Phone = null;
         }

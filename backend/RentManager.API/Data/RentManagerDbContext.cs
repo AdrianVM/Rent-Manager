@@ -3,7 +3,7 @@ using RentManager.API.Models;
 
 namespace RentManager.API.Data
 {
-    public class RentManagerDbContext : DbContext
+    public class RentManagerDbContext : DbContext, IUnitOfWork
     {
         public RentManagerDbContext(DbContextOptions<RentManagerDbContext> options)
             : base(options)
@@ -31,6 +31,10 @@ namespace RentManager.API.Data
         public DbSet<DataRetentionSchedule> DataRetentionSchedules { get; set; } = null!;
         public DbSet<LegalHold> LegalHolds { get; set; } = null!;
 
+        public override async Task<int> SaveChangesAsync(CancellationToken token = default)
+        {
+           return await base.SaveChangesAsync(token);
+        }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);

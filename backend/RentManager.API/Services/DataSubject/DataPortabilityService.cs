@@ -16,11 +16,11 @@ public interface IDataPortabilityService
 /// </summary>
 public class DataPortabilityService : IDataPortabilityService
 {
-    private readonly RentManagerDbContext _context;
+    private readonly IUnitOfWork _context;
     private readonly ILogger<DataPortabilityService> _logger;
 
     public DataPortabilityService(
-        RentManagerDbContext context,
+        IUnitOfWork context,
         ILogger<DataPortabilityService> logger)
     {
         _context = context;

@@ -12,7 +12,7 @@ namespace RentManager.API.BackgroundJobs.Jobs;
 /// </summary>
 public class CheckLeaseExpirationsJob
 {
-    private readonly RentManagerDbContext _context;
+    private readonly IUnitOfWork _context;
     private readonly IBackgroundEmailService _backgroundEmailService;
     private readonly IConfiguration _configuration;
     private readonly ILogger<CheckLeaseExpirationsJob> _logger;
@@ -21,7 +21,7 @@ public class CheckLeaseExpirationsJob
     private readonly int[] _notificationIntervals = { 60, 30, 7 };
 
     public CheckLeaseExpirationsJob(
-        RentManagerDbContext context,
+        IUnitOfWork context,
         IBackgroundEmailService backgroundEmailService,
         IConfiguration configuration,
         ILogger<CheckLeaseExpirationsJob> logger)

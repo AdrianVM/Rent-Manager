@@ -12,11 +12,11 @@ namespace RentManager.API.Controllers;
 [Route("api/[controller]")]
 public class CookieConsentController : ControllerBase
 {
-    private readonly RentManagerDbContext _context;
+    private readonly IUnitOfWork _context;
     private readonly ILogger<CookieConsentController> _logger;
 
     public CookieConsentController(
-        RentManagerDbContext context,
+        IUnitOfWork context,
         ILogger<CookieConsentController> logger)
     {
         _context = context;

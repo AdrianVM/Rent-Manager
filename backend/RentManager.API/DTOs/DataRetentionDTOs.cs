@@ -1,6 +1,7 @@
 using System.ComponentModel.DataAnnotations;
+using RentManager.API.Models;
 
-namespace RentManager.API.Models.DTOs
+namespace RentManager.API.DTOs
 {
     /// <summary>
     /// DTO for creating a new retention schedule.
@@ -96,6 +97,20 @@ namespace RentManager.API.Models.DTOs
         public int RetentionMonths { get; set; }
         public string RetentionPeriodDescription { get; set; } = string.Empty;
         public RetentionAction Action { get; set; }
+        public string ActionDescription { get; set; } = string.Empty;
+    }
+
+    /// <summary>
+    /// DTO for public retention policy display (simplified view for all users).
+    /// </summary>
+    public class RetentionPolicyPublicDto
+    {
+        public string DataCategory { get; set; } = string.Empty;
+        public string Description { get; set; } = string.Empty;
+        public int RetentionMonths { get; set; }
+        public string RetentionPeriodDescription { get; set; } = string.Empty;
+        public string LegalBasis { get; set; } = string.Empty;
+        public string Action { get; set; } = string.Empty;
         public string ActionDescription { get; set; } = string.Empty;
     }
 

@@ -19,11 +19,11 @@ public interface IDataSubjectRequestService
 
 public class DataSubjectRequestService : IDataSubjectRequestService
 {
-    private readonly RentManagerDbContext _context;
+    private readonly IUnitOfWork _context;
     private readonly ILogger<DataSubjectRequestService> _logger;
 
     public DataSubjectRequestService(
-        RentManagerDbContext context,
+        IUnitOfWork context,
         ILogger<DataSubjectRequestService> logger)
     {
         _context = context;

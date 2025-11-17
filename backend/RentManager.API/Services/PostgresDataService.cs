@@ -6,10 +6,10 @@ namespace RentManager.API.Services
 {
     public class PostgresDataService : IDataService
     {
-        private readonly RentManagerDbContext _context;
+        private readonly IUnitOfWork _context;
         private readonly ILogger<PostgresDataService> _logger;
 
-        public PostgresDataService(RentManagerDbContext context, ILogger<PostgresDataService> logger)
+        public PostgresDataService(IUnitOfWork context, ILogger<PostgresDataService> logger)
         {
             _context = context;
             _logger = logger;

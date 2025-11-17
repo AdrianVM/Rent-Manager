@@ -10,11 +10,11 @@ namespace RentManager.API.Services.DataRetention
     /// </summary>
     public class LegalHoldService : ILegalHoldService
     {
-        private readonly RentManagerDbContext _context;
+        private readonly IUnitOfWork _context;
         private readonly ILogger<LegalHoldService> _logger;
 
         public LegalHoldService(
-            RentManagerDbContext context,
+            IUnitOfWork context,
             ILogger<LegalHoldService> logger)
         {
             _context = context;

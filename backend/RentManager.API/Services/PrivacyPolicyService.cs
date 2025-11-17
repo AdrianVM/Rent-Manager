@@ -19,9 +19,9 @@ public interface IPrivacyPolicyService
 
 public class PrivacyPolicyService : IPrivacyPolicyService
 {
-    private readonly RentManagerDbContext _context;
+    private readonly IUnitOfWork _context;
 
-    public PrivacyPolicyService(RentManagerDbContext context)
+    public PrivacyPolicyService(IUnitOfWork context)
     {
         _context = context;
     }

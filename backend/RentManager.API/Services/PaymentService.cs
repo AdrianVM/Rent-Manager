@@ -12,14 +12,14 @@ namespace RentManager.API.Services;
 /// </summary>
 public class PaymentService : IPaymentService
 {
-    private readonly RentManagerDbContext _context;
+    private readonly IUnitOfWork _context;
     private readonly ILogger<PaymentService> _logger;
     private readonly IPaymentGateway? _paymentGateway;
     private readonly IBackgroundEmailService _backgroundEmailService;
     private readonly IConfiguration _configuration;
 
     public PaymentService(
-        RentManagerDbContext context,
+        IUnitOfWork context,
         ILogger<PaymentService> logger,
         IBackgroundEmailService backgroundEmailService,
         IConfiguration configuration,

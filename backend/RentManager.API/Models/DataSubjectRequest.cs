@@ -5,7 +5,7 @@ namespace RentManager.API.Models;
 
 /// <summary>
 /// Represents a data subject request (GDPR Articles 15-22)
-/// Includes access, deletion, portability, rectification, restriction, objection
+/// Includes access, deletion, portability, rectification, restriction, objection, and retention inquiries
 /// </summary>
 public class DataSubjectRequest
 {
@@ -20,7 +20,7 @@ public class DataSubjectRequest
     public string UserId { get; set; } = string.Empty;
 
     /// <summary>
-    /// Type of request: Access, Deletion, Portability, Rectification, Restriction, Objection
+    /// Type of request: Access, Deletion, Portability, Rectification, Restriction, Objection, RetentionInquiry
     /// </summary>
     [Required]
     [MaxLength(50)]
@@ -138,6 +138,7 @@ public static class DataSubjectRequestType
     public const string Rectification = "Rectification";
     public const string Restriction = "Restriction";
     public const string Objection = "Objection";
+    public const string RetentionInquiry = "RetentionInquiry";
 
     public static readonly string[] All = new[]
     {
@@ -146,7 +147,8 @@ public static class DataSubjectRequestType
         Portability,
         Rectification,
         Restriction,
-        Objection
+        Objection,
+        RetentionInquiry
     };
 }
 

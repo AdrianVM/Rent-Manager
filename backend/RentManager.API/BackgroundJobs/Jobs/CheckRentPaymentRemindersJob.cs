@@ -12,7 +12,7 @@ namespace RentManager.API.BackgroundJobs.Jobs;
 /// </summary>
 public class CheckRentPaymentRemindersJob
 {
-    private readonly RentManagerDbContext _context;
+    private readonly IUnitOfWork _context;
     private readonly IBackgroundEmailService _backgroundEmailService;
     private readonly IConfiguration _configuration;
     private readonly ILogger<CheckRentPaymentRemindersJob> _logger;
@@ -24,7 +24,7 @@ public class CheckRentPaymentRemindersJob
     private readonly int _rentDueDayOfMonth = 5;
 
     public CheckRentPaymentRemindersJob(
-        RentManagerDbContext context,
+        IUnitOfWork context,
         IBackgroundEmailService backgroundEmailService,
         IConfiguration configuration,
         ILogger<CheckRentPaymentRemindersJob> logger)
