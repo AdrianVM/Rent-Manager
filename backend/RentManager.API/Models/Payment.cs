@@ -34,6 +34,15 @@ namespace RentManager.API.Models
         public DateTimeOffset? RefundedAt { get; set; }
         public string? RefundReason { get; set; }
 
+        // Stripe Connect fields
+        public string? StripeConnectAccountId { get; set; } // Connected account receiving funds
+        public StripeConnectAccount? StripeConnectAccount { get; set; }
+        public decimal? PlatformFee { get; set; } // Fee retained by platform
+        public decimal? TransferAmount { get; set; } // Amount transferred to property owner
+        public string? StripeTransferId { get; set; } // Transfer ID if funds transferred
+        public bool TransferCompleted { get; set; }
+        public DateTimeOffset? TransferredAt { get; set; }
+
         public DateTimeOffset CreatedAt { get; set; } = DateTimeOffset.UtcNow;
         public DateTimeOffset UpdatedAt { get; set; } = DateTimeOffset.UtcNow;
     }
