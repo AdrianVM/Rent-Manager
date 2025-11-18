@@ -145,7 +145,7 @@ public class StripeConnectService : IStripeConnectService
                 UpdatedAt = DateTimeOffset.UtcNow
             };
 
-            _context.Set<StripeConnectAccount>().Add(connectAccount);
+            _context.StripeConnectAccounts.Add(connectAccount);
             await _context.SaveChangesAsync();
 
             _logger.LogInformation("Stripe Connect account record created in database: {Id}", connectAccount.Id);
@@ -164,7 +164,7 @@ public class StripeConnectService : IStripeConnectService
         string refreshUrl,
         string returnUrl)
     {
-        var connectAccount = await _context.Set<StripeConnectAccount>()
+        var connectAccount = await _context.StripeConnectAccounts
             .FirstOrDefaultAsync(a => a.Id == stripeConnectAccountId);
 
         if (connectAccount == null)
@@ -211,7 +211,7 @@ public class StripeConnectService : IStripeConnectService
 
     public async Task<StripeConnectAccount> RefreshAccountStatusAsync(string stripeConnectAccountId)
     {
-        var connectAccount = await _context.Set<StripeConnectAccount>()
+        var connectAccount = await _context.StripeConnectAccounts
             .FirstOrDefaultAsync(a => a.Id == stripeConnectAccountId);
 
         if (connectAccount == null)
@@ -294,14 +294,14 @@ public class StripeConnectService : IStripeConnectService
 
     public async Task<StripeConnectAccount?> GetAccountByPropertyOwnerIdAsync(string propertyOwnerId)
     {
-        return await _context.Set<StripeConnectAccount>()
+        return await _context.StripeConnectAccounts
             .AsNoTracking()
             .FirstOrDefaultAsync(a => a.PropertyOwnerId == propertyOwnerId);
     }
 
     public async Task<StripeConnectAccount?> GetAccountByStripeAccountIdAsync(string stripeAccountId)
     {
-        return await _context.Set<StripeConnectAccount>()
+        return await _context.StripeConnectAccounts
             .AsNoTracking()
             .FirstOrDefaultAsync(a => a.StripeAccountId == stripeAccountId);
     }
@@ -314,7 +314,7 @@ public class StripeConnectService : IStripeConnectService
 
     public async Task<StripeConnectAccount> DisableAccountAsync(string stripeConnectAccountId, string reason)
     {
-        var connectAccount = await _context.Set<StripeConnectAccount>()
+        var connectAccount = await _context.StripeConnectAccounts
             .FirstOrDefaultAsync(a => a.Id == stripeConnectAccountId);
 
         if (connectAccount == null)
@@ -337,7 +337,7 @@ public class StripeConnectService : IStripeConnectService
 
     public async Task<StripeConnectAccount> EnableAccountAsync(string stripeConnectAccountId)
     {
-        var connectAccount = await _context.Set<StripeConnectAccount>()
+        var connectAccount = await _context.StripeConnectAccounts
             .FirstOrDefaultAsync(a => a.Id == stripeConnectAccountId);
 
         if (connectAccount == null)
@@ -359,7 +359,7 @@ public class StripeConnectService : IStripeConnectService
 
     public async Task<string> GenerateLoginLinkAsync(string stripeConnectAccountId)
     {
-        var connectAccount = await _context.Set<StripeConnectAccount>()
+        var connectAccount = await _context.StripeConnectAccounts
             .FirstOrDefaultAsync(a => a.Id == stripeConnectAccountId);
 
         if (connectAccount == null)
@@ -369,12 +369,19 @@ public class StripeConnectService : IStripeConnectService
 
         try
         {
-            var service = new LoginLinkService();
-            var loginLink = await service.CreateAsync(connectAccount.StripeAccountId);
+            var service = new Stripe.AccountLinkService();
+            var options = new Stripe.AccountLinkCreateOptions
+            {
+                Account = connectAccount.StripeAccountId,
+                RefreshUrl = "https://example.com/reauth",
+                ReturnUrl = "https://example.com/return",
+                Type = "account_onboarding",
+            };
+            var accountLink = await service.CreateAsync(options);
 
             _logger.LogInformation("Login link generated for Stripe account: {StripeAccountId}", connectAccount.StripeAccountId);
 
-            return loginLink.Url;
+            return accountLink.Url;
         }
         catch (StripeException ex)
         {
@@ -487,12 +494,14 @@ public class StripeConnectService : IStripeConnectService
             Amount = payout.Amount / 100m,
             Currency = payout.Currency,
             Status = payout.Status,
-            ArrivalDate = payout.ArrivalDate.HasValue
-                ? DateTimeOffset.FromUnixTimeSeconds(payout.ArrivalDate.Value)
+            ArrivalDate = payout.ArrivalDate > DateTime.MinValue
+                ? new DateTimeOffset(payout.ArrivalDate, TimeSpan.Zero)
                 : null,
             BankAccountLast4 = payout.Destination is BankAccount ba ? ba.Last4 : null,
             Description = payout.Description,
-            CreatedAt = DateTimeOffset.FromUnixTimeSeconds(payout.Created)
+            CreatedAt = payout.Created > DateTime.MinValue
+                ? new DateTimeOffset(payout.Created, TimeSpan.Zero)
+                : DateTimeOffset.UtcNow
         };
     }
 

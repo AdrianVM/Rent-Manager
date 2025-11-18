@@ -30,6 +30,9 @@ namespace RentManager.API.Data
         public DbSet<DataDeletionLog> DataDeletionLogs { get; set; } = null!;
         public DbSet<DataRetentionSchedule> DataRetentionSchedules { get; set; } = null!;
         public DbSet<LegalHold> LegalHolds { get; set; } = null!;
+        public DbSet<StripeConnectAccount> StripeConnectAccounts { get; set; } = null!;
+        public DbSet<StripeTransfer> StripeTransfers { get; set; } = null!;
+        public DbSet<StripePlatformFee> StripePlatformFees { get; set; } = null!;
 
         // Explicitly implement IUnitOfWork.SaveChangesAsync
         Task<int> IUnitOfWork.SaveChangesAsync(CancellationToken token)
@@ -200,6 +203,7 @@ namespace RentManager.API.Data
                 entity.HasKey(e => e.Id);
                 entity.HasIndex(e => e.TenantId);
                 entity.HasIndex(e => e.Date);
+                entity.HasIndex(e => e.StripeConnectAccountId);
 
                 entity.Property(e => e.Id).IsRequired();
                 entity.Property(e => e.TenantId).IsRequired();
@@ -208,8 +212,18 @@ namespace RentManager.API.Data
                 entity.Property(e => e.Method).HasConversion<string>().IsRequired();
                 entity.Property(e => e.Status).HasConversion<string>().IsRequired();
                 entity.Property(e => e.Notes).HasMaxLength(1000);
+                entity.Property(e => e.ProcessingFee).HasPrecision(18, 2);
+                entity.Property(e => e.PlatformFee).HasPrecision(18, 2);
+                entity.Property(e => e.TransferAmount).HasPrecision(18, 2);
+                entity.Property(e => e.TransferCompleted).IsRequired();
                 entity.Property(e => e.CreatedAt).IsRequired();
                 entity.Property(e => e.UpdatedAt).IsRequired();
+
+                // Configure optional relationship with StripeConnectAccount
+                entity.HasOne(p => p.StripeConnectAccount)
+                    .WithMany()
+                    .HasForeignKey(p => p.StripeConnectAccountId)
+                    .OnDelete(DeleteBehavior.SetNull);
             });
 
             // Configure Contract entity
@@ -582,6 +596,110 @@ namespace RentManager.API.Data
                 entity.Property(e => e.IsActive).IsRequired();
                 entity.Property(e => e.CaseReference).HasMaxLength(100);
                 entity.Property(e => e.Notes).HasMaxLength(2000);
+            });
+
+            // Configure StripeConnectAccount entity
+            modelBuilder.Entity<StripeConnectAccount>(entity =>
+            {
+                entity.ToTable("stripe_connect_accounts");
+                entity.HasKey(e => e.Id);
+                entity.HasIndex(e => e.PropertyOwnerId).IsUnique();
+                entity.HasIndex(e => e.StripeAccountId).IsUnique();
+                entity.HasIndex(e => e.Status);
+
+                entity.Property(e => e.Id).IsRequired();
+                entity.Property(e => e.PropertyOwnerId).IsRequired();
+                entity.Property(e => e.StripeAccountId).IsRequired().HasMaxLength(255);
+                entity.Property(e => e.AccountType).HasConversion<string>().IsRequired();
+                entity.Property(e => e.Status).HasConversion<string>().IsRequired();
+                entity.Property(e => e.OnboardingCompleted).IsRequired();
+                entity.Property(e => e.CanAcceptPayments).IsRequired();
+                entity.Property(e => e.CanCreatePayouts).IsRequired();
+                entity.Property(e => e.IdentityVerified).IsRequired();
+                entity.Property(e => e.DocumentsRequired).IsRequired();
+                entity.Property(e => e.Currency).HasMaxLength(3);
+                entity.Property(e => e.DefaultPayoutSchedule).HasMaxLength(50);
+                entity.Property(e => e.InstantPayoutsEnabled).IsRequired();
+                entity.Property(e => e.IsActive).IsRequired();
+                entity.Property(e => e.CreatedAt).IsRequired();
+                entity.Property(e => e.UpdatedAt).IsRequired();
+
+                // Configure one-to-one relationship with PropertyOwner
+                entity.HasOne(sca => sca.PropertyOwner)
+                    .WithOne(po => po.StripeConnectAccount)
+                    .HasForeignKey<StripeConnectAccount>(sca => sca.PropertyOwnerId)
+                    .OnDelete(DeleteBehavior.Cascade);
+            });
+
+            // Configure StripeTransfer entity
+            modelBuilder.Entity<StripeTransfer>(entity =>
+            {
+                entity.ToTable("stripe_transfers");
+                entity.HasKey(e => e.Id);
+                entity.HasIndex(e => e.PaymentId);
+                entity.HasIndex(e => e.StripeConnectAccountId);
+                entity.HasIndex(e => e.StripeTransferId);
+                entity.HasIndex(e => e.Status);
+
+                entity.Property(e => e.Id).IsRequired();
+                entity.Property(e => e.PaymentId).IsRequired();
+                entity.Property(e => e.StripeConnectAccountId).IsRequired();
+                entity.Property(e => e.StripeTransferId).IsRequired().HasMaxLength(255);
+                entity.Property(e => e.StripePaymentIntentId).IsRequired().HasMaxLength(255);
+                entity.Property(e => e.GrossAmount).HasPrecision(18, 2).IsRequired();
+                entity.Property(e => e.PlatformFee).HasPrecision(18, 2).IsRequired();
+                entity.Property(e => e.StripeFee).HasPrecision(18, 2).IsRequired();
+                entity.Property(e => e.NetAmount).HasPrecision(18, 2).IsRequired();
+                entity.Property(e => e.Status).HasConversion<string>().IsRequired();
+                entity.Property(e => e.PayoutCompleted).IsRequired();
+                entity.Property(e => e.IsReversed).IsRequired();
+                entity.Property(e => e.CreatedAt).IsRequired();
+                entity.Property(e => e.UpdatedAt).IsRequired();
+
+                // Configure relationship with Payment
+                entity.HasOne(st => st.Payment)
+                    .WithMany()
+                    .HasForeignKey(st => st.PaymentId)
+                    .OnDelete(DeleteBehavior.Restrict);
+
+                // Configure relationship with StripeConnectAccount
+                entity.HasOne(st => st.StripeConnectAccount)
+                    .WithMany()
+                    .HasForeignKey(st => st.StripeConnectAccountId)
+                    .OnDelete(DeleteBehavior.Restrict);
+            });
+
+            // Configure StripePlatformFee entity
+            modelBuilder.Entity<StripePlatformFee>(entity =>
+            {
+                entity.ToTable("stripe_platform_fees");
+                entity.HasKey(e => e.Id);
+                entity.HasIndex(e => e.PropertyId);
+                entity.HasIndex(e => e.IsActive);
+                entity.HasIndex(e => e.IsDefault);
+
+                entity.Property(e => e.Id).IsRequired();
+                entity.Property(e => e.Name).IsRequired().HasMaxLength(255);
+                entity.Property(e => e.Description).HasMaxLength(1000);
+                entity.Property(e => e.IsActive).IsRequired();
+                entity.Property(e => e.IsDefault).IsRequired();
+                entity.Property(e => e.FeeType).HasConversion<string>().IsRequired();
+                entity.Property(e => e.PercentageFee).HasPrecision(5, 2).IsRequired();
+                entity.Property(e => e.FixedFee).HasPrecision(18, 2).IsRequired();
+                entity.Property(e => e.MinimumFee).HasPrecision(18, 2).IsRequired();
+                entity.Property(e => e.MaximumFee).HasPrecision(18, 2).IsRequired();
+                entity.Property(e => e.ApplicableToOwnerType).HasMaxLength(50);
+                entity.Property(e => e.MinPaymentAmount).HasPrecision(18, 2);
+                entity.Property(e => e.MaxPaymentAmount).HasPrecision(18, 2);
+                entity.Property(e => e.IsPromotional).IsRequired();
+                entity.Property(e => e.CreatedAt).IsRequired();
+                entity.Property(e => e.UpdatedAt).IsRequired();
+
+                // Configure optional relationship with Property
+                entity.HasOne(spf => spf.Property)
+                    .WithMany()
+                    .HasForeignKey(spf => spf.PropertyId)
+                    .OnDelete(DeleteBehavior.SetNull);
             });
         }
     }

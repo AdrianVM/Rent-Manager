@@ -171,18 +171,30 @@ public class StripeConnectPaymentService
             payment.ProcessedAt = DateTimeOffset.UtcNow;
             payment.ExternalTransactionId = paymentIntent.Id;
 
-            // Get Stripe processing fee
-            var charges = paymentIntent.Charges?.Data;
+            // Get Stripe processing fee from latest charge
             var stripeFee = 0m;
-            if (charges?.Any() == true)
+            if (!string.IsNullOrEmpty(paymentIntent.LatestChargeId))
             {
-                var charge = charges.First();
-                stripeFee = charge.BalanceTransaction?.Fee / 100m ?? 0m;
+                try
+                {
+                    var chargeService = new Stripe.ChargeService();
+                    var charge = await chargeService.GetAsync(paymentIntent.LatestChargeId);
+                    if (charge.BalanceTransaction != null)
+                    {
+                        var btService = new Stripe.BalanceTransactionService();
+                        var balanceTransaction = await btService.GetAsync(charge.BalanceTransactionId);
+                        stripeFee = balanceTransaction.Fee / 100m;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogWarning(ex, "Failed to fetch Stripe fee for charge: {ChargeId}", paymentIntent.LatestChargeId);
+                }
             }
             payment.ProcessingFee = stripeFee;
 
-            // Extract transfer information
-            var transferId = paymentIntent.Transfer?.Id ?? paymentIntent.TransferData?.Destination;
+            // Extract transfer information from metadata
+            var transferId = paymentIntent.Metadata.GetValueOrDefault("transfer_id", null);
             var platformFee = decimal.Parse(paymentIntent.Metadata.GetValueOrDefault("platform_fee", "0"));
             var transferAmount = decimal.Parse(paymentIntent.Metadata.GetValueOrDefault("transfer_amount", "0"));
 
@@ -206,7 +218,7 @@ public class StripeConnectPaymentService
                 UpdatedAt = DateTimeOffset.UtcNow
             };
 
-            _context.Set<StripeTransfer>().Add(transfer);
+            _context.StripeTransfers.Add(transfer);
 
             // Update payment transfer tracking
             payment.TransferCompleted = true;
@@ -349,7 +361,7 @@ public class StripeConnectPaymentService
             // Update transfer record if exists
             if (!string.IsNullOrEmpty(payment.StripeTransferId))
             {
-                var transfer = await _context.Set<StripeTransfer>()
+                var transfer = await _context.StripeTransfers
                     .FirstOrDefaultAsync(t => t.Id == payment.StripeTransferId);
 
                 if (transfer != null)
@@ -393,7 +405,7 @@ public class StripeConnectPaymentService
         string? propertyId,
         decimal paymentAmount)
     {
-        var query = _context.Set<StripePlatformFee>()
+        var query = _context.StripePlatformFees
             .AsNoTracking()
             .Where(f => f.IsActive);
 

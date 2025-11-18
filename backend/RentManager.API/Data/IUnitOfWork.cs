@@ -25,6 +25,9 @@ namespace RentManager.API.Data
         public DbSet<DataDeletionLog> DataDeletionLogs { get; set; }
         public DbSet<DataRetentionSchedule> DataRetentionSchedules { get; set; }
         public DbSet<LegalHold> LegalHolds { get; set; }
+        public DbSet<StripeConnectAccount> StripeConnectAccounts { get; set; }
+        public DbSet<StripeTransfer> StripeTransfers { get; set; }
+        public DbSet<StripePlatformFee> StripePlatformFees { get; set; }
 
         public Task<int> SaveChangesAsync(CancellationToken token = default);
     }
