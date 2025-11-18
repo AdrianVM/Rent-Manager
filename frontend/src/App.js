@@ -262,7 +262,7 @@ function App() {
                   <Route path="/data-requests" element={<DataSubjectRequestPage />} />
 
                   {/* Account Settings - Available to all authenticated users */}
-                  <Route path="/settings" element={<AccountSettings user={user} />} />
+                  <Route path="/settings" element={<AccountSettings user={user} currentRole={activeRole} />} />
 
                   {/* Admin-only routes */}
                   {isAdmin && (

@@ -2,7 +2,9 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import './AccountSettings.css';
 
-function AccountSettings({ user }) {
+function AccountSettings({ user, currentRole }) {
+  const activeRole = currentRole || user?.role;
+  const isAdmin = activeRole?.toLowerCase() === 'admin';
   return (
     <div className="account-settings">
       <div className="account-settings-header">
@@ -108,6 +110,18 @@ function AccountSettings({ user }) {
               </div>
               <span className="settings-arrow">›</span>
             </Link>
+            {isAdmin && (
+              <Link to="/privacy-compliance" className="settings-link-item">
+                <div className="settings-item-info">
+                  <span className="settings-item-icon">🔒</span>
+                  <div>
+                    <h3>Privacy</h3>
+                    <p>Data retention & GDPR</p>
+                  </div>
+                </div>
+                <span className="settings-arrow">›</span>
+              </Link>
+            )}
           </div>
         </section>
 
