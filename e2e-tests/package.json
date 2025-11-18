@@ -1,0 +1,43 @@
+{
+  "name": "rent-manager-e2e-tests",
+  "version": "1.0.0",
+  "description": "End-to-end tests for Rent Manager application",
+  "main": "index.js",
+  "scripts": {
+    "test": "playwright test",
+    "test:headed": "playwright test --headed",
+    "test:ui": "playwright test --ui",
+    "test:debug": "playwright test --debug",
+    "test:auth": "playwright test tests/auth",
+    "test:property-owner": "playwright test tests/property-owner",
+    "test:renter": "playwright test tests/renter",
+    "test:admin": "playwright test tests/admin",
+    "test:api": "playwright test tests/api",
+    "test:smoke": "playwright test --grep @smoke",
+    "test:critical": "playwright test --grep @critical",
+    "test:regression": "playwright test",
+    "test:parallel": "playwright test --workers=4",
+    "report": "playwright show-report",
+    "codegen": "playwright codegen",
+    "install:browsers": "playwright install"
+  },
+  "keywords": [
+    "e2e",
+    "testing",
+    "playwright",
+    "rent-manager"
+  ],
+  "author": "Rent Manager Team",
+  "license": "ISC",
+  "devDependencies": {
+    "@playwright/test": "^1.48.0",
+    "@types/node": "^22.9.0",
+    "typescript": "^5.6.3",
+    "dotenv": "^16.4.5",
+    "faker": "^5.5.3",
+    "@faker-js/faker": "^9.2.0"
+  },
+  "dependencies": {
+    "pg": "^8.13.1"
+  }
+}
