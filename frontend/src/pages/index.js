@@ -8,6 +8,7 @@ export { default as Tenants } from './Tenants';
 export { default as Payments } from './Payments';
 export { default as UserManagement } from './UserManagement';
 export { default as SystemSettings } from './SystemSettings';
+export { default as AccountSettings } from './AccountSettings';
 export { default as MaintenanceRequests } from './MaintenanceRequests/MaintenanceRequests';
 export { default as Documents } from './Documents';
 export { default as PaymentHistory } from './PaymentHistory';

@@ -18,6 +18,7 @@ import {
   Payments,
   UserManagement,
   SystemSettings,
+  AccountSettings,
   MaintenanceRequests,
   Documents,
   PaymentHistory,
@@ -259,6 +260,9 @@ function App() {
 
                   {/* Privacy and Data Requests - Available to all authenticated users */}
                   <Route path="/data-requests" element={<DataSubjectRequestPage />} />
+
+                  {/* Account Settings - Available to all authenticated users */}
+                  <Route path="/settings" element={<AccountSettings user={user} />} />
 
                   {/* Admin-only routes */}
                   {isAdmin && (

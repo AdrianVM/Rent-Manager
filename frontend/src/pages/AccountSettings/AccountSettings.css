@@ -1,0 +1,222 @@
+.account-settings {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+.account-settings-header {
+  margin-bottom: 2.5rem;
+}
+
+.account-settings-header h1 {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0 0 0.5rem 0;
+}
+
+.account-settings-subtitle {
+  font-size: 1rem;
+  color: var(--text-secondary);
+  margin: 0;
+}
+
+.account-settings-content {
+  display: flex;
+  flex-direction: column;
+  gap: 2.5rem;
+}
+
+/* Settings Section */
+.settings-section {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.settings-section-header {
+  margin-bottom: 0.5rem;
+}
+
+.settings-section-header h2 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0 0 0.25rem 0;
+}
+
+.settings-section-header p {
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+  margin: 0;
+}
+
+/* Settings Card */
+.settings-card {
+  background: var(--card-background);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+/* Settings Item */
+.settings-item,
+.settings-link-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.25rem 1.5rem;
+  border-bottom: 1px solid var(--border-color);
+  transition: background-color 0.2s ease;
+}
+
+.settings-item:last-child,
+.settings-link-item:last-child {
+  border-bottom: none;
+}
+
+.settings-link-item {
+  text-decoration: none;
+  color: inherit;
+  cursor: pointer;
+}
+
+.settings-link-item:hover,
+.settings-item:hover {
+  background-color: var(--hover-background, rgba(0, 0, 0, 0.02));
+}
+
+.settings-item-info {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex: 1;
+}
+
+.settings-item-icon {
+  font-size: 1.5rem;
+  width: 2.5rem;
+  height: 2.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--icon-background, rgba(0, 0, 0, 0.05));
+  border-radius: 8px;
+}
+
+.settings-item-info h3 {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0 0 0.25rem 0;
+}
+
+.settings-item-info p {
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+  margin: 0;
+}
+
+/* Buttons */
+.settings-btn-secondary,
+.settings-btn-danger {
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: 1px solid;
+}
+
+.settings-btn-secondary {
+  background: transparent;
+  color: var(--primary-color);
+  border-color: var(--primary-color);
+}
+
+.settings-btn-secondary:hover {
+  background: var(--primary-color);
+  color: white;
+}
+
+.settings-btn-danger {
+  background: transparent;
+  color: var(--danger-color, #dc3545);
+  border-color: var(--danger-color, #dc3545);
+}
+
+.settings-btn-danger:hover {
+  background: var(--danger-color, #dc3545);
+  color: white;
+}
+
+/* Arrow for link items */
+.settings-arrow {
+  font-size: 1.5rem;
+  color: var(--text-tertiary);
+  transition: transform 0.2s ease;
+}
+
+.settings-link-item:hover .settings-arrow {
+  transform: translateX(4px);
+}
+
+/* Danger Zone */
+.danger-zone .settings-section-header h2 {
+  color: var(--danger-color, #dc3545);
+}
+
+.danger-zone .settings-card {
+  border-color: var(--danger-color, #dc3545);
+  background: var(--danger-background, rgba(220, 53, 69, 0.05));
+}
+
+/* Dark mode adjustments */
+[data-theme="dark"] .settings-item:hover,
+[data-theme="dark"] .settings-link-item:hover {
+  background-color: rgba(255, 255, 255, 0.05);
+}
+
+[data-theme="dark"] .settings-item-icon {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .account-settings {
+    padding: 1.5rem 1rem;
+  }
+
+  .account-settings-header h1 {
+    font-size: 1.75rem;
+  }
+
+  .settings-item,
+  .settings-link-item {
+    padding: 1rem;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+
+  .settings-btn-secondary,
+  .settings-btn-danger {
+    width: 100%;
+  }
+
+  .settings-arrow {
+    position: absolute;
+    right: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+  }
+
+  .settings-link-item {
+    position: relative;
+  }
+
+  .settings-link-item:hover .settings-arrow {
+    transform: translateY(-50%) translateX(4px);
+  }
+}
