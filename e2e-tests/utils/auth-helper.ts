@@ -31,14 +31,30 @@ export async function authenticateUser(
       return;
     }
 
-    // Click login button (adjust selector based on your app)
-    console.log('  → Clicking login button');
-    await page.click('button:has-text("Login"), a:has-text("Login"), [data-testid="login-button"]', {
-      timeout: 10000
-    }).catch(() => {
-      // If login button not found, might already be on login page
-      console.log('  → Login button not found, assuming already on login page');
-    });
+    // Handle cookie consent banner if present
+    console.log('  → Checking for cookie consent banner');
+    const acceptAllButton = page.locator('button:has-text("Accept All")');
+    if (await acceptAllButton.isVisible().catch(() => false)) {
+      console.log('  → Accepting cookies');
+      await acceptAllButton.click();
+      await page.waitForTimeout(1000);
+    }
+
+    // Click "Continue with Zitadel" button on landing page
+    console.log('  → Looking for Continue with Zitadel button');
+    const zitadelButton = page.locator('button:has-text("Continue with Zitadel")');
+    if (await zitadelButton.isVisible().catch(() => false)) {
+      console.log('  → Clicking Continue with Zitadel');
+      await zitadelButton.click();
+    } else {
+      // Try alternative login buttons
+      console.log('  → Clicking login button');
+      await page.click('button:has-text("Login"), a:has-text("Login"), [data-testid="login-button"]', {
+        timeout: 10000
+      }).catch(() => {
+        console.log('  → Login button not found, assuming already on login page');
+      });
+    }
 
     // Wait for redirect to Zitadel login page
     console.log('  → Waiting for Zitadel login page');

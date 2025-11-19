@@ -11,6 +11,7 @@ playwright/.cache/
 test-results/.auth/
 
 # Environment files with secrets
+.env.test
 .env.test.local
 .env.local
 

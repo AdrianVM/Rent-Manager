@@ -11,7 +11,7 @@ import { faker } from '@faker-js/faker';
  */
 export function generateProperty(overrides?: Partial<PropertyData>): PropertyData {
   const bedrooms = faker.number.int({ min: 1, max: 5 });
-  const bathrooms = faker.number.float({ min: 1, max: 3, precision: 0.5 });
+  const bathrooms = faker.number.float({ min: 1, max: 3, fractionDigits: 1 });
   const squareFeet = faker.number.int({ min: 500, max: 3000 });
 
   return {
@@ -36,6 +36,55 @@ export function generateProperty(overrides?: Partial<PropertyData>): PropertyDat
   };
 }
 
+/**
+ * Generate test parking space property data
+ */
+export function generateParkingSpaceProperty(overrides?: Partial<ParkingSpacePropertyData>): ParkingSpacePropertyData {
+  const parkingTypes = ['Outdoor', 'Covered', 'Garage', 'Underground'];
+  const spaceNumber = `${faker.helpers.arrayElement(['A', 'B', 'C', 'D'])}-${faker.number.int({ min: 1, max: 200 })}`;
+
+  return {
+    name: `Parking Space ${spaceNumber}`,
+    address: faker.location.streetAddress(),
+    city: faker.location.city(),
+    state: faker.location.state({ abbreviated: true }),
+    zipCode: faker.location.zipCode(),
+    country: 'USA',
+    propertyType: 'ParkingSpace',
+    parkingType: faker.helpers.arrayElement(parkingTypes),
+    spaceNumber,
+    monthlyRent: faker.number.int({ min: 50, max: 250 }),
+    description: `${faker.helpers.arrayElement(parkingTypes)} parking space`,
+    ...overrides,
+  };
+}
+
+/**
+ * Generate test apartment property data
+ */
+export function generateApartmentProperty(overrides?: Partial<PropertyData>): PropertyData {
+  return generateProperty({
+    propertyType: 'Apartment',
+    bedrooms: faker.number.int({ min: 1, max: 3 }),
+    bathrooms: faker.number.float({ min: 1, max: 2, fractionDigits: 1 }),
+    squareFeet: faker.number.int({ min: 600, max: 1500 }),
+    ...overrides,
+  });
+}
+
+/**
+ * Generate test house property data
+ */
+export function generateHouseProperty(overrides?: Partial<PropertyData>): PropertyData {
+  return generateProperty({
+    propertyType: 'House',
+    bedrooms: faker.number.int({ min: 2, max: 5 }),
+    bathrooms: faker.number.float({ min: 1.5, max: 3.5, fractionDigits: 1 }),
+    squareFeet: faker.number.int({ min: 1200, max: 3500 }),
+    ...overrides,
+  });
+}
+
 export interface PropertyData {
   name: string;
   address: string;
@@ -51,6 +100,20 @@ export interface PropertyData {
   securityDeposit: number;
   description: string;
   amenities: string[];
+}
+
+export interface ParkingSpacePropertyData {
+  name: string;
+  address: string;
+  city: string;
+  state: string;
+  zipCode: string;
+  country: string;
+  propertyType: string;
+  parkingType: string;
+  spaceNumber: string;
+  monthlyRent: number;
+  description: string;
 }
 
 /**

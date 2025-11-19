@@ -22,9 +22,6 @@ type TestFixtures = {
 
   // Common test actions
   testActions: TestActions;
-
-  // Screenshot helper
-  screenshot: ScreenshotHelper;
 };
 
 /**
@@ -323,13 +320,6 @@ export const test = base.extend<TestFixtures>({
    */
   testActions: async ({ page }, use) => {
     await use(new TestActions(page));
-  },
-
-  /**
-   * Screenshot helper fixture
-   */
-  screenshot: async ({ page }, use) => {
-    await use(new ScreenshotHelper(page));
   },
 });
 
